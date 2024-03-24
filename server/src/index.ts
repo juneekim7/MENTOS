@@ -20,9 +20,9 @@ const DB = new MongoClient(`mongodb+srv://${process.env.MONGODB_ID}:${process.en
         deprecationErrors: true
     }
 })
-export const userColl = DB.db('data').collection<User>('users')
-export const problemColl = DB.db('data').collection<Problem>('problems')
-export const solutionColl = DB.db('data').collection<Solution>('solutions')
+// export const userColl = DB.db('data').collection<User>('users')
+// export const problemColl = DB.db('data').collection<Problem>('problems')
+// export const solutionColl = DB.db('data').collection<Solution>('solutions')
 
 app.listen(8080, () => {
     console.log('The server has started.')
@@ -63,35 +63,35 @@ addServerEventListener('login', async (body) => {
 //     }
 // })
 
-app.post('/api/create_problem', async (req: Request<ParamDict, CreateProblemRes, CreateProblemReq>, res) => {
-    try {
-        const user = await getUser(req.body.accessToken)
-        const problem = req.body.problem
-        const solution = req.body.solution
-        problem.writer = user._id
-        solution.writer = user._id
+// app.post('/api/create_problem', async (req: Request<ParamDict, CreateProblemRes, CreateProblemReq>, res) => {
+//     try {
+//         const user = await getUser(req.body.accessToken)
+//         const problem = req.body.problem
+//         const solution = req.body.solution
+//         problem.writer = user._id
+//         solution.writer = user._id
 
-        const problemId = new ObjectId()
-        const solutionId = new ObjectId()
-        problem.solutions = [solutionId]
-        solution.problem = problemId
+//         const problemId = new ObjectId()
+//         const solutionId = new ObjectId()
+//         problem.solutions = [solutionId]
+//         solution.problem = problemId
 
-        await problemColl.insertOne(problem)
-        await solutionColl.insertOne(solution)
+//         await problemColl.insertOne(problem)
+//         await solutionColl.insertOne(solution)
 
-        res.json({
-            success: true,
-            problemId
-        })
+//         res.json({
+//             success: true,
+//             problemId
+//         })
 
-    } catch (err) {
-        if (!(err instanceof Error)) return
-        res.json({
-            success: false,
-            error: err.message
-        })
-    }
-})
+//     } catch (err) {
+//         if (!(err instanceof Error)) return
+//         res.json({
+//             success: false,
+//             error: err.message
+//         })
+//     }
+// })
 
 // app.post('/api/test', () => {
 //     console.log('Success.')
