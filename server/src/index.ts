@@ -46,7 +46,7 @@ const addServerEventListener = <T extends keyof Connection>(
     })
 }
 
-const subscribers: Record<string, Set<WebSocket>> = {}
+const subscribers: Record<number, Set<WebSocket>> = {}
 
 for (const mentoring of await mentoringColl(currentSemester).find().toArray()) {
     subscribers[mentoring.index] = new Set()
@@ -54,7 +54,7 @@ for (const mentoring of await mentoringColl(currentSemester).find().toArray()) {
 
 wss.on('connection', (socket, _request) => {
     socket.on('message', (rawData) => {
-        const target = rawData.toString('utf-8')
+        const target = Number(rawData.toString('utf-8'))
         if (target in subscribers) {
             subscribers[target].add(socket)
             socket.send(JSON.stringify({
