@@ -7,6 +7,11 @@ export interface History {
     attend: Set<StudentId>
 }
 
+export interface HistoryImage {
+    startImage: string
+    endImage: string
+}
+
 export interface Mentoring {
     name: string
     mentor: Set<StudentId>
