@@ -1,16 +1,21 @@
 import bodyParser from 'body-parser'
-import express, { Request } from 'express'
+import express from 'express'
 import cors from 'cors'
-import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
+import { WebSocket, WebSocketServer } from 'ws'
+import { MongoClient, ServerApiVersion } from 'mongodb'
 import dotenv from 'dotenv'
 import { getUser } from './user'
-import type { Connection, ErrorData } from '../../models/connection'
+import type { Connection, ErrorData, Success } from '../../models/connection'
+import { User } from '../../models/user'
+import { HistoryImage, Mentoring } from '../../models/mentoring'
 
 export type ParamDict = Record<string, string>
 
 const app = express()
 app.use(bodyParser.json())
 app.use(cors())
+
+const wss = new WebSocketServer({ port: 3000 })
 
 dotenv.config()
 const DB = new MongoClient(`mongodb+srv://${process.env.MONGODB_ID}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URI}/?retryWrites=true&w=majority`, {
@@ -20,9 +25,13 @@ const DB = new MongoClient(`mongodb+srv://${process.env.MONGODB_ID}:${process.en
         deprecationErrors: true
     }
 })
-// export const userColl = DB.db('data').collection<User>('users')
-// export const problemColl = DB.db('data').collection<Problem>('problems')
-// export const solutionColl = DB.db('data').collection<Solution>('solutions')
+
+type Semester = `${number}-1` | `${number}-2`
+const currentSemester = '2024-1'
+
+export const userColl = (semester: Semester) => DB.db(semester).collection<User>('user')
+export const mentoringColl = (semester: Semester) => DB.db(semester).collection<Mentoring>('mentoring')
+export const historyImageColl = (semester: Semester) => DB.db(semester).collection<HistoryImage>('historyImage')
 
 app.listen(8080, () => {
     console.log('The server has started.')
@@ -37,6 +46,35 @@ const addServerEventListener = <T extends keyof Connection>(
     })
 }
 
+const subscribers: Record<string, Set<WebSocket>> = {}
+
+for (const mentoring of await mentoringColl(currentSemester).find().toArray()) {
+    subscribers[mentoring.index] = new Set()
+}
+
+wss.on('connection', (socket, _request) => {
+    socket.on('message', (rawData) => {
+        const target = rawData.toString('utf-8')
+        if (target in subscribers) {
+            subscribers[target].add(socket)
+            socket.send(JSON.stringify({
+                success: true
+            } as Success))
+        } else {
+            socket.send(JSON.stringify({
+                success: false,
+                error: 'invalid subscription target'
+            } as ErrorData))
+        }
+    })
+
+    socket.on('close', () => {
+        for (const target in subscribers) {
+            subscribers[target].delete(socket)
+        }
+    })
+})
+
 addServerEventListener('login', async (body) => {
     const { accessToken } = body
     const user = await getUser(accessToken) // 여기다가 try 넣는 건 좀... getUser에서 try catch해서 error 리턴하게 만드셈
@@ -46,53 +84,3 @@ addServerEventListener('login', async (body) => {
         user
     }
 })
-
-// app.post('/api/google_auth', async (req: Request<ParamDict, LoginRes, LoginReq>, res) => {
-//     try {
-//         const user = await getUser(req.body.accessToken) as User
-//         res.json({
-//             success: true,
-//             user
-//         })
-//     } catch (err) {
-//         if (!(err instanceof Error)) return
-//         res.json({
-//             success: false,
-//             error: err.message
-//         })
-//     }
-// })
-
-// app.post('/api/create_problem', async (req: Request<ParamDict, CreateProblemRes, CreateProblemReq>, res) => {
-//     try {
-//         const user = await getUser(req.body.accessToken)
-//         const problem = req.body.problem
-//         const solution = req.body.solution
-//         problem.writer = user._id
-//         solution.writer = user._id
-
-//         const problemId = new ObjectId()
-//         const solutionId = new ObjectId()
-//         problem.solutions = [solutionId]
-//         solution.problem = problemId
-
-//         await problemColl.insertOne(problem)
-//         await solutionColl.insertOne(solution)
-
-//         res.json({
-//             success: true,
-//             problemId
-//         })
-
-//     } catch (err) {
-//         if (!(err instanceof Error)) return
-//         res.json({
-//             success: false,
-//             error: err.message
-//         })
-//     }
-// })
-
-// app.post('/api/test', () => {
-//     console.log('Success.')
-// })

@@ -13,6 +13,7 @@ export interface HistoryImage {
 }
 
 export interface Mentoring {
+    index: number
     name: string
     mentor: Set<StudentId>
     student: Set<StudentId>
@@ -24,5 +25,6 @@ export interface Mentoring {
         start: Date
     } | null
 
+    now: History
     logs: History[]
 }

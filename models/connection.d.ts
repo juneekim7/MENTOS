@@ -3,13 +3,15 @@ export interface ErrorData {
     error: string
 }
 
+export interface Success {
+    success: true
+}
+
 export interface Connection {
     'login': [
         {
             accessToken: string
         },
-        {
-            success: true
-        }
+        Success
     ]
 }
