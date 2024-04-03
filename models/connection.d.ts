@@ -5,7 +5,9 @@ export interface ErrorData {
 
 export interface Connection {
     'login': [
-        { accessToken: string },
+        {
+            accessToken: string
+        },
         {
             success: true
         }
