@@ -1,4 +1,4 @@
-import { StudentId, User } from './user'
+import { StudentId } from './user'
 
 export interface History {
     location: string
