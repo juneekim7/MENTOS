@@ -14,7 +14,7 @@ module.exports = {
             "warn",
             { allowConstantExport: true },
         ],
-        "@stylistic/quotes": ["error", "single"],
+        "@stylistic/quotes": ["error", "double"],
         "@stylistic/indent": ["error", 4],
         "@stylistic/semi": ["error", "never"],
         "@stylistic/arrow-parens": ["error"],

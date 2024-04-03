@@ -1,12 +1,12 @@
-import { css } from '@emotion/react'
-import { CSSTransition } from 'react-transition-group'
-import { useEffect, useState } from 'react'
-import { useEvent } from '../../utils/event'
+import { css } from "@emotion/react"
+import { CSSTransition } from "react-transition-group"
+import { useEffect, useState } from "react"
+import { useEvent } from "../../utils/event"
 
-import Check from '@assets/check.svg'
-import Forbidden from '@assets/forbidden.svg'
+import Check from "@assets/check.svg"
+import Forbidden from "@assets/forbidden.svg"
 
-type NotiType = 'allowed' | 'forbidden'
+type NotiType = "allowed" | "forbidden"
 interface INotificationInfo {
     type: NotiType
     content: string | undefined
@@ -64,7 +64,7 @@ export const Notification: React.FC<INotificationInfo> = (props) => {
                     }
                 `}
             >
-                <img src={props.type === 'allowed' ? Check : Forbidden} height={20} />
+                <img src={props.type === "allowed" ? Check : Forbidden} height={20} />
                 <div>{props.content}</div>
             </div>
         </CSSTransition>
@@ -74,7 +74,7 @@ export const Notification: React.FC<INotificationInfo> = (props) => {
 export const NotiContainer: React.FC = () => {
     const [contents, setContents] = useState<{ type: NotiType, content: string, key: string }[]>([])
 
-    useEvent('notification', (type: NotiType, content: string) => {
+    useEvent("notification", (type: NotiType, content: string) => {
         const key = Date.now().toString()
         setContents([ ...contents, { type, content, key } ])
     })
