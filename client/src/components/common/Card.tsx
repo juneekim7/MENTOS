@@ -1,11 +1,11 @@
-import { css } from '@emotion/react'
-import { omit } from '../../utils/omit'
-import { DivProps } from '../../global'
+import { css } from "@emotion/react"
+import { omit } from "../../utils/omit"
+import { DivProps } from "../../global"
 
 export const Card: React.FC<DivProps> = (props) => {
     return (
         <div
-            {...omit(props, 'children')}
+            {...omit(props, "children")}
             css={css`
                 border-radius: 8px;
                 padding: 16px;
@@ -22,7 +22,7 @@ export const Card: React.FC<DivProps> = (props) => {
 export const HoverCard: React.FC<DivProps> = (props) => {
     return (
         <div
-            {...omit(props, 'children')}
+            {...omit(props, "children")}
             css={css`
                 border-radius: 8px;
                 padding: 16px;

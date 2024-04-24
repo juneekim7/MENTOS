@@ -4,25 +4,19 @@ import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBuilding, faClock, faUser } from "@fortawesome/free-solid-svg-icons"
+import { IHomeMentoring } from "../types/mentoring"
 
-interface IMentoringProps {
-    name: string
-    code: number
-    mentors: string[]
-    place: string
-    time: string
-    mentee?: boolean
-}
+type IMentoringProps = IHomeMentoring
 
 export const Mentoring: React.FC<IMentoringProps> = (props) => {
-    const textColor = props.mentee ? "var(--official-text)" : "black"
-    const iconColor = props.mentee ? "var(--official-text)" : "var(--section-icon)"
+    const textColor = props.isMentee ? "var(--official-text)" : "black"
+    const iconColor = props.isMentee ? "var(--official-text)" : "var(--section-icon)"
 
     return (
         <VFlexBox
             css={css`
                 border-radius: 8px;
-                background-color: ${props.mentee ? "var(--mentos-official)" : "var(--mentos-section)" };
+                background-color: ${props.isMentee ? "var(--mentos-official)" : "var(--mentos-section)" };
                 padding: 16px;
                 color: ${textColor};
             `}
@@ -50,7 +44,7 @@ export const Mentoring: React.FC<IMentoringProps> = (props) => {
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faClock} size="sm" style={{ color: iconColor }} />
                     </VFlexBox>
-                    {props.time}
+                    {props.startTime}
                 </HFlexBox>
             </VFlexBox>
             <VBox

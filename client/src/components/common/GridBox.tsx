@@ -1,17 +1,17 @@
-import { css } from '@emotion/react'
-import { DivProps } from '../../global'
-import { omit } from '../../utils/omit'
+import { css } from "@emotion/react"
+import { DivProps } from "../../global"
+import { omit } from "../../utils/omit"
 
 interface GridBoxProps {
-    column?: number
-    row?: number
+    column?: number | string
+    row?: number | string
     gap?: number
 }
 
 export const GridBox: React.FC<DivProps<GridBoxProps>> = (props) => {
     return (
         <div
-            {...omit(props, 'children', 'column', 'row', 'gap')}
+            {...omit(props, "children", "column", "row", "gap")}
             css={css`
                 display: grid;
                 grid-template-columns: repeat(${props.column ?? 1}, 1fr);

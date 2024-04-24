@@ -1,6 +1,6 @@
-import { css } from '@emotion/react'
-import { omit } from '../../utils/omit'
-import { DivProps } from '../../global'
+import { css } from "@emotion/react"
+import { omit } from "../../utils/omit"
+import { DivProps } from "../../global"
 
 interface FlexBoxProps {
     center?: boolean
@@ -11,13 +11,13 @@ interface FlexBoxProps {
 export const HFlexBox: React.FC<DivProps<FlexBoxProps>> = (props) => {
     return (
         <div
-            {...omit(props, 'children', 'gap', 'center', 'full')}
+            {...omit(props, "children", "gap", "center", "full")}
             css={css`
                 display: flex;
                 flex-direction: row;
-                align-items: ${props.center ? 'center' : 'flex-start'};
+                align-items: ${props.center ? "center" : "flex-start"};
                 gap: ${props.gap ?? 0}px;
-                ${props.full && 'width: 100%;'}
+                ${props.full && "width: 100%;"}
             `}
         >
             {props.children}
@@ -28,13 +28,13 @@ export const HFlexBox: React.FC<DivProps<FlexBoxProps>> = (props) => {
 export const VFlexBox: React.FC<DivProps<FlexBoxProps>> = (props) => {
     return (
         <div
-            {...omit(props, 'children', 'gap', 'center', 'full')}
+            {...omit(props, "children", "gap", "center", "full")}
             css={css`
                 display: flex;
                 flex-direction: column;
-                align-items: ${props.center ? 'center' : 'flex-start'};
+                align-items: ${props.center ? "center" : "flex-start"};
                 gap: ${props.gap ?? 0}px;
-                ${props.full && 'width: 100%;'}
+                ${props.full && "width: 100%;"}
             `}
         >
             {props.children}
