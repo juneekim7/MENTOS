@@ -26,11 +26,6 @@ const webDevClass: Mentoring = {
     classification: 'artisan',
     subject: '',
 
-    schedule: {
-        location: '형설관 3511',
-        start: new Date()
-    },
-
     now: null,
     logs: []
 }

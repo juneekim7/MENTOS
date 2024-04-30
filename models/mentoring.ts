@@ -23,11 +23,6 @@ export interface Mentoring {
     classification: 'academic' | 'artisan'
     subject: string
 
-    schedule: {
-        location: string
-        start: Date
-    } | null
-
     now: History | null
     logs: History[]
 }
