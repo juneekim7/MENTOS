@@ -10,10 +10,10 @@ GET
 /api/login
 
 ### Request
-None
+accessToken : string 
 
 ### Response
-Your own
+User
 
 ## Mentoring List
 메인 페이지에서 호출됨.
@@ -28,22 +28,7 @@ GET
 accessToken : string 
 
 ### Response
-mentoringData : Mentoring[]
-
-## Ranking
-랭킹 페이지에서 호출됨.
-
-### METHOD
-GET
-
-### URL
-/api/ranking
-
-### Request
-accessToken : string 
-
-### Response
-rankingData : Mentoring[] (sorted)
+Mentoring[]
 
 ## Mentoring Information
 멘토링 정보를 불러옴.
@@ -56,7 +41,7 @@ GET
 
 ### Request
 accessToken : string  
-mentoringId : number
+index : number
 
 ### Response
-mentoringData : Mentoring
+Mentoring

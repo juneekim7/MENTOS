@@ -1,10 +1,13 @@
 import { StudentId } from './user'
 
+export type Semester = `${number}-1` | `${number}-2`
+export const currentSemester: () => Semester = () => '2024-1'
+
 export interface History {
     location: string
     start: Date
     end: Date
-    attend: Set<StudentId>
+    attend: StudentId[]
 }
 
 export interface HistoryImage {
@@ -15,8 +18,8 @@ export interface HistoryImage {
 export interface Mentoring {
     index: number
     name: string
-    mentor: Set<StudentId>
-    student: Set<StudentId>
+    mentor: StudentId[]
+    student: StudentId[]
     classification: 'academic' | 'artisan'
     subject: string
 
@@ -25,6 +28,6 @@ export interface Mentoring {
         start: Date
     } | null
 
-    now: History
+    now: History | null
     logs: History[]
 }

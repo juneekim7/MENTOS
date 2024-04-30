@@ -1,56 +1,43 @@
 import axios from 'axios'
-import { User } from '../../models/user'
 import { userColl } from '.'
-import { WithId } from 'mongodb'
+import { failure, success } from '../../models/connection'
+import { StudentId, User } from '../../models/user'
 
-const savedEmail: Record<string, string> = {}
-
-export const isValidUser = async (accessToken: string) => {
-    if (savedEmail[accessToken] !== undefined) {
-        return true
-    }
+const savedStudentId: Record<string, StudentId> = {}
+export async function getUser(accessToken: string) {
     try {
+        if (savedStudentId[accessToken] !== undefined) {
+            const studentId = savedStudentId[accessToken]
+            const foundUser = await userColl().findOne({
+                studentId
+            })
+            if (foundUser !== null) return success(foundUser)
+        }
+
         const { data } = await axios.get(
             `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${accessToken}`
         )
-        const email: string = data.email
-        savedEmail[accessToken] = email
-        return true
-    } catch (err) {
-        return false
-    }
-}
-
-export const getEmail = async (accessToken: string) => {
-    if (! await isValidUser(accessToken)) {
-        throw new Error('Invalid accessToken')
-    }
-    return savedEmail[accessToken]
-}
-
-export const getUser = async (accessToken: string): Promise<User> => {
-    if (! await isValidUser(accessToken)) {
-        throw new Error('Invalid accessToken')
-    }
-    const email = savedEmail[accessToken]
-
-    const foundUser = await userColl.findOne({
-        email
-    })
-
-    if (foundUser === null) {
-        const newUser: User = {
-            id: email.split('@')[0],
-            email,
-            role: 'user'
+        if (data.hd !== 'ksa.hs.kr') {
+            return failure('You are not KSA student!')
         }
-        const res = await userColl.insertOne(newUser)
+        const studentId = data.email.split('@')[0] as StudentId
 
-        return {
-            _id: res.insertedId,
-            ...newUser
-        } as WithId<User>
+        const foundUser = await userColl().findOne({
+            studentId
+        })
+
+        if (foundUser === null) {
+            const newUser: User = {
+                name: data.given_name,
+                studentId
+            }
+            await userColl().insertOne(newUser)
+            return success(newUser)
+        }
+
+        return success(foundUser)
+    } catch (error) {
+        if (error instanceof Error) return failure(error.message)
+        return failure(String(error))
     }
-
-    return foundUser
 }
