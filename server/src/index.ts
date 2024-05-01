@@ -91,7 +91,39 @@ addServerEventListener('mentoring_info', async (body) => {
 
     const mentoring = await mentoringColl(semester).findOne({ index })
     if (mentoring === null) {
-        return failure(`No mentoring in the semester ${semester}`)
+        return failure(`No mentoring in the semester ${semester} with the index ${index}`)
     }
     return success(mentoring)
+})
+
+addServerEventListener('mentoring_reserve', async (body) => {
+    const { accessToken, index, plan } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+    const user = getUserRes.data
+
+    const mentoring = await mentoringColl().findOne({ index })
+    if (mentoring === null) {
+        return failure(`No mentoring with the index ${index}`)
+    }
+
+    if (!mentoring.mentor.includes(user.studentId)) {
+        return failure('You are not mentor of this mentoring!')
+    }
+    if (plan.location === '') {
+        return failure('Empty location')
+    }
+    if (plan.start < new Date()) {
+        return failure('You cannot reserve past')
+    }
+    if (plan.start >= plan.end) {
+        return failure('You cannot end before start')
+    }
+    plan.attend = []
+    plan.image = ''
+
+    await mentoringColl().updateOne({ index }, {
+        working: plan
+    })
+    return success(null)
 })

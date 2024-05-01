@@ -11,7 +11,7 @@ export interface Success<T> {
     data: T
 }
 
-export type Response<T> = Success<T> | Failure 
+export type Response<T> = Success<T> | Failure
 
 export function failure(error: string) {
     return {
@@ -55,6 +55,6 @@ export interface Connection {
             index: number
             plan: Log
         },
-        Success<null>
+        Response<null>
     ]
 }
