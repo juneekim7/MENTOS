@@ -1,10 +1,10 @@
 import bodyParser from 'body-parser'
 import express from 'express'
 import cors from 'cors'
+import dotenv from 'dotenv'
 import { WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ServerApiVersion } from 'mongodb'
-import dotenv from 'dotenv'
-import { failure, success, type Connection, type Failure } from '../../models/connection'
+import { failure, success, type Connection } from '../../models/connection'
 import { User } from '../../models/user'
 import { LogImage, Mentoring, Semester, currentSemester } from '../../models/mentoring'
 import { getUser } from './user'
@@ -36,32 +36,33 @@ app.listen(8080, () => {
 
 const addServerEventListener = <T extends keyof Connection>(
     event: T,
-    cb: (body: Connection[T][0]) => Promise<Connection[T][1] | Failure>
+    cb: (body: Connection[T][0]) => Promise<Connection[T][1]>
 ) => {
     app.post(`/api/${event}`, async (req, res) => {
         res.json(await cb(req.body as Connection[T][0]))
     })
 }
 
-const subscribers: Record<number, Set<WebSocket>> = {}
+const subscribers = new Map<number, Set<WebSocket>>()
 for (const mentoring of await mentoringColl().find().toArray()) {
-    subscribers[mentoring.index] = new Set()
+    subscribers.set(mentoring.index, new Set())
 }
 
 wss.on('connection', (socket, _request) => {
     socket.on('message', (rawData) => {
         const target = Number(rawData.toString('utf-8'))
-        if (target in subscribers) {
-            subscribers[target].add(socket)
-            socket.send(JSON.stringify(success(null)))
-        } else {
+        const wsSet = subscribers.get(target)
+        if (wsSet === undefined) {
             socket.send(JSON.stringify(failure('invalid subscription target')))
+            return
         }
+        wsSet.add(socket)
+        socket.send(JSON.stringify(success(null)))
     })
 
     socket.on('close', () => {
-        for (const target in subscribers) {
-            subscribers[target].delete(socket)
+        for (const [_, wsSet] of subscribers) {
+            wsSet.delete(socket)
         }
     })
 })
