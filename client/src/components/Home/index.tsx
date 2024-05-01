@@ -3,7 +3,7 @@ import { VBox } from "../common/VBox"
 import { Mentoring } from "./Mentoring"
 import { GridBox } from "../common/GridBox"
 import { css } from "@emotion/react"
-import { IHomeMentoring } from "../../types/mentoring"
+import { IHomeMentoring } from "../types/mentoring"
 
 const MentoringInfo: IHomeMentoring[] = [
     {

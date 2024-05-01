@@ -4,7 +4,7 @@ import { VBox } from "../common/VBox"
 import { TextBox } from "../common/TextBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faFolder, faHourglass, faUser } from "@fortawesome/free-solid-svg-icons"
-import { IMentoringInfo } from "../../types/mentoring"
+import { IMentoringInfo } from "../types/mentoring"
 
 export const Mentoring: React.FC<IMentoringInfo> = (props) => {
     return (

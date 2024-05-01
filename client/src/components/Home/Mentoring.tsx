@@ -4,7 +4,7 @@ import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBuilding, faClock, faUser } from "@fortawesome/free-solid-svg-icons"
-import { IHomeMentoring } from "../../types/mentoring"
+import { IHomeMentoring } from "../types/mentoring"
 
 type IMentoringProps = IHomeMentoring
 
