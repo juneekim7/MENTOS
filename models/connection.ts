@@ -55,6 +55,6 @@ export interface Connection {
             index: number
             plan: Log
         },
-        Response<null>
+        null
     ]
 }
