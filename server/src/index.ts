@@ -6,7 +6,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb'
 import dotenv from 'dotenv'
 import { failure, success, type Connection, type Failure } from '../../models/connection'
 import { User } from '../../models/user'
-import { HistoryImage, Mentoring, Semester, currentSemester } from '../../models/mentoring'
+import { LogImage, Mentoring, Semester, currentSemester } from '../../models/mentoring'
 import { getUser } from './user'
 
 export type ParamDict = Record<string, string>
@@ -28,7 +28,7 @@ const DB = new MongoClient(`mongodb+srv://${process.env.MONGODB_ID}:${process.en
 
 export const userColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<User>('user')
 export const mentoringColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<Mentoring>('mentoring')
-export const historyImageColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<HistoryImage>('historyImage')
+export const logImageColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<LogImage>('logImage')
 
 app.listen(8080, () => {
     console.log('The server has started.')

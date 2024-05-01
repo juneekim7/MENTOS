@@ -12,6 +12,7 @@ const request = async <T extends keyof Connection>(event: T, body: Connection[T]
     })
 
     const data = await response.json() as Connection[T][1] | Failure
+    if (data === undefined) throw new Error('data is undefined')
     if (!data.success) throw new Error(data.error)
 
     return data
@@ -26,7 +27,7 @@ const webDevClass: Mentoring = {
     classification: 'artisan',
     subject: '',
 
-    now: null,
+    working: null,
     logs: []
 }
 await mentoringColl(currentSemester()).insertOne(webDevClass)

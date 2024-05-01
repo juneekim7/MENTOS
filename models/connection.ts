@@ -1,13 +1,13 @@
-import { Mentoring, Semester } from './mentoring'
+import { Log, Mentoring, Semester } from './mentoring'
 import { User } from './user'
 
 export interface Failure {
-    success: false,
+    success: false
     error: string
 }
 
 export interface Success<T> {
-    success: true,
+    success: true
     data: T
 }
 
@@ -34,17 +34,25 @@ export interface Connection {
     ],
     'mentoring_list': [
         {
-            accessToken: string,
+            accessToken: string
             semester: Semester
         },
         Success<Mentoring[]>
     ],
     'mentoring_info': [
         {
-            accessToken: string,
-            semester: Semester,
+            accessToken: string
+            semester: Semester
             index: number
         },
         Success<Mentoring>
     ],
+    'mentoring_reserve': [
+        {
+            accessToken: string
+            index: number
+            plan: Log
+        },
+        Success<null>
+    ]
 }
