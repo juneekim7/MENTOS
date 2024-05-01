@@ -32,14 +32,14 @@ export interface Connection {
         {
             accessToken: string
         },
-        Response<User>
+        User
     ],
     'mentoring_list': [
         {
             accessToken: string
             semester: Semester
         },
-        Response<Mentoring[]>
+        Mentoring[]
     ],
     'mentoring_info': [
         {
@@ -47,7 +47,7 @@ export interface Connection {
             semester: Semester
             index: number
         },
-        Response<Mentoring>
+        Mentoring
     ],
     'mentoring_reserve': [
         {
@@ -55,6 +55,6 @@ export interface Connection {
             index: number
             plan: Log
         },
-        Success<null>
+        null
     ]
 }
