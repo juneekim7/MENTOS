@@ -1,19 +1,10 @@
 import { css } from "@emotion/react"
 import { useNavigate } from "react-router-dom"
 import { TextBox } from "../common/TextBox"
+import { DivProps } from "../../global"
+import { omit } from "../../utils/omit"
 
 export namespace HeaderElement {
-    export const linkCSS = css`
-        border-radius: 6px;
-        padding: 10px 12px;
-        color: var(--nav-text);
-        cursor: pointer;
-
-        :hover {
-            background-color: var(--nav-hover);
-        }
-    `
-
     export const Logo: React.FC = () => {
         return (
             <div
@@ -51,29 +42,33 @@ export namespace HeaderElement {
         )
     }
 
-    export const Link: React.FC<React.PropsWithChildren<{ path: string }>> = (props) => {
-        const navigate = useNavigate()
-
+    export const Hover: React.FC<DivProps> = (props) => {
         return (
             <div
-                css={linkCSS}
-                onClick={() => navigate(props.path)}
+                css={css`
+                    border-radius: 6px;
+                    padding: 10px 12px;
+                    color: var(--nav-text);
+                    cursor: pointer;
+
+                    :hover {
+                        background-color: var(--nav-hover);
+                    }
+                `}
+                {...omit(props, "children")}
             >
                 {props.children}
             </div>
         )
     }
 
-    export const Login: React.FC = () => {
+    export const Link: React.FC<React.PropsWithChildren<{ path: string }>> = (props) => {
+        const navigate = useNavigate()
+
         return (
-            <div css={css`margin: 0 0 0 auto;`}>
-                <div
-                    css={linkCSS}
-                    onClick={() => { }}
-                >
-                    Login
-                </div>
-            </div>
+            <Hover onClick={() => navigate(props.path)}>
+                {props.children}
+            </Hover>
         )
     }
 

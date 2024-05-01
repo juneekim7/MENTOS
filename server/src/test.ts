@@ -1,19 +1,18 @@
-import fetch from 'node-fetch'
-import { Connection, Failure } from '../../models/connection'
+import { Connection, Failure, Response } from '../../models/connection'
 import { Mentoring, currentSemester } from '../../models/mentoring'
 import { mentoringColl } from '.'
 
 const SERVER_HOST = 'http://localhost:8080'
-const request = async <T extends keyof Connection>(event: T, body: Connection[T][0]): Promise<Connection[T][1]> => {
+const request = async <T extends keyof Connection>(event: T, body: Connection[T][0]): Promise<Response<Connection[T][1]>> => {
     const response = await fetch(`${SERVER_HOST}/api/${event}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
     })
 
-    const data = await response.json() as Connection[T][1] | Failure
+    const data = await response.json() as Response<Connection[T][1]>
     if (data === undefined) throw new Error('data is undefined')
-    if (!data.success) throw new Error(data.error)
+    if (!data.success) throw new Error((data as Failure).error)
 
     return data
 }

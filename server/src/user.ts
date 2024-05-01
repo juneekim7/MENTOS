@@ -1,9 +1,10 @@
 import axios from 'axios'
 import { userColl } from '.'
 import { failure, success } from '../../models/connection'
-import { StudentId, User } from '../../models/user'
+import { User } from '../../models/user'
 
-const savedStudentId: Record<string, StudentId> = {}
+const savedStudentId: Record<string, string> = {}
+
 export async function getUser(accessToken: string) {
     try {
         if (savedStudentId[accessToken] !== undefined) {
@@ -20,7 +21,7 @@ export async function getUser(accessToken: string) {
         if (data.hd !== 'ksa.hs.kr') {
             return failure('You are not KSA student!')
         }
-        const studentId = data.email.split('@')[0] as StudentId
+        const studentId = data.email.split('@')[0]
 
         const foundUser = await userColl().findOne({
             studentId
@@ -29,7 +30,7 @@ export async function getUser(accessToken: string) {
         if (foundUser === null) {
             const newUser: User = {
                 name: data.given_name,
-                studentId
+                id: studentId
             }
             await userColl().insertOne(newUser)
             return success(newUser)

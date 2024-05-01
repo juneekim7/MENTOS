@@ -1,26 +1,40 @@
-// import { useContext } from "react"
-// import { UserContext } from "../../User"
-// import { useGoogleLogin } from "@react-oauth/google"
-// import { requestLogin } from "../../functions/login"
-// import { HeaderElement } from "./Element"
+import { useContext } from "react"
+import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google"
 import { css } from "@emotion/react"
+import { UserInfoContext } from "../context/User"
+import { request } from "../../utils/connection"
+import { HeaderElement } from "./Element"
 
 export const Login: React.FC = () => {
-    // const { user, setUser, isLoggedIn, setIsLoggedIn, setAccessToken } = useContext(UserContext)
+    const { userInfo, setUserInfo } = useContext(UserInfoContext)
 
-    // const googleAuthLogin = useGoogleLogin({
-    //     onSuccess: async (res) => {
-    //         const data = await requestLogin(res.access_token)
-    //         setUser(data.user)
-    //         setIsLoggedIn(true)
-    //         setAccessToken(res.access_token)
-    //     },
-    //     onError: async (res) => console.log(res)
-    // })
+    const googleAuthLogin = useGoogleLogin({
+        onSuccess: async (res) => {
+            if (setUserInfo === null) return
+
+            const response = await request("login", { accessToken: res.access_token })
+            if (!response.success) {
+                alert(`Login Failed!\nError message: ${response.error}`)
+                return
+            }
+
+            const { name, id } = response.data
+            setUserInfo({
+                ...userInfo,
+                name,
+                id
+            })
+        },
+        onError: async (res) => console.log(res)
+    })
 
     return (
-        <div css={css`margin: 0 0 0 auto;`}>
-            로그인
-        </div>
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID as string}>
+            <div css={css`margin: 0 0 0 auto;`}>
+                <HeaderElement.Hover onClick={() => googleAuthLogin()}>
+                    로그인
+                </HeaderElement.Hover>
+            </div>
+        </GoogleOAuthProvider>
     )
 }

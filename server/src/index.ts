@@ -4,7 +4,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import { WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ServerApiVersion } from 'mongodb'
-import { failure, success, type Connection } from '../../models/connection'
+import { Response, failure, success, type Connection } from '../../models/connection'
 import { User } from '../../models/user'
 import { LogImage, Mentoring, Semester, currentSemester } from '../../models/mentoring'
 import { getUser } from './user'
@@ -36,7 +36,7 @@ app.listen(8080, () => {
 
 const addServerEventListener = <T extends keyof Connection>(
     event: T,
-    cb: (body: Connection[T][0]) => Promise<Connection[T][1]>
+    cb: (body: Connection[T][0]) => Promise<Response<Connection[T][1]>>
 ) => {
     app.post(`/api/${event}`, async (req, res) => {
         res.json(await cb(req.body as Connection[T][0]))
@@ -75,7 +75,7 @@ addServerEventListener('login', async (body) => {
 addServerEventListener('mentoring_list', async (body) => {
     const { accessToken, semester } = body
     const getUserRes = await getUser(accessToken)
-    if (!getUserRes.success) return getUserRes
+    if (!getUserRes.success) return failure('Invalid user.')
 
     const mentoringList = await mentoringColl(semester).find().toArray()
     if (mentoringList === null) {
@@ -87,7 +87,7 @@ addServerEventListener('mentoring_list', async (body) => {
 addServerEventListener('mentoring_info', async (body) => {
     const { accessToken, semester, index } = body
     const getUserRes = await getUser(accessToken)
-    if (!getUserRes.success) return getUserRes
+    if (!getUserRes.success) return failure('Invalid user.')
 
     const mentoring = await mentoringColl(semester).findOne({ index })
     if (mentoring === null) {
