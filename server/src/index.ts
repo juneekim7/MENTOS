@@ -1,10 +1,10 @@
 import bodyParser from 'body-parser'
 import express from 'express'
 import cors from 'cors'
+import dotenv from 'dotenv'
 import { WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ServerApiVersion } from 'mongodb'
-import dotenv from 'dotenv'
-import { failure, success, type Connection, type Failure } from '../../models/connection'
+import { failure, success, type Connection } from '../../models/connection'
 import { User } from '../../models/user'
 import { HistoryImage, Mentoring, Semester, currentSemester } from '../../models/mentoring'
 import { getUser } from './user'
@@ -36,7 +36,7 @@ app.listen(8080, () => {
 
 const addServerEventListener = <T extends keyof Connection>(
     event: T,
-    cb: (body: Connection[T][0]) => Promise<Connection[T][1] | Failure>
+    cb: (body: Connection[T][0]) => Promise<Connection[T][1]>
 ) => {
     app.post(`/api/${event}`, async (req, res) => {
         res.json(await cb(req.body as Connection[T][0]))

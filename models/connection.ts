@@ -11,6 +11,8 @@ export interface Success<T> {
     data: T
 }
 
+export type Response<T> = Success<T> | Failure 
+
 export function failure(error: string) {
     return {
         success: false,
@@ -30,14 +32,14 @@ export interface Connection {
         {
             accessToken: string
         },
-        Success<User>
+        Response<User>
     ],
     'mentoring_list': [
         {
             accessToken: string,
             semester: Semester
         },
-        Success<Mentoring[]>
+        Response<Mentoring[]>
     ],
     'mentoring_info': [
         {
@@ -45,6 +47,6 @@ export interface Connection {
             semester: Semester,
             index: number
         },
-        Success<Mentoring>
+        Response<Mentoring>
     ],
 }
