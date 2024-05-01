@@ -43,25 +43,26 @@ const addServerEventListener = <T extends keyof Connection>(
     })
 }
 
-const subscribers: Record<number, Set<WebSocket>> = {}
+const subscribers = new Map<number, Set<WebSocket>>()
 for (const mentoring of await mentoringColl().find().toArray()) {
-    subscribers[mentoring.index] = new Set()
+    subscribers.set(mentoring.index, new Set())
 }
 
 wss.on('connection', (socket, _request) => {
     socket.on('message', (rawData) => {
         const target = Number(rawData.toString('utf-8'))
-        if (target in subscribers) {
-            subscribers[target].add(socket)
-            socket.send(JSON.stringify(success(null)))
-        } else {
+        const wsSet = subscribers.get(target)
+        if (wsSet === undefined) {
             socket.send(JSON.stringify(failure('invalid subscription target')))
+            return
         }
+        wsSet.add(socket)
+        socket.send(JSON.stringify(success(null)))
     })
 
     socket.on('close', () => {
-        for (const target in subscribers) {
-            subscribers[target].delete(socket)
+        for (const [_, wsSet] of subscribers) {
+            wsSet.delete(socket)
         }
     })
 })
