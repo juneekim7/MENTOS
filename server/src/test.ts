@@ -29,7 +29,9 @@ const webDevClass: Mentoring = {
     working: null,
     logs: []
 }
-await mentoringColl(currentSemester()).insertOne(webDevClass)
+mentoringColl(currentSemester()).insertOne(webDevClass)
 
-console.log(await request('login', { accessToken }))
-console.log(await request('mentoring_list', { accessToken, semester: currentSemester() }))
+;(async () => {
+    console.log(await request('login', { accessToken }))
+    console.log(await request('mentoring_list', { accessToken, semester: currentSemester() }))
+})()
