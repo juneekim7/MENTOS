@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect } from "react"
 
 interface ClientEvents {
-    'notification': [type: 'allowed' | 'forbidden', content: string]
+    "notification": [type: "allowed" | "forbidden", content: string]
 }
 type Event = keyof ClientEvents
 
