@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "nodemon --watch src --ext \"ts,json\"  --exec \"esrun src/index\"",
+        "dev": "nodemon --watch src --ext \"ts,json\"  --exec \"ts-node src/index\"",
         "test": "concurrently \"esrun src/index\" \"esrun test/test\"",
         "exe": "concurrently \"esrun src/index\" \"esrun test/execute\"",
         "ins": "esrun test/insert",
@@ -30,6 +30,7 @@
         "@types/ws": "^8.5.10",
         "@typescript-eslint/eslint-plugin": "^7.0.2",
         "concurrently": "^8.2.2",
-        "esrun": "^3.2.26"
+        "esrun": "^3.2.26",
+        "ts-node": "^10.9.2"
     }
 }
