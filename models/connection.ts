@@ -53,7 +53,26 @@ export interface Connection {
         {
             accessToken: string
             index: number
-            plan: Log
+            location: string
+            start: Date
+            duration: number
+        },
+        null
+    ],
+    'mentoring_start': [
+        {
+            accessToken: string
+            index: number
+            location: string
+            startImage: string
+        },
+        null
+    ],
+    'mentoring_end': [
+        {
+            accessToken: string
+            index: number
+            endImage: string
         },
         null
     ]

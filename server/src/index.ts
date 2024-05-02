@@ -6,8 +6,10 @@ import { WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ServerApiVersion } from 'mongodb'
 import { Response, failure, success, type Connection } from '../../models/connection'
 import { User } from '../../models/user'
-import { LogImage, Mentoring, Semester, currentSemester } from '../../models/mentoring'
+import { Log, LogImage, Mentoring, Semester, currentSemester } from '../../models/mentoring'
 import { getUser } from './user'
+import { getRes } from './utils'
+import { checkLog, getMentoring } from './mentoring'
 
 export type ParamDict = Record<string, string>
 
@@ -39,7 +41,7 @@ const addServerEventListener = <T extends keyof Connection>(
     cb: (body: Connection[T][0]) => Promise<Response<Connection[T][1]>>
 ) => {
     app.post(`/api/${event}`, async (req, res) => {
-        res.json(await cb(req.body as Connection[T][0]))
+        res.json(await getRes(cb)(req.body as Connection[T][0]))
     })
 }
 
@@ -99,33 +101,93 @@ addServerEventListener('mentoring_info', async (body) => {
 })
 
 addServerEventListener('mentoring_reserve', async (body) => {
-    const { accessToken, index, plan } = body
+    const { accessToken, index, location, start, duration } = body
     const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
     const user = getUserRes.data
 
-    const mentoring = await mentoringColl().findOne({ index })
-    if (mentoring === null) {
-        return failure(`No mentoring with the index ${index}`)
-    }
-    if (!mentoring.mentor.includes(user.id)) {
-        return failure('You are not mentor of this mentoring!')
-    }
+    const getMentoringRes = await getMentoring(index, user, 'mentor')
+    if (!getMentoringRes.success) return getMentoringRes
 
-    if (plan.location === '') {
-        return failure('Empty location')
-    }
-    if (plan.start < new Date()) {
+    const checkLogRes = await checkLog({
+        location,
+        start,
+        duration
+    })
+    if (!checkLogRes.success) return checkLogRes
+    if (start < new Date()) {
         return failure('You cannot reserve past')
     }
-    if (plan.start >= plan.end) {
-        return failure('You cannot end before start')
+
+    const plan: Log = {
+        location,
+        start,
+        duration,
+        attend: [],
+        startImageId: null,
+        endImageId: null
     }
-    plan.attend = []
-    plan.image = ''
 
     await mentoringColl().updateOne({ index }, {
         working: plan
+    })
+    return success(null)
+})
+
+addServerEventListener('mentoring_start', async (body) => {
+    const { accessToken, index, location, startImage } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+    const user = getUserRes.data
+
+    const getMentoringRes = await getMentoring(index, user, 'mentor')
+    if (!getMentoringRes.success) return getMentoringRes
+
+    const checkLogRes = await checkLog({ location })
+    if (!checkLogRes.success) return checkLogRes
+
+    const startImageId = (await logImageColl().insertOne({
+        image: startImage
+    })).insertedId.toString()
+
+    const working: Log = {
+        location,
+        start: new Date(),
+        duration: 0,
+        attend: [],
+        startImageId,
+        endImageId: null
+    }
+
+    await mentoringColl().updateOne({ index }, {
+        working
+    })
+    return success(null)
+})
+
+addServerEventListener('mentoring_end', async (body) => {
+    const { accessToken, index, endImage } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+    const user = getUserRes.data
+
+    const getMentoringRes = await getMentoring(index, user, 'mentor')
+    if (!getMentoringRes.success) return getMentoringRes
+    const mentoring = getMentoringRes.data
+
+    const endImageId = (await logImageColl().insertOne({
+        image: endImage
+    })).insertedId.toString()
+
+    const log = mentoring.working
+    if (log === null) {
+        return failure('Mentoring did not start')
+    }
+    log.endImageId = endImageId
+
+    await mentoringColl().updateOne({ index }, {
+        $push: { logs: log },
+        working: null
     })
     return success(null)
 })
