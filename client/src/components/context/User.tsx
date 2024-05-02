@@ -20,6 +20,7 @@ export const UserInfoContext = createContext<IUserInfoContext>({
 
 export const UserProvider: React.FC<React.PropsWithChildren> = (props) => {
     const [userInfo, setUserInfo] = useState<User>(defaultInfo)
+
     return (
         <UserInfoContext.Provider value={{ userInfo, setUserInfo }}>
             {props.children}

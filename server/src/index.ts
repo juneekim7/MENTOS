@@ -44,9 +44,11 @@ const addServerEventListener = <T extends keyof Connection>(
 }
 
 const subscribers = new Map<number, Set<WebSocket>>()
-for (const mentoring of await mentoringColl().find().toArray()) {
-    subscribers.set(mentoring.index, new Set())
-}
+mentoringColl().find().toArray().then((arr) => {
+    for (const mentoring of arr) {
+        subscribers.set(mentoring.index, new Set())
+    }
+})
 
 wss.on('connection', (socket, _request) => {
     socket.on('message', (rawData) => {

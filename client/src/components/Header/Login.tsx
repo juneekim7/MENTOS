@@ -11,18 +11,20 @@ export const Login: React.FC = () => {
     const googleAuthLogin = useGoogleLogin({
         onSuccess: async (res) => {
             if (setUserInfo === null) return
-
             const response = await request("login", { accessToken: res.access_token })
             if (!response.success) {
                 alert(`Login Failed!\nError message: ${response.error}`)
                 return
             }
 
+            console.log(response)
             const { name, id } = response.data
             setUserInfo({
                 ...userInfo,
                 name,
-                id
+                id,
+                accessToken: res.access_token,
+                isLoggedIn: true
             })
         },
         onError: async (res) => console.log(res)
@@ -31,8 +33,8 @@ export const Login: React.FC = () => {
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID as string}>
             <div css={css`margin: 0 0 0 auto;`}>
-                <HeaderElement.Hover onClick={() => googleAuthLogin()}>
-                    로그인
+                <HeaderElement.Hover onClick={() => userInfo.isLoggedIn || googleAuthLogin()}>
+                    {userInfo.isLoggedIn ? userInfo.name : "로그인"}
                 </HeaderElement.Hover>
             </div>
         </GoogleOAuthProvider>

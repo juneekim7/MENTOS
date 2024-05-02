@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "nodemon --watch src --ext \"ts,json\"  --exec \"esrun src/index.ts\"",
         "test": "esrun src/test",
-        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "start": "ts-node src/index.ts"
     },
     "author": "",
     "license": "ISC",
