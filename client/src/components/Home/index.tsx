@@ -8,7 +8,7 @@ import { IHomeMentoring } from "../../types/mentoring"
 const MentoringInfo: IHomeMentoring[] = [
     {
         name: "웹 개발",
-        code: 12,
+        code: 25,
         mentors: ["김준이", "문가온"],
         place: "형설관 3511",
         startTime: "2024. 03. 30. 20:00~22:00",
@@ -28,7 +28,7 @@ const MentoringInfo: IHomeMentoring[] = [
         mentors: ["김창하", "문가온"],
         place: "형설관 3511",
         startTime: "2024. 03. 30. 20:00~22:00",
-        isMentee: false   
+        isMentee: false
     }
 ]
 
