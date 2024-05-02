@@ -7,6 +7,7 @@
         "dev": "nodemon --watch src --ext \"ts,json\"  --exec \"esrun src/index\"",
         "test": "concurrently \"esrun src/index\" \"esrun test/test\"",
         "exe": "concurrently \"esrun src/index\" \"esrun test/execute\"",
+        "ins": "esrun test/insert",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "start": "ts-node src/index.ts"
     },

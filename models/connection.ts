@@ -20,6 +20,7 @@ export function failure(error: string) {
     } as Failure
 }
 
+
 export function success<T>(data: T) {
     return {
         success: true,
@@ -45,14 +46,14 @@ export interface Connection {
         {
             accessToken: string
             semester: Semester
-            index: number
+            code: number
         },
         Mentoring
     ],
     'mentoring_reserve': [
         {
             accessToken: string
-            index: number
+            code: number
             location: string
             start: Date
             duration: number
@@ -62,7 +63,7 @@ export interface Connection {
     'mentoring_start': [
         {
             accessToken: string
-            index: number
+            code: number
             location: string
             startImage: string
         },
@@ -71,8 +72,23 @@ export interface Connection {
     'mentoring_end': [
         {
             accessToken: string
-            index: number
+            code: number
             endImage: string
+        },
+        null
+    ],
+    'mentoring_attend_req': [
+        {
+            accessToken: string
+            code: number
+        },
+        null
+    ],
+    'mentoring_attend_accept': [
+        {
+            accessToken: string
+            code: number
+            studentId: string
         },
         null
     ],

@@ -1,3 +1,5 @@
+import { User } from './user'
+
 export type Auth = 'mentor' | 'student' | 'any'
 
 export type Semester = `${number}-1` | `${number}-2`
@@ -9,9 +11,19 @@ export interface Log {
     location: string
     start: Date
     duration: number
-    attend: string[]
+    attend: User[]
     startImageId: string | null
     endImageId: string | null
+}
+
+export interface WorkingLog extends Log {
+    attendQueue: User[]
+}
+
+export interface SocketRes {
+    code: number
+    attend: User[]
+    attendQueue: User[]
 }
 
 export interface LogImage {
@@ -19,28 +31,28 @@ export interface LogImage {
 }
 
 export interface Mentoring {
-    index: number
+    code: number
     name: string
-    mentors: string[]
-    students: string[]
+    mentors: User[]
+    students: User[]
     classification: 'academic' | 'artisan'
     subject: string
 
-    working: Log | null
+    working: WorkingLog | null
     logs: Log[]
 }
 
 export interface RankMentoring {
-    index: number
+    code: number
     name: string
     time: number
 }
 
 export function toRankMentoring(mentoring: Mentoring) {
-    const { index, name } = mentoring
+    const { code, name } = mentoring
     const time = mentoring.logs.reduce((acc, log) => acc + log.duration, 0)
     return {
-        index,
+        code,
         name,
         time
     } as RankMentoring

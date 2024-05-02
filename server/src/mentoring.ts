@@ -1,18 +1,18 @@
-import { mentoringColl } from '.'
+import { mentoringColl, withoutId } from '.'
 import { failure, success } from '../../models/connection'
 import { Auth, Log, maxDuration } from '../../models/mentoring'
 import { User } from '../../models/user'
 import { getRes } from './utils'
 
 export const getMentoring = getRes(async (index: number, user: User, auth: Auth = 'any') => {
-    const mentoring = await mentoringColl().findOne({ index })
+    const mentoring = await mentoringColl().findOne({ index }, withoutId)
     if (mentoring === null) {
         return failure(`No mentoring with the index ${index}`)
     }
-    if (auth === 'mentor' && !mentoring.mentors.includes(user.id)) {
+    if (auth === 'mentor' && !mentoring.mentors.map((u) => u.id).includes(user.id)) {
         return failure('You are not the mentor of this mentoring!')
     }
-    if (auth === 'student' && !mentoring.students.includes(user.id)) {
+    if (auth === 'student' && !mentoring.students.map((u) => u.id).includes(user.id)) {
         return failure('You are not the student of this mentoring!')
     }
     return success(mentoring)

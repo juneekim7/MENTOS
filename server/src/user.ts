@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { userColl } from '.'
+import { userColl, withoutId } from '.'
 import { failure, success } from '../../models/connection'
 import { User } from '../../models/user'
 import { getRes } from './utils'
@@ -35,7 +35,7 @@ export const getUser = getRes(async (accessToken: string) => {
 
     const foundUser = await userColl().findOne({
         studentId
-    })
+    }, withoutId)
     const user = foundUser ?? {
         name: data.given_name,
         id: studentId

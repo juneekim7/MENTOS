@@ -49,10 +49,10 @@ export const Home: React.FC = () => {
         setMentoringInfo(res.data.map((m) => {
             return {
                 name: m.name,
-                code: m.index,
+                code: m.code,
                 // TODO: studentId to name
                 // 아마도 백엔드에서 이름만 담긴 array 따로 주든가 해야할듯
-                mentors: m.mentors,
+                mentors: m.mentors.map((u) => u.name),
                 // TODO : working.start가 미래면 예정된거, 과거면 이미 시작된거 표시
                 place: m.working?.location ?? "없음",
                 startTime: m.working ? (() => {
