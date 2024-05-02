@@ -146,6 +146,9 @@ addServerEventListener('mentoring_start', async (body) => {
     const checkLogRes = await checkLog({ location })
     if (!checkLogRes.success) return checkLogRes
 
+    if (startImage === '') {
+        return failure('Empty startImage')
+    }
     const startImageId = (await logImageColl().insertOne({
         image: startImage
     })).insertedId.toString()
@@ -175,6 +178,9 @@ addServerEventListener('mentoring_end', async (body) => {
     if (!getMentoringRes.success) return getMentoringRes
     const mentoring = getMentoringRes.data
 
+    if (endImage === '') {
+        return failure('Empty endImage')
+    }
     const endImageId = (await logImageColl().insertOne({
         image: endImage
     })).insertedId.toString()
@@ -182,6 +188,9 @@ addServerEventListener('mentoring_end', async (body) => {
     const log = mentoring.working
     if (log === null) {
         return failure('Mentoring did not start')
+    }
+    if (log.startImageId === null) {
+        return failure('Empty startImageId')
     }
     log.endImageId = endImageId
 
