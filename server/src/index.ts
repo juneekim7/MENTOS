@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser'
 import express from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
+import { configDotenv } from 'dotenv'
 import { WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ServerApiVersion } from 'mongodb'
 import { Response, failure, success, type Connection } from '../../models/connection'
@@ -19,7 +19,7 @@ app.use(cors())
 
 const wss = new WebSocketServer({ port: 3000 })
 
-dotenv.config()
+configDotenv()
 const DB = new MongoClient(`mongodb+srv://${process.env.MONGODB_ID}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URI}/?retryWrites=true&w=majority`, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -79,7 +79,7 @@ addServerEventListener('login', async (body) => {
 addServerEventListener('mentoring_list', async (body) => {
     const { accessToken, semester } = body
     const getUserRes = await getUser(accessToken)
-    if (!getUserRes.success) return failure('Invalid user.')
+    if (!getUserRes.success) return getUserRes
 
     const mentoringList = await mentoringColl(semester).find().toArray()
     if (mentoringList === null) {
@@ -91,7 +91,7 @@ addServerEventListener('mentoring_list', async (body) => {
 addServerEventListener('mentoring_info', async (body) => {
     const { accessToken, semester, index } = body
     const getUserRes = await getUser(accessToken)
-    if (!getUserRes.success) return failure('Invalid user.')
+    if (!getUserRes.success) return getUserRes
 
     const mentoring = await mentoringColl(semester).findOne({ index })
     if (mentoring === null) {
@@ -129,7 +129,7 @@ addServerEventListener('mentoring_reserve', async (body) => {
     }
 
     await mentoringColl().updateOne({ index }, {
-        working: plan
+        $set: { working: plan }
     })
     return success(null)
 })
@@ -160,7 +160,7 @@ addServerEventListener('mentoring_start', async (body) => {
     }
 
     await mentoringColl().updateOne({ index }, {
-        working
+        $set: { working }
     })
     return success(null)
 })
@@ -187,7 +187,7 @@ addServerEventListener('mentoring_end', async (body) => {
 
     await mentoringColl().updateOne({ index }, {
         $push: { logs: log },
-        working: null
+        $set: { working: null }
     })
     return success(null)
 })

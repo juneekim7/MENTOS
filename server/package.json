@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "nodemon --watch src --ext \"ts,json\"  --exec \"esrun src/index.ts\"",
-        "test": "esrun src/test",
+        "dev": "nodemon --watch src --ext \"ts,json\"  --exec \"esrun src/index\"",
+        "test": "concurrently \"esrun src/index\" \"esrun src/test\"",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "start": "ts-node src/index.ts"
     },
@@ -27,6 +27,7 @@
         "@types/mongodb": "^4.0.7",
         "@types/ws": "^8.5.10",
         "@typescript-eslint/eslint-plugin": "^7.0.2",
+        "concurrently": "^8.2.2",
         "esrun": "^3.2.26"
     }
 }

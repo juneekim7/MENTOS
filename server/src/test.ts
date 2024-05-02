@@ -1,6 +1,7 @@
-import { Connection, Failure, Response } from '../../models/connection'
-import { Mentoring, currentSemester } from '../../models/mentoring'
-import { mentoringColl } from '.'
+import fetch from 'node-fetch'
+import { Connection, Response } from '../../models/connection'
+import { currentSemester } from '../../models/mentoring'
+import { configDotenv } from 'dotenv'
 
 const SERVER_HOST = 'http://localhost:8080'
 const request = async <T extends keyof Connection>(event: T, body: Connection[T][0]): Promise<Response<Connection[T][1]>> => {
@@ -11,27 +12,43 @@ const request = async <T extends keyof Connection>(event: T, body: Connection[T]
     })
 
     const data = await response.json() as Response<Connection[T][1]>
-    if (data === undefined) throw new Error('data is undefined')
-    if (!data.success) throw new Error((data as Failure).error)
-
     return data
 }
+
+configDotenv()
 const accessToken = process.env.TEST_ACCESSTOKEN as string
 
-const webDevClass: Mentoring = {
-    index: 12,
-    name: '웹개발',
-    mentor: ['23-031', '23-046'],
-    student: ['23-016'],
-    classification: 'artisan',
-    subject: '',
-
-    working: null,
-    logs: []
+async function testReq<T extends keyof Connection>(event: T, body: Connection[T][0]) {
+    const res = await request(event, body)
+    console.log(event)
+    if (res === undefined) console.log('error: res undefined')
+    else if (res.success) console.log('success: ' + JSON.stringify(res.data, null, 4))
+    else console.log('error: ' + res.error)
+    console.log('----------------------------------------')
 }
-mentoringColl(currentSemester()).insertOne(webDevClass)
 
-;(async () => {
-    console.log(await request('login', { accessToken }))
-    console.log(await request('mentoring_list', { accessToken, semester: currentSemester() }))
-})()
+async function test() {
+    console.log('test started')
+    testReq('login', { accessToken })
+    testReq('mentoring_list', { accessToken, semester: currentSemester() })
+    testReq('mentoring_info', { accessToken, semester: currentSemester(), index: 25 })
+    testReq('mentoring_reserve', {
+        accessToken, index: 25,
+        location: '형3303',
+        start: new Date('2024-12-31'),
+        duration: 2 * 60 * 60 * 1000
+    })
+    testReq('mentoring_start', {
+        accessToken, index: 25,
+        location: '형3303',
+        startImage: 'exampleimage'
+    })
+    setTimeout(() => {
+        testReq('mentoring_end', {
+            accessToken, index: 25,
+            endImage: 'exampleimage'
+        })
+    }, 1000)
+}
+
+setTimeout(test, 1 * 1000)

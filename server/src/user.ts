@@ -15,6 +15,12 @@ interface googleData {
 const savedUser: Record<string, User> = {}
 
 export const getUser = getRes(async (accessToken: string) => {
+    if (accessToken === process.env.TEST_ACCESSTOKEN) {
+        return success({
+            name: '김준이',
+            id: '23-031'
+        })
+    }
     if (savedUser[accessToken] !== undefined) {
         return success(savedUser[accessToken])
     }
