@@ -6,7 +6,7 @@ import { WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ServerApiVersion } from 'mongodb'
 import { Response, failure, success, type Connection } from '../../models/connection'
 import { User } from '../../models/user'
-import { Log, LogImage, Mentoring, Semester, currentSemester } from '../../models/mentoring'
+import { Log, LogImage, Mentoring, Semester, currentSemester, toRankMentoring } from '../../models/mentoring'
 import { getUser } from './user'
 import { getRes } from './utils'
 import { checkLog, getMentoring } from './mentoring'
@@ -200,3 +200,14 @@ addServerEventListener('mentoring_end', async (body) => {
     })
     return success(null)
 })
+
+addServerEventListener('mentoring_rank', getRes(async (body) => {
+    const { accessToken, semester } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+
+    return success(
+        (await mentoringColl(semester).find().toArray())
+            .map((m) => toRankMentoring(m))
+    )
+}))

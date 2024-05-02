@@ -29,3 +29,19 @@ export interface Mentoring {
     working: Log | null
     logs: Log[]
 }
+
+export interface RankMentoring {
+    index: number
+    name: string
+    time: number
+}
+
+export function toRankMentoring(mentoring: Mentoring) {
+    const { index, name } = mentoring
+    const time = mentoring.logs.reduce((acc, log) => acc + log.duration, 0)
+    return {
+        index,
+        name,
+        time
+    } as RankMentoring
+}
