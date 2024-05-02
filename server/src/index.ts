@@ -106,10 +106,10 @@ addServerEventListener('mentoring_reserve', async (body) => {
     if (mentoring === null) {
         return failure(`No mentoring with the index ${index}`)
     }
-
     if (!mentoring.mentor.includes(user.id)) {
         return failure('You are not mentor of this mentoring!')
     }
+
     if (plan.location === '') {
         return failure('Empty location')
     }
