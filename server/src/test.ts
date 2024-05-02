@@ -29,26 +29,24 @@ async function testReq<T extends keyof Connection>(event: T, body: Connection[T]
 
 async function test() {
     console.log('test started')
-    testReq('login', { accessToken })
-    testReq('mentoring_list', { accessToken, semester: currentSemester() })
-    testReq('mentoring_info', { accessToken, semester: currentSemester(), index: 25 })
-    testReq('mentoring_reserve', {
+    await testReq('login', { accessToken })
+    await testReq('mentoring_list', { accessToken, semester: currentSemester() })
+    await testReq('mentoring_info', { accessToken, semester: currentSemester(), index: 25 })
+    await testReq('mentoring_reserve', {
         accessToken, index: 25,
         location: '형3303',
         start: new Date('2024-12-31'),
         duration: 2 * 60 * 60 * 1000
     })
-    testReq('mentoring_start', {
+    await testReq('mentoring_start', {
         accessToken, index: 25,
         location: '형3303',
         startImage: 'exampleimage'
     })
-    setTimeout(() => {
-        testReq('mentoring_end', {
-            accessToken, index: 25,
-            endImage: 'exampleimage'
-        })
-    }, 1000)
+    await testReq('mentoring_end', {
+        accessToken, index: 25,
+        endImage: 'exampleimage'
+    })
 }
 
 setTimeout(test, 1 * 1000)
