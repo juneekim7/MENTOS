@@ -21,8 +21,8 @@ export interface LogImage {
 export interface Mentoring {
     index: number
     name: string
-    mentor: string[]
-    student: string[]
+    mentors: string[]
+    students: string[]
     classification: 'academic' | 'artisan'
     subject: string
 

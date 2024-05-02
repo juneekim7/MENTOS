@@ -9,10 +9,10 @@ export const getMentoring = getRes(async (index: number, user: User, auth: Auth 
     if (mentoring === null) {
         return failure(`No mentoring with the index ${index}`)
     }
-    if (auth === 'mentor' && !mentoring.mentor.includes(user.id)) {
+    if (auth === 'mentor' && !mentoring.mentors.includes(user.id)) {
         return failure('You are not the mentor of this mentoring!')
     }
-    if (auth === 'student' && !mentoring.student.includes(user.id)) {
+    if (auth === 'student' && !mentoring.students.includes(user.id)) {
         return failure('You are not the student of this mentoring!')
     }
     return success(mentoring)
