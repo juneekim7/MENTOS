@@ -36,7 +36,6 @@ export interface Mentoring {
     mentors: User[]
     mentees: User[]
     classification: 'academic' | 'artisan'
-    subject: string
 
     working: WorkingLog | null
     logs: Log[]

@@ -21,8 +21,17 @@ export const webDev: Mentoring = {
     name: '웹개발',
     mentors: [junee, gaon],
     mentees: [changha],
+    classification: 'artisan',
+    working: null,
+    logs: []
+}
+
+export const sigma: Mentoring = {
+    code: 10,
+    name: '시그마 정멘',
+    mentors: [changha, gaon],
+    mentees: [],
     classification: 'academic',
-    subject: '',
     working: null,
     logs: []
 }
