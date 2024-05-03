@@ -216,12 +216,12 @@ addServerEventListener('mentoring_attend_req', async (body) => {
         return failure('Mentoring is not in progress.')
     }
     const attendQueue = working.attendQueue
-    if (attendQueue.find((exist) => exist.id === user.id)) {
+    if (attendQueue.some((exist) => exist.id === user.id)) {
         return failure(`Mentee ${user.id} is already in attendQueue.`)
     }
 
     await mentoringColl().updateOne({ code }, {
-        $push: { 'working.attendQueue': [user] }
+        $push: { 'working.attendQueue': user }
     })
 
     for (const socket of subscribers.get(code) ?? []) {
@@ -249,12 +249,12 @@ addServerEventListener('mentoring_attend_accept', async (body) => {
     }
     const attendQueue = working.attendQueue
     const index = attendQueue.findIndex((exist) => exist.id === menteeId)
-    const mentee = attendQueue[index]
     if (index === -1) {
         return failure(`Mentee ${menteeId} is not in attendQueue.`)
     }
+    const mentee = attendQueue[index]
     const attend = working.attend
-    if (attend.find((exist) => exist.id === menteeId)) {
+    if (attend.some((exist) => exist.id === menteeId)) {
         return failure(`Mentee ${menteeId} is already in attend.`)
     }
 
@@ -262,7 +262,7 @@ addServerEventListener('mentoring_attend_accept', async (body) => {
     attend.push(mentee)
     await mentoringColl().updateOne({ code }, {
         $set: { 'working.attendQueue': attendQueue },
-        $push: { 'working.attend': [mentee] }
+        $push: { 'working.attend': mentee }
     })
 
     for (const socket of subscribers.get(code) ?? []) {

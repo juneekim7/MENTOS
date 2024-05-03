@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 import { Connection, Response } from '../../models/connection'
 import { configDotenv } from 'dotenv'
+import { WebSocket } from 'ws'
 
 const SERVER_HOST = 'http://localhost:8080'
 
@@ -15,9 +16,22 @@ const request = async <T extends keyof Connection>(event: T, body: Connection[T]
     return data
 }
 
+export async function socketRequest(code: number) {
+    const socket = new WebSocket('ws://localhost:3000')
+    socket.onmessage = (event) => {
+        console.log(JSON.stringify(event.data))
+    }
+    socket.onopen = (_event) => {
+        socket.send(code.toString())
+    }
+}
+
 configDotenv()
-const accessToken = process.env.TEST_ACCESSTOKEN as string
-export async function testReq<T extends keyof Connection>(event: T, body: Omit<Connection[T][0], 'accessToken'>) {
+export const juneeAccessToken = process.env.TEST_JUNEEACCESSTOKEN as string
+export const gaonAccessToken = process.env.TEST_GAONACCESSTOKEN as string
+export const changhaAccessToken = process.env.TEST_CHANGHAACCESSTOKEN as string
+
+export async function testReq<T extends keyof Connection>(event: T, body: Omit<Connection[T][0], 'accessToken'>, accessToken = juneeAccessToken) {
     const res = await request(event, { ...body, accessToken })
     console.log(event)
     if (res === undefined) console.log('error: res undefined')

@@ -1,5 +1,5 @@
 import { currentSemester } from '../../models/mentoring'
-import { addHours, executeAfterDelay, testReq } from './basic'
+import { addHours, changhaAccessToken, executeAfterDelay, socketRequest, testReq } from './basic'
 
 async function test() {
     console.log('test started')
@@ -19,6 +19,16 @@ async function test() {
         location: '형설관 3303',
         startImage: 'exampleimage'
     })
+
+    await socketRequest(25)
+    await testReq('mentoring_attend_req', {
+        code: 25
+    }, changhaAccessToken)
+    await testReq('mentoring_attend_accept', {
+        code: 25,
+        menteeId: '23-035'
+    })
+
     await testReq('mentoring_end', {
         code: 25,
         endImage: 'exampleimage'
