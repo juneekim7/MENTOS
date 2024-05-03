@@ -2,8 +2,8 @@ import { css } from "@emotion/react"
 import { CenterBox } from "../common/CenterBox"
 import { TextBox } from "../common/TextBox"
 import { UserInfoContext } from "../context/User"
-import { useContext } from "react"
-import { request } from "../../utils/connection"
+import { useContext, useEffect, useState } from "react"
+import { WS, request } from "../../utils/connection"
 import { Mentoring } from "../../../../models/mentoring"
 
 interface IAttendanceProps {
@@ -12,6 +12,12 @@ interface IAttendanceProps {
 
 export const Attendance: React.FC<IAttendanceProps> = (props) => {
     const { userInfo } = useContext(UserInfoContext)
+    const [ ws, setWs ] = useState(new WS())
+
+    useEffect(() => {
+        // ws.addEventListener()
+        return ws.close()
+    }, [ws])
 
     if (props.info.working === null) return (
         <CenterBox
@@ -54,6 +60,7 @@ export const Attendance: React.FC<IAttendanceProps> = (props) => {
                     code: props.info.code
                 })
                 if (!res.success) console.log(res.error)
+                else ws.request("attend_subscribe", { code: props.info.code })
             }}
         >
             <TextBox
