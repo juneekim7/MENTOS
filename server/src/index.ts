@@ -138,6 +138,9 @@ addServerEventListener('mentoring_start', async (body) => {
 
     const getMentoringRes = await getMentoring(code, user, 'mentor')
     if (!getMentoringRes.success) return getMentoringRes
+    if (getMentoringRes.data.working !== null) {
+        return failure('Mentoring already in progress.')
+    }
 
     const checkLogRes = await checkLog({ location })
     if (!checkLogRes.success) return checkLogRes
