@@ -2,7 +2,9 @@ import { css } from "@emotion/react"
 import { CenterBox } from "../common/CenterBox"
 import { TextBox } from "../common/TextBox"
 
-export const Attendance: React.FC = () => {
+export const MentorButton: React.FC = () => {
+    const []
+
     return (
         <CenterBox
             css={css`

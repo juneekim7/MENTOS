@@ -3,6 +3,7 @@ import { VFlexBox } from "../common/FlexBox"
 import { TextBox } from "../common/TextBox"
 import React from "react"
 import { VBox } from "../common/VBox"
+import { Log } from "../../../../models/mentoring"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -42,7 +43,11 @@ namespace TableElement {
     }
 }
 
-export const History: React.FC = () => {
+interface IHistoryProps {
+    logs: Log[]
+}
+
+export const History: React.FC<IHistoryProps> = (props) => {
     return (
         <VFlexBox full>
             <TextBox size={24} weight={700}>
@@ -58,16 +63,13 @@ export const History: React.FC = () => {
                     </TableElement.Row>
                 </thead>
                 <tbody>
-                    <TableElement.Row>
-                        <TableElement.Data>1</TableElement.Data>
-                        <TableElement.Data>2024. 03. 03. 22:00~24:00</TableElement.Data>
-                        <TableElement.Data>03h 00m</TableElement.Data>
-                    </TableElement.Row>
-                    <TableElement.Row>
-                        <TableElement.Data>2</TableElement.Data>
-                        <TableElement.Data>2024. 03. 03. 22:00~24:00</TableElement.Data>
-                        <TableElement.Data>06h 00m</TableElement.Data>
-                    </TableElement.Row>
+                    {props.logs.map((log, i) => (
+                        <TableElement.Row>
+                            <TableElement.Data>{i + 1}</TableElement.Data>
+                            <TableElement.Data>{log.start.toString()}</TableElement.Data>
+                            <TableElement.Data></TableElement.Data>
+                        </TableElement.Row>
+                    ))}
                 </tbody>
             </table>
         </VFlexBox>

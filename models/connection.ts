@@ -1,4 +1,4 @@
-import { Log, Mentoring, RankMentoring, Semester } from './mentoring'
+import { Mentoring, RankMentoring, Semester } from './mentoring'
 import { User } from './user'
 
 export interface Failure {
