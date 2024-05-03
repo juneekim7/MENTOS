@@ -278,6 +278,44 @@ addServerEventListener('mentoring_attend_accept', async (body) => {
     return success(null)
 })
 
+addServerEventListener('mentoring_attend_decline', async (body) => {
+    const { accessToken, code, menteeId } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+    const user = getUserRes.data
+
+    const getMentoringRes = await getMentoring(code, user, 'mentor')
+    if (!getMentoringRes.success) return getMentoringRes
+
+    const working = getMentoringRes.data.working
+    if (working === null) {
+        return failure('Mentoring is not in progress.')
+    }
+    const attendQueue = working.attendQueue
+    const index = attendQueue.findIndex((exist) => exist.id === menteeId)
+    if (index === -1) {
+        return failure(`Mentee ${menteeId} is not in attendQueue.`)
+    }
+    const attend = working.attend
+    if (attend.some((exist) => exist.id === menteeId)) {
+        return failure(`Mentee ${menteeId} is already in attend.`)
+    }
+
+    attendQueue.splice(index, 1)
+    await mentoringColl().updateOne({ code }, {
+        $set: { 'working.attendQueue': attendQueue }
+    })
+
+    for (const socket of subscribers.get(code) ?? []) {
+        socket.send(JSON.stringify({
+            code,
+            attend,
+            attendQueue
+        } as SocketRes))
+    }
+    return success(null)
+})
+
 addServerEventListener('mentoring_rank', getRes(async (body) => {
     const { accessToken, semester } = body
     const getUserRes = await getUser(accessToken)

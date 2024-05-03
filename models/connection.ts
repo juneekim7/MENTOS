@@ -90,6 +90,14 @@ export interface Connection {
         },
         null
     ],
+    'mentoring_attend_decline': [
+        {
+            accessToken: string
+            code: number
+            menteeId: string
+        },
+        null
+    ],
     'mentoring_rank': [
         {
             accessToken: string
