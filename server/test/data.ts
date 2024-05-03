@@ -48,3 +48,14 @@ export const latex: Mentoring = {
     logs: [],
     plan: null
 }
+
+export const valorant: Mentoring = {
+    code: 35,
+    name: '발로란트',
+    mentors: [junee],
+    mentees: [changha],
+    classification: 'artisan',
+    working: null,
+    logs: [],
+    plan: null
+}

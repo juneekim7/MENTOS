@@ -1,11 +1,11 @@
 import { mentoringColl } from '../src'
 import { currentSemester } from '../../models/mentoring'
-import { latex } from './data'
+import { valorant } from './data'
 
 async function insert() {
     console.log('insert started')
     await mentoringColl(currentSemester()).insertMany([
-        latex
+        valorant
     ])
     console.log('insert end')
 }
