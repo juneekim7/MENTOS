@@ -1,9 +1,13 @@
 import { mentoringColl } from '../src'
 import { currentSemester } from '../../models/mentoring'
-import { webDev } from './data'
+import { sigma, webDev } from './data'
 
 async function insert() {
-    await mentoringColl(currentSemester()).insertOne(webDev)
+    console.log('insert started')
+    await mentoringColl(currentSemester()).insertMany([
+        webDev, sigma
+    ])
+    console.log('insert end')
 }
 
 insert()

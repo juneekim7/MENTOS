@@ -4,10 +4,10 @@ import { Auth, Log, maxDuration } from '../../models/mentoring'
 import { User } from '../../models/user'
 import { getRes } from './utils'
 
-export const getMentoring = getRes(async (index: number, user: User, auth: Auth = 'any') => {
-    const mentoring = await mentoringColl().findOne({ index }, withoutId)
+export const getMentoring = getRes(async (code: number, user: User, auth: Auth = 'any') => {
+    const mentoring = await mentoringColl().findOne({ code }, withoutId)
     if (mentoring === null) {
-        return failure(`No mentoring with the index ${index}`)
+        return failure(`No mentoring with the code ${code}`)
     }
     if (auth === 'mentor' && !mentoring.mentors.map((u) => u.id).includes(user.id)) {
         return failure('You are not the mentor of this mentoring!')
@@ -19,19 +19,22 @@ export const getMentoring = getRes(async (index: number, user: User, auth: Auth 
 })
 
 export const checkLog = async (log: Partial<Log>) => {
-    const { location, duration, startImageId, endImageId } = log
+    const { location, start, end, startImageId, endImageId } = log
     if (location) {
         if (location === '') {
             return failure('Empty location')
         }
     }
-    if (duration) {
+    if (start && end) {
+        const duration = end.getTime() - start.getTime()
         if (duration <= 0) {
             return failure('Duration should be positive')
         }
         if (duration >= maxDuration) {
             return failure(`Duration should be maximum ${maxDuration / (60 * 60 * 1000)} hours`)
         }
+    } else if (start || end) {
+        return failure('There must be start and end')
     }
     if (startImageId) {
         if (startImageId === '') {

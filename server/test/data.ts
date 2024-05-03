@@ -23,7 +23,8 @@ export const webDev: Mentoring = {
     mentees: [changha],
     classification: 'artisan',
     working: null,
-    logs: []
+    logs: [],
+    plan: null
 }
 
 export const sigma: Mentoring = {
@@ -33,5 +34,6 @@ export const sigma: Mentoring = {
     mentees: [],
     classification: 'academic',
     working: null,
-    logs: []
+    logs: [],
+    plan: null
 }

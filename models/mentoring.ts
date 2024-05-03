@@ -7,18 +7,27 @@ export const currentSemester: () => Semester = () => '2024-1'
 
 export const maxDuration = 6 * (60 * 60 * 1000)
 
+export interface Plan {
+    location: string
+    start: Date
+    end: Date
+}
+
 export interface Log {
     location: string
     start: Date
-    duration: number
+    end: Date
     attend: User[]
-    startImageId: string | null
-    endImageId: string | null
+    startImageId: string
+    endImageId: string
 }
 
-export interface WorkingLog extends Log {
-    hasStarted: boolean
+export interface WorkingLog {
+    location: string
+    start: Date
+    attend: User[]
     attendQueue: User[]
+    startImageId: string
 }
 
 export interface SocketRes {
@@ -39,6 +48,7 @@ export interface Mentoring {
     classification: 'academic' | 'artisan'
 
     working: WorkingLog | null
+    plan: Plan | null
     logs: Log[]
 }
 
@@ -50,7 +60,7 @@ export interface RankMentoring {
 
 export function toRankMentoring(mentoring: Mentoring) {
     const { code, name } = mentoring
-    const time = mentoring.logs.reduce((acc, log) => acc + log.duration, 0)
+    const time = mentoring.logs.reduce((acc, log) => acc + log.end.getTime() - log.start.getTime(), 0)
     return {
         code,
         name,

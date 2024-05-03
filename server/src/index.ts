@@ -104,37 +104,28 @@ addServerEventListener('mentoring_info', async (body) => {
 })
 
 addServerEventListener('mentoring_reserve', async (body) => {
-    const { accessToken, code, location, start, duration } = body
+    const { accessToken, code, plan } = body
+    plan.start = new Date(plan.start)
+    plan.end = new Date(plan.end)
     const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
     const user = getUserRes.data
 
     const getMentoringRes = await getMentoring(code, user, 'mentor')
     if (!getMentoringRes.success) return getMentoringRes
+    const mentoring = getMentoringRes.data
+    if (mentoring.working !== null) {
+        return failure('You cannot reserve if mentoring is working.')
+    }
 
-    const checkLogRes = await checkLog({
-        location,
-        start,
-        duration
-    })
+    const checkLogRes = await checkLog(plan)
     if (!checkLogRes.success) return checkLogRes
-    if (start < new Date()) {
+    if (plan.start < new Date()) {
         return failure('You cannot reserve past')
     }
 
-    const plan: WorkingLog = {
-        location,
-        start,
-        duration,
-        hasStarted: false,
-        attend: [],
-        attendQueue: [],
-        startImageId: null,
-        endImageId: null
-    }
-
     await mentoringColl().updateOne({ code }, {
-        $set: { working: plan }
+        $set: { plan: plan }
     })
     return success(null)
 })
@@ -161,16 +152,13 @@ addServerEventListener('mentoring_start', async (body) => {
     const working: WorkingLog = {
         location,
         start: new Date(),
-        duration: 0,
-        hasStarted: true,
         attend: [],
         attendQueue: [],
-        startImageId,
-        endImageId: null
+        startImageId
     }
 
     await mentoringColl().updateOne({ code }, {
-        $set: { working }
+        $set: { working, plan: null }
     })
     return success(null)
 })
@@ -183,7 +171,11 @@ addServerEventListener('mentoring_end', async (body) => {
 
     const getMentoringRes = await getMentoring(code, user, 'mentor')
     if (!getMentoringRes.success) return getMentoringRes
-    const mentoring = getMentoringRes.data
+    const working = getMentoringRes.data.working
+    if (working === null) {
+        return failure('Mentoring is not in progress.')
+    }
+    const { location, start, attend, startImageId } = working
 
     if (endImage === '') {
         return failure('Empty endImage')
@@ -192,18 +184,16 @@ addServerEventListener('mentoring_end', async (body) => {
         image: endImage
     })).insertedId.toString()
 
-    const log = {
-        ...mentoring.working,
-        hasStarted: undefined,
-        attendQueue: undefined
-    } as Log
-    if (log === null) {
-        return failure('Mentoring did not start')
+    const log: Log = {
+        location,
+        start,
+        end: new Date(),
+        attend,
+        startImageId,
+        endImageId
     }
-    if (log.startImageId === null) {
-        return failure('Empty startImageId')
-    }
-    log.endImageId = endImageId
+    const checkLogRes = await checkLog(log)
+    if (!checkLogRes.success) return checkLogRes
 
     await mentoringColl().updateOne({ code }, {
         $push: { logs: log },

@@ -26,6 +26,10 @@ export async function testReq<T extends keyof Connection>(event: T, body: Omit<C
     console.log('----------------------------------------')
 }
 
+export function addHours(dateArg: string | number | Date, hours: number) {
+    return new Date(new Date(dateArg).getTime() + hours * 60 * 60 * 1000)
+}
+
 export function executeAfterDelay(func: () => void) {
     setTimeout(func, 1000)
 }
