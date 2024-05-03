@@ -17,7 +17,6 @@ export const Login: React.FC = () => {
                 return
             }
 
-            console.log(response)
             const { name, id } = response.data
             setUserInfo({
                 ...userInfo,

@@ -4,9 +4,9 @@ import { VBox } from "../common/VBox"
 import { TextBox } from "../common/TextBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faFolder, faHourglass, faUser } from "@fortawesome/free-solid-svg-icons"
-import { IMentoringInfo } from "../../types/mentoring"
+import { Mentoring } from "../../../../models/mentoring"
 
-export const Mentoring: React.FC<IMentoringInfo> = (props) => {
+export const MentoringScreen: React.FC<Mentoring> = (props) => {
     return (
         <VFlexBox
             css={css`
@@ -28,19 +28,19 @@ export const Mentoring: React.FC<IMentoringInfo> = (props) => {
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faUser} size="sm" style={{ color: "var(--section-icon)" }} />
                     </VFlexBox>
-                    {props.mentors.join(", ")}
+                    {props.mentors.map((mtr) => mtr.name).join(", ")}
                 </HFlexBox>
                 <HFlexBox gap={4} center>
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faFolder} size="sm" style={{ color: "var(--section-icon)" }} />
                     </VFlexBox>
-                    {props.class}
+                    {props.classification === "academic" ? "학업 멘토링" : "장인 멘토링"}
                 </HFlexBox>
                 <HFlexBox gap={4} center>
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faHourglass} size="sm" style={{ color: "var(--section-icon)" }} />
                     </VFlexBox>
-                    {`${props.accumulatedTime}m (${props.ranking}위)`}
+                    {"-m (-위)"}
                 </HFlexBox>
             </VFlexBox>
         </VFlexBox>

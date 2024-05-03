@@ -6,7 +6,7 @@ import { WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ServerApiVersion } from 'mongodb'
 import { Response, failure, success, type Connection } from '../../models/connection'
 import { User } from '../../models/user'
-import { LogImage, Mentoring, Semester, SocketRes, WorkingLog, currentSemester, toRankMentoring } from '../../models/mentoring'
+import { Log, LogImage, Mentoring, Semester, SocketRes, WorkingLog, currentSemester, toRankMentoring } from '../../models/mentoring'
 import { getUser } from './user'
 import { getRes } from './utils'
 import { checkLog, getMentoring } from './mentoring'
@@ -126,6 +126,7 @@ addServerEventListener('mentoring_reserve', async (body) => {
         location,
         start,
         duration,
+        hasStarted: false,
         attend: [],
         attendQueue: [],
         startImageId: null,
@@ -161,6 +162,7 @@ addServerEventListener('mentoring_start', async (body) => {
         location,
         start: new Date(),
         duration: 0,
+        hasStarted: true,
         attend: [],
         attendQueue: [],
         startImageId,
@@ -190,7 +192,11 @@ addServerEventListener('mentoring_end', async (body) => {
         image: endImage
     })).insertedId.toString()
 
-    const log = mentoring.working
+    const log = {
+        ...mentoring.working,
+        hasStarted: undefined,
+        attendQueue: undefined
+    } as Log
     if (log === null) {
         return failure('Mentoring did not start')
     }

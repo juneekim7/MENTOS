@@ -17,6 +17,7 @@ export interface Log {
 }
 
 export interface WorkingLog extends Log {
+    hasStarted: boolean
     attendQueue: User[]
 }
 

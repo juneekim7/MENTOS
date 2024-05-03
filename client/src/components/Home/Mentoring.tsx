@@ -5,10 +5,13 @@ import { VBox } from "../common/VBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBuilding, faClock, faUser } from "@fortawesome/free-solid-svg-icons"
 import { IHomeMentoring } from "../../types/mentoring"
+import { useNavigate } from "react-router-dom"
 
 type IMentoringProps = IHomeMentoring
 
 export const Mentoring: React.FC<IMentoringProps> = (props) => {
+    const navigate = useNavigate()
+
     const textColor = props.isMentee ? "var(--official-text)" : "black"
     const iconColor = props.isMentee ? "var(--official-text)" : "var(--section-icon)"
 
@@ -19,7 +22,14 @@ export const Mentoring: React.FC<IMentoringProps> = (props) => {
                 background-color: ${props.isMentee ? "var(--mentos-official)" : "var(--mentos-section)" };
                 padding: 16px;
                 color: ${textColor};
+                
+                transition: all 0.2s linear;
+                :hover {
+                    transform: translateY(-5px);
+                    background-color: ${props.isMentee ? "var(--mentos-official-dark)" : "var(--mentos-section-dark)"};
+                }
             `}
+            onClick={() => navigate(`./info/${props.code}`)}
             center
         >
             <HFlexBox gap={4}>
@@ -32,7 +42,7 @@ export const Mentoring: React.FC<IMentoringProps> = (props) => {
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faUser} size="sm" style={{ color: iconColor }} />
                     </VFlexBox>
-                    {props.mentors.join(", ")}
+                    {props.mentors.map((mt) => mt.name).join(", ")}
                 </HFlexBox>
                 <HFlexBox gap={4} center>
                     <VFlexBox css={css`width: 14px;`} center>

@@ -1,27 +1,42 @@
+import { useParams } from "react-router-dom"
 import { Content } from "../common/Content"
 import { VBox } from "../common/VBox"
 import { Attendance } from "./Attendance"
 import { History } from "./History"
-import { Mentoring } from "./Mentoring"
-
-const info = {
-    code: 13,
-    name: "웹 개발",
-    class: "장인 멘토링",
-    accumulatedTime: 130,
-    ranking: 2,
-    mentors: ["김준이", "문가온"]
-}
+import { useContext, useEffect, useState } from "react"
+import { request } from "../../utils/connection"
+import { UserInfoContext } from "../context/User"
+import { Mentoring, currentSemester } from "../../../../models/mentoring"
+import { MentoringScreen } from "./Mentoring"
 
 export const MentoringInfo: React.FC = () => {
+    const { id } = useParams()
+    const { userInfo } = useContext(UserInfoContext)
+    const [ info, setInfo ] = useState<Mentoring>()
+
+    useEffect(() => {
+        (async () => {
+            const res = await request("mentoring_info", {
+                accessToken: userInfo.accessToken,
+                semester: currentSemester(),
+                code: parseInt(id ?? "0")
+            })
+
+            if (!res.success) return
+            setInfo(res.data)
+        })()
+    }, [id, userInfo])
+
+    if (id === undefined || info === undefined) return <></>
+
     return (
         <Content>
             <VBox height={32} />
-            <Mentoring {...info} />
+            <MentoringScreen {...info} />
             <VBox height={16} />
             <Attendance />
             <VBox height={48} />
-            <History />
+            <History logs={info.logs} />
         </Content>
     )
 }
