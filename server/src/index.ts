@@ -8,7 +8,7 @@ import { Response, failure, success, type Connection } from '../../models/connec
 import { User } from '../../models/user'
 import { Log, LogImage, Mentoring, Semester, SocketRes, WorkingLog, currentSemester, toRankMentoring } from '../../models/mentoring'
 import { getUser } from './user'
-import { getRes } from './utils'
+import { KST, getRes } from './utils'
 import { checkLog, getMentoring } from './mentoring'
 
 export type ParamDict = Record<string, string>
@@ -105,8 +105,8 @@ addServerEventListener('mentoring_info', async (body) => {
 
 addServerEventListener('mentoring_reserve', async (body) => {
     const { accessToken, code, plan } = body
-    plan.start = new Date(plan.start)
-    plan.end = new Date(plan.end)
+    plan.start = KST(plan.start)
+    plan.end = KST(plan.end)
     const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
     const user = getUserRes.data
@@ -120,7 +120,7 @@ addServerEventListener('mentoring_reserve', async (body) => {
 
     const checkLogRes = await checkLog(plan)
     if (!checkLogRes.success) return checkLogRes
-    if (plan.start < new Date()) {
+    if (plan.start < KST()) {
         return failure('You cannot reserve past')
     }
 
@@ -154,7 +154,7 @@ addServerEventListener('mentoring_start', async (body) => {
 
     const working: WorkingLog = {
         location,
-        start: new Date(),
+        start: KST(),
         attend: [],
         attendQueue: [],
         startImageId
@@ -190,7 +190,7 @@ addServerEventListener('mentoring_end', async (body) => {
     const log: Log = {
         location,
         start,
-        end: new Date(),
+        end: KST(),
         attend,
         startImageId,
         endImageId

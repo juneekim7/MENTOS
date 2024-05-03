@@ -11,3 +11,7 @@ export function getRes<Param extends unknown[], Data>(func: (...args: Param) => 
         }
     }
 }
+
+export function KST(date: string | number | Date = new Date()) {
+    return new Date(new Date(date).getTime() + 9 * 60 * 60 * 1000)
+}
