@@ -46,7 +46,7 @@ export const getUser = getRes(async (accessToken: string) => {
     const studentId = data.email.split('@')[0]
 
     const foundUser = await userColl().findOne({
-        studentId
+        id: studentId
     }, withoutId)
     const user = foundUser ?? {
         name: data.given_name,
