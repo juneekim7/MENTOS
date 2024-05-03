@@ -12,8 +12,8 @@ export const getMentoring = getRes(async (index: number, user: User, auth: Auth 
     if (auth === 'mentor' && !mentoring.mentors.map((u) => u.id).includes(user.id)) {
         return failure('You are not the mentor of this mentoring!')
     }
-    if (auth === 'student' && !mentoring.students.map((u) => u.id).includes(user.id)) {
-        return failure('You are not the student of this mentoring!')
+    if (auth === 'mentee' && !mentoring.mentees.map((u) => u.id).includes(user.id)) {
+        return failure('You are not the mentee of this mentoring!')
     }
     return success(mentoring)
 })

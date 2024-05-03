@@ -88,7 +88,7 @@ export interface Connection {
         {
             accessToken: string
             code: number
-            studentId: string
+            menteeId: string
         },
         null
     ],

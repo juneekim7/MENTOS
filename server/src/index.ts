@@ -212,7 +212,7 @@ addServerEventListener('mentoring_attend_req', async (body) => {
     if (!getUserRes.success) return getUserRes
     const user = getUserRes.data
 
-    const getMentoringRes = await getMentoring(code, user, 'student')
+    const getMentoringRes = await getMentoring(code, user, 'mentee')
     if (!getMentoringRes.success) return getMentoringRes
 
     const working = getMentoringRes.data.working
@@ -221,7 +221,7 @@ addServerEventListener('mentoring_attend_req', async (body) => {
     }
     const attendQueue = working.attendQueue
     if (attendQueue.find((exist) => exist.id === user.id)) {
-        return failure(`Student ${user.id} is already in attendQueue.`)
+        return failure(`Mentee ${user.id} is already in attendQueue.`)
     }
 
     await mentoringColl().updateOne({ code }, {
@@ -239,7 +239,7 @@ addServerEventListener('mentoring_attend_req', async (body) => {
 })
 
 addServerEventListener('mentoring_attend_accept', async (body) => {
-    const { accessToken, code, studentId } = body
+    const { accessToken, code, menteeId } = body
     const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
     const user = getUserRes.data
@@ -252,21 +252,21 @@ addServerEventListener('mentoring_attend_accept', async (body) => {
         return failure('Mentoring is not in progress.')
     }
     const attendQueue = working.attendQueue
-    const index = attendQueue.findIndex((exist) => exist.id === studentId)
-    const student = attendQueue[index]
+    const index = attendQueue.findIndex((exist) => exist.id === menteeId)
+    const mentee = attendQueue[index]
     if (index === -1) {
-        return failure(`Student ${studentId} is not in attendQueue.`)
+        return failure(`Mentee ${menteeId} is not in attendQueue.`)
     }
     const attend = working.attend
-    if (attend.find((exist) => exist.id === studentId)) {
-        return failure(`Student ${studentId} is already in attend.`)
+    if (attend.find((exist) => exist.id === menteeId)) {
+        return failure(`Mentee ${menteeId} is already in attend.`)
     }
 
     attendQueue.splice(index, 1)
-    attend.push(student)
+    attend.push(mentee)
     await mentoringColl().updateOne({ code }, {
         $set: { 'working.attendQueue': attendQueue },
-        $push: { 'working.attend': [student] }
+        $push: { 'working.attend': [mentee] }
     })
 
     for (const socket of subscribers.get(code) ?? []) {

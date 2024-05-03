@@ -1,6 +1,6 @@
 import { User } from './user'
 
-export type Auth = 'mentor' | 'student' | 'any'
+export type Auth = 'mentor' | 'mentee' | 'any'
 
 export type Semester = `${number}-1` | `${number}-2`
 export const currentSemester: () => Semester = () => '2024-1'
@@ -34,7 +34,7 @@ export interface Mentoring {
     code: number
     name: string
     mentors: User[]
-    students: User[]
+    mentees: User[]
     classification: 'academic' | 'artisan'
     subject: string
 

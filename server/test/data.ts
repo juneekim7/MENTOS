@@ -20,7 +20,7 @@ export const webDev: Mentoring = {
     code: 25,
     name: '웹개발',
     mentors: [junee, gaon],
-    students: [changha],
+    mentees: [changha],
     classification: 'academic',
     subject: '',
     working: null,
