@@ -37,3 +37,14 @@ export const sigma: Mentoring = {
     logs: [],
     plan: null
 }
+
+export const latex: Mentoring = {
+    code: 28,
+    name: 'LaTeX',
+    mentors: [changha],
+    mentees: [gaon],
+    classification: 'artisan',
+    working: null,
+    logs: [],
+    plan: null
+}
