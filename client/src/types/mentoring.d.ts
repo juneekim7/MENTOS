@@ -1,12 +1,16 @@
-export interface IMentoring {
+import { User } from "../../../models/user"
+
+interface IMentoring {
     code: number
     name: string
-    mentors: string[]
+    mentors: User[]
     class: string
-    startTime: string
+    plan: string
     accumulatedTime: number
     ranking: number
     isMentee: boolean
+    isMentor: boolean
+    hasStarted: boolean
     place: string
 }
 

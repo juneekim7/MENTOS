@@ -1,40 +1,22 @@
 import { css } from "@emotion/react"
 import { CenterBox } from "../common/CenterBox"
 import { TextBox } from "../common/TextBox"
-import { UserInfoContext } from "../context/User"
-import { useContext } from "react"
 import { request } from "../../utils/connection"
+import { useContext } from "react"
+import { UserInfoContext } from "../context/User"
 import { Mentoring } from "../../../../models/mentoring"
 
-interface IAttendanceProps {
+interface IStart {
     info: Mentoring
+    forceUpdate: () => void
 }
 
-export const Attendance: React.FC<IAttendanceProps> = (props) => {
+export const Start: React.FC<IStart> = (props) => {
     const { userInfo } = useContext(UserInfoContext)
-
-    if (props.info.working === null) return (
-        <CenterBox
-            css={css`
-                max-width: 500px;
-                margin: 0 auto;
-                padding: 12px 0;
-                border-radius: 8px;
-                background-color: #DADDDF;
-            `}
-        >
-            <TextBox
-                size={20}
-                color="#909090"
-            >
-                시작을 기다리는 중...
-            </TextBox>
-        </CenterBox>
-    )
 
     return (
         <CenterBox
-            css={css`
+            css={css`   
                 max-width: 500px;
                 margin: 0 auto;
                 padding: 12px 0;
@@ -49,11 +31,14 @@ export const Attendance: React.FC<IAttendanceProps> = (props) => {
                 }
             `}
             onClick={async () => {
-                const res = await request("mentoring_attend_req", {
+                const res = await request("mentoring_start", {
                     accessToken: userInfo.accessToken,
-                    code: props.info.code
+                    code: props.info.code,
+                    location: "견407",
+                    startImage: "Junee Kim"
                 })
                 if (!res.success) console.log(res.error)
+                else props.forceUpdate()
             }}
         >
             <TextBox
@@ -61,7 +46,7 @@ export const Attendance: React.FC<IAttendanceProps> = (props) => {
                 size={28}
                 color="white"
             >
-                출석
+                시작
             </TextBox>
         </CenterBox>
     ) 

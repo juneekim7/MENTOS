@@ -11,6 +11,6 @@ export const request = async <T extends keyof Connection>(event: T, body: Connec
     const data = await response.json() as Response<Connection[T][1]>
     if (!data.success) throw new Error(data.error)
     
-    console.log(data)
+    console.log(event, body, data)
     return data
 }

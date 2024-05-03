@@ -4,6 +4,7 @@ import { TextBox } from "../common/TextBox"
 import React from "react"
 import { VBox } from "../common/VBox"
 import { Log } from "../../../../models/mentoring"
+import { intervalFormat } from "../../utils/time"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -35,6 +36,7 @@ namespace TableElement {
                     text-align: center;
                     padding: 8px;
                     line-height: 24px;
+                    font-variant-numeric: tabular-nums;
                 `}
             >
                 {props.children}
@@ -45,6 +47,21 @@ namespace TableElement {
 
 interface IHistoryProps {
     logs: Log[]
+}
+
+const setTableData = (logs: Log[]) => {
+    const tableData = []
+    let accTime = 0
+    for (const log of logs) {
+        const sDate = new Date(log.start)
+        const eDate = new Date(log.end)
+        const interval = intervalFormat(sDate, eDate)
+        accTime += (eDate.getTime() - sDate.getTime()) / 60000
+        const hour = Math.floor(accTime / 60)
+        const minute = Math.floor(accTime - 3600 * hour)
+        tableData.push([interval, `${hour}h ${minute}m`])
+    }
+    return tableData
 }
 
 export const History: React.FC<IHistoryProps> = (props) => {
@@ -63,11 +80,11 @@ export const History: React.FC<IHistoryProps> = (props) => {
                     </TableElement.Row>
                 </thead>
                 <tbody>
-                    {props.logs.map((log, i) => (
-                        <TableElement.Row>
+                    {setTableData(props.logs).map(([interval, accTime], i) => (
+                        <TableElement.Row key={i}>
                             <TableElement.Data>{i + 1}</TableElement.Data>
-                            <TableElement.Data>{log.start.toString()}</TableElement.Data>
-                            <TableElement.Data></TableElement.Data>
+                            <TableElement.Data>{interval}</TableElement.Data>
+                            <TableElement.Data>{accTime}</TableElement.Data>
                         </TableElement.Row>
                     ))}
                 </tbody>
