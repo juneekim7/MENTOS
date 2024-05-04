@@ -101,7 +101,6 @@ wss.on('connection', (socket, _request) => {
             for (const [_, socketList] of subscribers[query as keyof WSServerResCont]) {
                 const index = socketList.indexOf(socket)
                 if (index !== -1) socketList.splice(index, 1)
-                else throw new Error('Socket does not exist.')
             }
         }
     })

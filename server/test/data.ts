@@ -31,7 +31,10 @@ export const sigma: Mentoring = {
     code: 10,
     name: '시그마 정멘',
     mentors: [changha, gaon],
-    mentees: [],
+    mentees: [{
+        name: '총무부',
+        id: 'ksacommuni'
+    }],
     classification: 'academic',
     working: null,
     logs: [],
