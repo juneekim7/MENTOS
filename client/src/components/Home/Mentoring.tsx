@@ -38,6 +38,7 @@ export const Mentoring: React.FC<IMentoringProps> = (props) => {
                 :hover {
                     transform: translateY(-5px);
                     background-color: ${hoverColor};
+                    cursor: pointer;
                 }
             `}
             onClick={() => navigate(`./info/${props.code}`)}

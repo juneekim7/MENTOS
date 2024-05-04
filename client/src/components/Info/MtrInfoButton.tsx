@@ -24,6 +24,7 @@ export const MtrInfoButton: React.FC<DivProps<IMtrInfoButtonProps>> = (props) =>
             <TextBox
                 size={20}
                 color="#909090"
+                css={css`line-height: 28px;`}
             >
                 {props.children}
             </TextBox>

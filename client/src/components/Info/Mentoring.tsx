@@ -4,7 +4,19 @@ import { VBox } from "../common/VBox"
 import { TextBox } from "../common/TextBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faFolder, faHourglass, faUser } from "@fortawesome/free-solid-svg-icons"
-import { Mentoring } from "../../../../models/mentoring"
+import { Log, Mentoring } from "../../../../models/mentoring"
+
+const format = (logs: Log[]) => {
+    let accTime = 0
+    for (const log of logs) {
+        const sDate = new Date(log.start)
+        const eDate = new Date(log.end)
+        accTime += (eDate.getTime() - sDate.getTime()) / 60000
+    }
+    const hour = Math.floor(accTime / 60)
+    const minute = Math.floor(accTime - 60 * hour)
+    return `${hour}h ${minute}m`
+}
 
 export const MentoringScreen: React.FC<Mentoring> = (props) => {
     return (
@@ -40,7 +52,7 @@ export const MentoringScreen: React.FC<Mentoring> = (props) => {
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faHourglass} size="sm" style={{ color: "var(--section-icon)" }} />
                     </VFlexBox>
-                    {"-m (-위)"}
+                    {`${format(props.logs)} (-위)`}
                 </HFlexBox>
             </VFlexBox>
         </VFlexBox>

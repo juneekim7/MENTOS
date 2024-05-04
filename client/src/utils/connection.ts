@@ -31,8 +31,8 @@ export class WS {
     }
 
     public request<C extends keyof WSClientReqCont>(query: C, content: WSClientReqCont[C]) {
-        if (this.ws === null) this.open()
-        this.ws?.send(JSON.stringify({
+        if (this.ws === null) throw new Error("The Websocket hasn't opened.")
+        this.ws.send(JSON.stringify({
             query,
             content
         }))
@@ -44,14 +44,20 @@ export class WS {
     }
 
     public open() {
-        if (this.ws !== null) return
-        const ws = new WebSocket(WEBSOCKET_HOST)
-        ws.addEventListener("message", <S extends keyof WSServerRes>(ev: MessageEvent<string>) => {
-            const res = JSON.parse(ev.data) as WSServerRes[S]
-            const el = this.eventListeners[res.query]
-            el?.forEach((cb) => cb(res.content))
+        if (this.ws !== null) throw new Error("The Websocket has already opened.")
+        return new Promise<void>((resolve, reject) => {
+            const ws = new WebSocket(WEBSOCKET_HOST)
+            ws.addEventListener("open", () => {
+                ws.addEventListener("message", <S extends keyof WSServerRes>(ev: MessageEvent<string>) => {
+                    const res = JSON.parse(ev.data) as WSServerRes[S]
+                    const el = this.eventListeners[res.query]
+                    el?.forEach((cb) => cb(res.content))
+                })
+                this.ws = ws
+                resolve()
+            })
+            ws.addEventListener("error", (err) => reject(err))
         })
-        this.ws = ws
     }
 
     public close() {
@@ -59,6 +65,10 @@ export class WS {
         if (this.ws === null) return
         this.ws.close()
         this.ws = null
+    }
+
+    public get isOpen() {
+        return this.ws !== null
     }
 }
 

@@ -91,7 +91,7 @@ const WS: {
 wss.on('connection', (socket, _request) => {
     socket.on('message', <T extends keyof WSClientReqCont>(rawData: RawData) => {
         const { query, content } = JSON.parse(rawData.toString('utf-8')) as WSClientReq<T>
-        for (const eventListenerFunc of WS.eventListeners[query]) {
+        for (const eventListenerFunc of WS.eventListeners[query] ?? []) {
             eventListenerFunc(socket, content)
         }
     })

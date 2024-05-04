@@ -54,7 +54,7 @@ const setTableData = (logs: Log[]) => {
         const interval = intervalFormat(sDate, eDate)
         accTime += (eDate.getTime() - sDate.getTime()) / 60000
         const hour = Math.floor(accTime / 60)
-        const minute = Math.floor(accTime - 3600 * hour)
+        const minute = Math.floor(accTime - 60 * hour)
         tableData.push([interval, `${hour}h ${minute}m`])
     }
     return tableData
