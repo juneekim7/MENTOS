@@ -35,6 +35,7 @@ export const MentoringInfo: React.FC = () => {
     useEffect(() => {
         ws.open()
         ws.addEventListener("mentoring_update", (res) => {
+            console.log(res)
             if (res.code === info?.code) forceUpdate()
         })
 
