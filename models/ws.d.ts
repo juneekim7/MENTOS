@@ -2,7 +2,7 @@ import { Response } from './connection'
 import { User } from './user'
 
 export interface WSClientReqCont {
-    'attend_subscribe': {
+    'mentoring_subscribe': {
         code: number
     }
 }
