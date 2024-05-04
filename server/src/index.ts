@@ -100,7 +100,7 @@ wss.on('connection', (socket, _request) => {
             for (const [_, socketList] of subscribers[query as keyof WSServerResCont]) {
                 const index = socketList.indexOf(socket)
                 if (index !== -1) socketList.splice(index, 1)
-                else throw new Error('socket does not exist')
+                else throw new Error('Socket does not exist.')
             }
         }
     })
@@ -260,6 +260,7 @@ addServerEventListener('mentoring_attend_req', async (body) => {
     if (attendQueue.some((exist) => exist.id === user.id)) {
         return failure(`Mentee ${user.id} is already in attendQueue.`)
     }
+    attendQueue.push(user)
 
     await mentoringColl().updateOne({ code }, {
         $push: { 'working.attendQueue': user }
