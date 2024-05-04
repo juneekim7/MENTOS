@@ -1,5 +1,5 @@
 import { Connection, Response } from "../../../models/connection"
-import { WSClientRes, WSServerRes } from "../../../models/ws"
+import { WSClientReq, WSServerRes } from "../../../models/ws"
 import { SERVER_HOST, WEBSOCKET_HOST } from "../server.config"
 
 export const request = async <T extends keyof Connection>(event: T, body: Connection[T][0]): Promise<Response<Connection[T][1]>> => {
@@ -11,14 +11,14 @@ export const request = async <T extends keyof Connection>(event: T, body: Connec
 
     const data = await response.json() as Response<Connection[T][1]>
     if (!data.success) throw new Error(data.error)
-    
+
     console.log(event, body, data)
     return data
 }
 
 type WSEventListener<S extends WSServerRes> = (res: S["content"]) => void
 
-export class WS<C extends WSClientRes, S extends WSServerRes> {
+export class WS<C extends WSClientReq, S extends WSServerRes> {
     ws: WebSocket
     eventListeners: Map<S["query"], WSEventListener<S>[]>
 
