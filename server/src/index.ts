@@ -69,7 +69,7 @@ const WS: {
     addSocketEventListener: <C extends keyof WSClientReqCont>(query: C, cb: WSEventCallback<C>) => void
 } = {
     eventListeners: {
-        'attend_subscribe': []
+        'mentoring_subscribe': []
     },
 
     send<S extends keyof WSServerResCont>(key: KeyOfMap<typeof subscribers[S]>, query: S, content: WSServerRes[S]['content']) {
@@ -106,7 +106,7 @@ wss.on('connection', (socket, _request) => {
     })
 })
 
-WS.addSocketEventListener('attend_subscribe', getRes(async (socket, content) => {
+WS.addSocketEventListener('mentoring_subscribe', getRes(async (socket, content) => {
     const { code } = content
     subscribers.mentoring_update.get(code.toString())?.push(socket)
     return success(null)
