@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google"
 import { css } from "@emotion/react"
 import { UserInfoContext } from "../context/User"
@@ -11,6 +11,7 @@ export const Login: React.FC = () => {
     const googleAuthLogin = useGoogleLogin({
         onSuccess: async (res) => {
             if (setUserInfo === null) return
+            localStorage.setItem("accessToken", res.access_token)
             const response = await request("login", { accessToken: res.access_token })
             if (!response.success) {
                 alert(`Login Failed!\nError message: ${response.error}`)
@@ -28,6 +29,29 @@ export const Login: React.FC = () => {
         },
         onError: async (res) => console.log(res)
     })
+
+    useEffect(() => {
+        if (setUserInfo === null) return
+        const accessToken = localStorage.getItem("accessToken")
+        if (accessToken === null) return
+        
+        ;(async () => {
+            const response = await request("login", { accessToken })
+            if (!response.success) {
+                alert(`Login Failed!\nError message: ${response.error}`)
+                return
+            }
+
+            const { name, id } = response.data
+            setUserInfo((userInfo) => ({
+                ...userInfo,
+                name,
+                id,
+                accessToken,
+                isLoggedIn: true
+            }))
+        })()
+    }, [setUserInfo])
 
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID as string}>

@@ -45,10 +45,6 @@ namespace TableElement {
     }
 }
 
-interface IHistoryProps {
-    logs: Log[]
-}
-
 const setTableData = (logs: Log[]) => {
     const tableData = []
     let accTime = 0
@@ -62,6 +58,10 @@ const setTableData = (logs: Log[]) => {
         tableData.push([interval, `${hour}h ${minute}m`])
     }
     return tableData
+}
+
+interface IHistoryProps {
+    logs: Log[]
 }
 
 export const History: React.FC<IHistoryProps> = (props) => {
