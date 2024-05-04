@@ -30,12 +30,6 @@ export interface WorkingLog {
     startImageId: string
 }
 
-export interface SocketRes {
-    code: number
-    attend: User[]
-    attendQueue: User[]
-}
-
 export interface LogImage {
     image: string
 }

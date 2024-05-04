@@ -7,7 +7,7 @@ export interface WSClientReqCont {
     }
 }
 
-export type WSClientReq<T extends keyof WSClientReqCont> = {
+export interface WSClientReq<T extends keyof WSClientReqCont> {
     query: T
     content: WSClientReqCont[T]
 }
@@ -16,8 +16,9 @@ type WSServerDirCont = {
     [C in keyof WSClientReqCont as `${C}_res`]: Response<null>
 }
 
-type WSServerResCont = {
+interface WSServerResCont {
     'attend_update': {
+        code: number
         attend: User[]
         attendQueue: User[]
     }
