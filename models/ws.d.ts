@@ -8,8 +8,8 @@ export type WSClientRes = {
 export type WSServerRes = {
     query: 'attend_update',
     content: {
-        attend: [],
-        attendQueue: []
+        attend: User[],
+        attendQueue: User[]
     }
 }
 // | {}
