@@ -20,7 +20,7 @@ async function test() {
         startImage: 'exampleimage'
     })
 
-    await socketRequest('attend_subscribe', {
+    await socketRequest('mentoring_subscribe', {
         code: 25
     })
     await testReq('mentoring_attend_req', {
