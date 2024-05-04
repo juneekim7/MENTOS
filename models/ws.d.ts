@@ -3,13 +3,14 @@ export type WSClientRes = {
     content: {
         code: number
     }
-} 
+}
 
 export type WSServerRes = {
-    query: 'abcd',
+    query: 'attend_update',
     content: {
-        asdf: string
+        attend: [],
+        attendQueue: []
     }
-} 
+}
 // | {}
 // In union
