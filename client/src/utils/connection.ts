@@ -1,5 +1,5 @@
 import { Connection, Response } from "../../../models/connection"
-import { WSClientReq, WSServerRes } from "../../../models/ws"
+import { WSClientReqCont, WSServerRes } from "../../../models/ws"
 import { SERVER_HOST, WEBSOCKET_HOST } from "../server.config"
 
 export const request = async <T extends keyof Connection>(event: T, body: Connection[T][0]): Promise<Response<Connection[T][1]>> => {
@@ -16,34 +16,36 @@ export const request = async <T extends keyof Connection>(event: T, body: Connec
     return data
 }
 
-type WSEventListener<S extends WSServerRes> = (res: S["content"]) => void
+type WSEventListener<S extends keyof WSServerRes> = (res: WSServerRes[S]["content"]) => void
 
-export class WS<C extends WSClientReq, S extends WSServerRes> {
+export class WS {
     ws: WebSocket
-    eventListeners: Map<S["query"], WSEventListener<S>[]>
-
-    public constructor() {
-        this.ws = new WebSocket(WEBSOCKET_HOST)
-        this.ws.addEventListener("message", (ev) => {
-            const res = JSON.parse(ev.data) as WSServerRes
-            const el = this.eventListeners.get(res.query)
-            if (el === undefined) return
-            el.forEach((cb) => cb(res.content))
-        })
-        this.eventListeners = new Map()
+    eventListeners: {
+        [S in keyof WSServerRes]?: WSEventListener<S>[]
     }
 
-    public request(query: C["query"], content: C["content"]) {
+    public constructor() {
+        const ws = new WebSocket(WEBSOCKET_HOST)
+        ws.addEventListener("message", <S extends keyof WSServerRes>(ev: MessageEvent<string>) => {
+            const res = JSON.parse(ev.data) as WSServerRes[S]
+            const el = this.eventListeners[res.query]
+            el?.forEach((cb) => cb(res.content))
+        })
+
+        this.ws = ws
+        this.eventListeners = {}
+    }
+
+    public request<C extends keyof WSClientReqCont>(query: C, content: WSClientReqCont[C]) {
         this.ws.send(JSON.stringify({
             query,
             content
         }))
     }
 
-    public addEventListener(query: S["query"], cb: WSEventListener<S>) {
-        const el = this.eventListeners.get(query)
-        if (el === undefined) return
-        el.push(cb)
+    public addEventListener<S extends keyof WSServerRes>(query: S, cb: WSEventListener<S>) {
+        this.eventListeners[query] ??= []
+        this.eventListeners[query]?.push(cb)
     }
 
     public close() {

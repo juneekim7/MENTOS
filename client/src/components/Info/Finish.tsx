@@ -9,6 +9,7 @@ import { request } from "../../utils/connection"
 import { UserInfoContext } from "../context/User"
 import { useContext, useEffect, useRef, useState } from "react"
 import { milliToHMS } from "../../utils/time"
+import { MtrInfoButton } from "./MtrInfoButton"
 
 interface IFinish {
     info: Mentoring
@@ -34,21 +35,8 @@ export const Finish: React.FC<IFinish> = (props) => {
     }, [props.info])
 
     return (
-        <CenterBox
-            css={css`
-                max-width: 500px;
-                margin: 0 auto;
-                padding: 12px 0;
-                border-radius: 8px;
-                background-color: var(--mentos-official);
-                transition: all 0.3s linear;
-                cursor: pointer;
-
-                :hover {
-                    background-color: var(--mentos-official-dark);
-                    transform: translateY(-5px);
-                }
-            `}
+        <MtrInfoButton
+            hover
             onClick={async () => {
                 const res = await request("mentoring_end", {
                     accessToken: userInfo.accessToken,
@@ -89,6 +77,6 @@ export const Finish: React.FC<IFinish> = (props) => {
                     </TextBox>
                 </CenterBox>
             </GridBox>
-        </CenterBox>
+        </MtrInfoButton>
     )
 }

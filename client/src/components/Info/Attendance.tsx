@@ -1,10 +1,10 @@
-import { css } from "@emotion/react"
-import { CenterBox } from "../common/CenterBox"
-import { TextBox } from "../common/TextBox"
 import { UserInfoContext } from "../context/User"
 import { useContext, useEffect, useState } from "react"
 import { WS, request } from "../../utils/connection"
 import { Mentoring } from "../../../../models/mentoring"
+import { MtrInfoButton } from "./MtrInfoButton"
+
+type Attendance = "ready" | "waiting" | "accepted" 
 
 interface IAttendanceProps {
     info: Mentoring
@@ -12,64 +12,41 @@ interface IAttendanceProps {
 
 export const Attendance: React.FC<IAttendanceProps> = (props) => {
     const { userInfo } = useContext(UserInfoContext)
-    const [ ws, setWs ] = useState(new WS())
+    const [ ws, _setWs ] = useState(new WS())
+    const [ attendState, setAttendState ] = useState<Attendance>("ready") 
 
     useEffect(() => {
-        // ws.addEventListener()
+        ws.addEventListener("attend_update", (res) => {
+            if (res.attend.some((user) => user.id === userInfo.id)) setAttendState("accepted")
+            else if (res.attendQueue.some((user) => user.id === userInfo.id)) setAttendState("waiting")
+            else setAttendState("ready")
+        })
+
         return ws.close()
-    }, [ws])
+    }, [ws, userInfo.id])
 
-    if (props.info.working === null) return (
-        <CenterBox
-            css={css`
-                max-width: 500px;
-                margin: 0 auto;
-                padding: 12px 0;
-                border-radius: 8px;
-                background-color: #DADDDF;
-            `}
-        >
-            <TextBox
-                size={20}
-                color="#909090"
-            >
-                시작을 기다리는 중...
-            </TextBox>
-        </CenterBox>
-    )
+    if (props.info.working === null)
+        return <MtrInfoButton>시작을 기다리는 중...</MtrInfoButton>
 
-    return (
-        <CenterBox
-            css={css`
-                max-width: 500px;
-                margin: 0 auto;
-                padding: 12px 0;
-                border-radius: 8px;
-                background-color: var(--mentos-official);
-                transition: all 0.3s linear;
-                cursor: pointer;
-
-                :hover {
-                    background-color: var(--mentos-official-dark);
-                    transform: translateY(-5px);
-                }
-            `}
-            onClick={async () => {
-                const res = await request("mentoring_attend_req", {
-                    accessToken: userInfo.accessToken,
-                    code: props.info.code
-                })
-                if (!res.success) console.log(res.error)
-                else ws.request("attend_subscribe", { code: props.info.code })
-            }}
-        >
-            <TextBox
-                weight={700}
-                size={28}
-                color="white"
+    if (attendState === "ready")
+        return (
+            <MtrInfoButton
+                hover
+                onClick={async () => {
+                    const res = await request("mentoring_attend_req", {
+                        accessToken: userInfo.accessToken,
+                        code: props.info.code
+                    })
+                    if (!res.success) console.log(res.error)
+                    else ws.request("attend_subscribe", { code: props.info.code })
+                }}
             >
                 출석
-            </TextBox>
-        </CenterBox>
-    ) 
+            </MtrInfoButton>
+        ) 
+    
+    if (attendState === "waiting")
+        return <MtrInfoButton>출석 체크를 기다리는 중...</MtrInfoButton>
+
+    return <MtrInfoButton>출석 완료!</MtrInfoButton>
 }
