@@ -20,7 +20,9 @@ async function test() {
         startImage: 'exampleimage'
     })
 
-    await socketRequest(25)
+    await socketRequest('attend_subscribe', {
+        code: 25
+    })
     await testReq('mentoring_attend_req', {
         code: 25
     }, changhaAccessToken)
