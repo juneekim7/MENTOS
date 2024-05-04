@@ -8,24 +8,24 @@ export interface WSClientReqCont {
 }
 
 export type WSClientReq<T extends keyof WSClientReqCont> = {
-    query: T,
+    query: T
     content: WSClientReqCont[T]
 }
 
-export interface WSServerResCont {
-    'attend_update': {
-        attend: User[],
-        attendQueue: User[]
-    }
+type WSServerDirCont = {
     [C in keyof WSClientReqCont as `${C}_res`]: Response<null>
 }
 
-export type WSServerDir<C extends keyof WSClientReqCont> = {
-    query: `${C}_res`,
-    content: Response<null>
+type WSServerResCont = {
+    'attend_update': {
+        attend: User[]
+        attendQueue: User[]
+    }
 }
 
-export type WSServerRes<S extends keyof WSServerReqCont> = {
-    query: S,
-    content: WSServerReqCont[S]
+export type WSServerRes = {
+    [S in keyof WSServerDirCont | keyof WSServerResCont]: {
+        query: S
+        content: S extends keyof WSServerDirCont ? WSServerDirCont[S] : WSServerResCont[S]
+    }
 }
