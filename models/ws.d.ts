@@ -1,27 +1,31 @@
 import { Response } from './connection'
 import { User } from './user'
 
-export type WSClientReq = {
-    query: 'attend_subscribe',
-    content: {
+export interface WSClientReqCont {
+    'attend_subscribe': {
         code: number
     }
 }
 
-export interface WSServer {
-    query: WSClientReq.query,
-    content: Response<null>
+export type WSClientReq<T extends keyof WSClientReqCont> = {
+    query: T,
+    content: WSClientReqCont[T]
 }
 
-export type WSServerRes = {
-    query: 'attend_update',
-    content: {
+export interface WSServerResCont {
+    'attend_update': {
         attend: User[],
         attendQueue: User[]
     }
-} | {
-    query: `${WSClientReq['query']}_res`,
+    [C in keyof WSClientReqCont as `${C}_res`]: Response<null>
+}
+
+export type WSServerDir<C extends keyof WSClientReqCont> = {
+    query: `${C}_res`,
     content: Response<null>
 }
-// | {}
-// In union
+
+export type WSServerRes<S extends keyof WSServerReqCont> = {
+    query: S,
+    content: WSServerReqCont[S]
+}
