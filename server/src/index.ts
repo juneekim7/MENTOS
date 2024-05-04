@@ -9,7 +9,7 @@ import { WSClientReq, WSClientReqCont, WSServerRes, WSServerResCont } from '../.
 import { User } from '../../models/user'
 import { Log, LogImage, Mentoring, Semester, WorkingLog, currentSemester, toRankMentoring } from '../../models/mentoring'
 import { getUser } from './user'
-import { getRes } from './utils'
+import { KeyOfMap, getRes } from './utils'
 import { checkLog, getMentoring } from './mentoring'
 
 export type ParamDict = Record<string, string>
@@ -38,7 +38,7 @@ app.listen(8080, () => {
     console.log('The server has started.')
 })
 
-export const addServerEventListener = <T extends keyof Connection>(
+const addServerEventListener = <T extends keyof Connection>(
     event: T,
     cb: (body: Connection[T][0]) => Promise<Response<Connection[T][1]>>
 ) => {
@@ -53,20 +53,32 @@ type WSEventListener = {
     [C in keyof WSClientReqCont]: WSEventCallback<C>[]
 }
 
-export const WS: {
+const subscribers: Record<keyof WSServerResCont, Map<string, WebSocket[]>> = {
+    mentoring_update: new Map<string, WebSocket[]>()
+}
+
+mentoringColl().find().toArray().then((arr) => {
+    for (const mentoring of arr) {
+        subscribers.mentoring_update.set(mentoring.code.toString(), [])
+    }
+})
+
+const WS: {
     eventListeners: WSEventListener
-    send: <S extends keyof WSServerResCont>(socket: WebSocket, query: S, content: WSServerRes[S]['content']) => void
+    send: <S extends keyof WSServerResCont>(key: KeyOfMap<typeof subscribers[S]>, query: S, content: WSServerRes[S]['content']) => void
     addSocketEventListener: <C extends keyof WSClientReqCont>(query: C, cb: WSEventCallback<C>) => void
 } = {
     eventListeners: {
         'attend_subscribe': []
     },
 
-    send<S extends keyof WSServerResCont>(socket: WebSocket, query: S, content: WSServerRes[S]['content']) {
-        socket.send(JSON.stringify({
-            query,
-            content
-        } as WSServerRes[S]))
+    send<S extends keyof WSServerResCont>(key: KeyOfMap<typeof subscribers[S]>, query: S, content: WSServerRes[S]['content']) {
+        for (const socket of subscribers[query].get(key) ?? []) {
+            socket.send(JSON.stringify({
+                query,
+                content
+            } as WSServerRes[S]))
+        }
     },
 
     addSocketEventListener<C extends keyof WSClientReqCont>(query: C, cb: WSEventCallback<C>) {
@@ -75,17 +87,6 @@ export const WS: {
         el.push(cb)
     }
 }
-
-
-const subscribers: Record<keyof WSServerResCont, Map<string, WebSocket[]>> = {
-    attend_update: new Map<string, WebSocket[]>()
-}
-
-mentoringColl().find().toArray().then((arr) => {
-    for (const mentoring of arr) {
-        subscribers.attend_update.set(mentoring.code.toString(), [])
-    }
-})
 
 wss.on('connection', (socket, _request) => {
     socket.on('message', <T extends keyof WSClientReqCont>(rawData: RawData) => {
@@ -108,7 +109,7 @@ wss.on('connection', (socket, _request) => {
 
 WS.addSocketEventListener('attend_subscribe', getRes(async (socket, content) => {
     const { code } = content
-    subscribers.attend_update.get(code.toString())?.push(socket)
+    subscribers.mentoring_update.get(code.toString())?.push(socket)
     return success(null)
 }))
 
@@ -165,6 +166,10 @@ addServerEventListener('mentoring_reserve', async (body) => {
     await mentoringColl().updateOne({ code }, {
         $set: { plan: plan }
     })
+
+    WS.send(code.toString(), 'mentoring_update', {
+        code
+    })
     return success(null)
 })
 
@@ -200,6 +205,10 @@ addServerEventListener('mentoring_start', async (body) => {
 
     await mentoringColl().updateOne({ code }, {
         $set: { working, plan: null }
+    })
+
+    WS.send(code.toString(), 'mentoring_update', {
+        code
     })
     return success(null)
 })
@@ -240,6 +249,10 @@ addServerEventListener('mentoring_end', async (body) => {
         $push: { logs: log },
         $set: { working: null }
     })
+
+    WS.send(code.toString(), 'mentoring_update', {
+        code
+    })
     return success(null)
 })
 
@@ -267,13 +280,9 @@ addServerEventListener('mentoring_attend_req', async (body) => {
     })
 
 
-    for (const socket of subscribers.attend_update.get(code.toString()) ?? []) {
-        WS.send(socket, 'attend_update', {
-            code,
-            attend: working.attend,
-            attendQueue
-        })
-    }
+    WS.send(code.toString(), 'mentoring_update', {
+        code
+    })
     return success(null)
 })
 
@@ -308,13 +317,9 @@ addServerEventListener('mentoring_attend_accept', async (body) => {
         $push: { 'working.attend': mentee }
     })
 
-    for (const socket of subscribers.attend_update.get(code.toString()) ?? []) {
-        WS.send(socket, 'attend_update', {
-            code,
-            attend: working.attend,
-            attendQueue
-        })
-    }
+    WS.send(code.toString(), 'mentoring_update', {
+        code
+    })
     return success(null)
 })
 
@@ -346,13 +351,9 @@ addServerEventListener('mentoring_attend_decline', async (body) => {
         $set: { 'working.attendQueue': attendQueue }
     })
 
-    for (const socket of subscribers.attend_update.get(code.toString()) ?? []) {
-        WS.send(socket, 'attend_update', {
-            code,
-            attend: working.attend,
-            attendQueue
-        })
-    }
+    WS.send(code.toString(), 'mentoring_update', {
+        code
+    })
     return success(null)
 })
 

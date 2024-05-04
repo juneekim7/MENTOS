@@ -17,10 +17,8 @@ type WSServerDirCont = {
 }
 
 interface WSServerResCont {
-    'attend_update': {
+    'mentoring_update': {
         code: number
-        attend: User[]
-        attendQueue: User[]
     }
 }
 
