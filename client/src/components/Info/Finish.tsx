@@ -37,6 +37,7 @@ export const Finish: React.FC<IFinish> = (props) => {
     return (
         <MtrInfoButton
             hover
+            nonText
             onClick={async () => {
                 const res = await request("mentoring_end", {
                     accessToken: userInfo.accessToken,

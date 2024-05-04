@@ -19,25 +19,20 @@ export const request = async <T extends keyof Connection>(event: T, body: Connec
 type WSEventListener<S extends keyof WSServerRes> = (res: WSServerRes[S]["content"]) => void
 
 export class WS {
-    ws: WebSocket
+    ws: WebSocket | null
     eventListeners: {
         [S in keyof WSServerRes]?: WSEventListener<S>[]
     }
 
     public constructor() {
-        const ws = new WebSocket(WEBSOCKET_HOST)
-        ws.addEventListener("message", <S extends keyof WSServerRes>(ev: MessageEvent<string>) => {
-            const res = JSON.parse(ev.data) as WSServerRes[S]
-            const el = this.eventListeners[res.query]
-            el?.forEach((cb) => cb(res.content))
-        })
-
-        this.ws = ws
+        this.ws = null
         this.eventListeners = {}
+        this.open()
     }
 
     public request<C extends keyof WSClientReqCont>(query: C, content: WSClientReqCont[C]) {
-        this.ws.send(JSON.stringify({
+        if (this.ws === null) this.open()
+        this.ws?.send(JSON.stringify({
             query,
             content
         }))
@@ -48,7 +43,23 @@ export class WS {
         this.eventListeners[query]?.push(cb)
     }
 
+    public open() {
+        if (this.ws !== null) return
+        const ws = new WebSocket(WEBSOCKET_HOST)
+        ws.addEventListener("message", <S extends keyof WSServerRes>(ev: MessageEvent<string>) => {
+            const res = JSON.parse(ev.data) as WSServerRes[S]
+            const el = this.eventListeners[res.query]
+            el?.forEach((cb) => cb(res.content))
+        })
+        this.ws = ws
+    }
+
     public close() {
+        console.log(1)
+        if (this.ws === null) return
         this.ws.close()
+        this.ws = null
     }
 }
+
+export const ws = new WS()
