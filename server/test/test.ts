@@ -26,6 +26,13 @@ async function test() {
     await testReq('mentoring_attend_req', {
         code: 25
     }, changhaAccessToken)
+    await testReq('mentoring_attend_decline', {
+        code: 25,
+        menteeId: '23-035'
+    })
+    await testReq('mentoring_attend_req', {
+        code: 25
+    }, changhaAccessToken)
     await testReq('mentoring_attend_accept', {
         code: 25,
         menteeId: '23-035'
