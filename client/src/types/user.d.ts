@@ -1,4 +1,4 @@
-export interface User {
+export interface ClientUser {
     id: string
     name: string
     accessToken: string

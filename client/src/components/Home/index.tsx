@@ -1,20 +1,19 @@
 import { Content } from "../common/Content"
 import { VBox } from "../common/VBox"
-import { Mentoring } from "./Mentoring"
+import { MentoringMain } from "./MentoringMain"
 import { GridBox } from "../common/GridBox"
 import { css } from "@emotion/react"
-import { IHomeMentoring } from "../../types/mentoring"
 import { request } from "../../utils/connection"
 import { UserInfoContext } from "../context/User"
 import { useContext, useEffect, useState } from "react"
-import { currentSemester } from "../../../../models/mentoring"
-import { intervalFormat } from "../../utils/time"
+import { Mentoring, currentSemester } from "../../../../models/mentoring"
+import { isMentee, isMentor } from "../../utils/mentoring"
 
-const defaultMentoringInfo: IHomeMentoring[] = []
+const defaultMentoringInfo: Mentoring[] = []
 
 export const Home: React.FC = () => {
     const { userInfo } = useContext(UserInfoContext)
-    const [ MentoringInfo, setMentoringInfo ] = useState<IHomeMentoring[]>(defaultMentoringInfo)
+    const [ MentoringInfo, setMentoringInfo ] = useState<Mentoring[]>(defaultMentoringInfo)
 
     useEffect(() => {
         (async () => {
@@ -26,25 +25,7 @@ export const Home: React.FC = () => {
             })
 
             if (!res.success) return // TODO: Error
-
-            setMentoringInfo(
-                res.data.map((mtr) => ({
-                    code: mtr.code,
-                    name: mtr.name,
-                    mentors: mtr.mentors,
-                    place: mtr.working
-                        ? mtr.working.location
-                        : (mtr.plan 
-                            ? mtr.plan.location
-                            : "-"),
-                    plan: mtr.plan !== null
-                        ? intervalFormat(new Date(mtr.plan.start), new Date(mtr.plan.end)) 
-                        : "-",
-                    isMentee: mtr.mentees.some((mte) => mte.id === userInfo.id),
-                    isMentor: mtr.mentors.some((mtr) => mtr.id === userInfo.id),
-                    hasStarted: mtr.working !== null
-                }))
-            )
+            setMentoringInfo(res.data)
         })()
     }, [userInfo])
     
@@ -56,17 +37,17 @@ export const Home: React.FC = () => {
                 css={css`grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));`}
             >
                 {MentoringInfo
-                    .filter((v) => v.isMentor)
+                    .filter((v) => isMentor(v, userInfo))
                     .sort((a, b) => a.code - b.code)
-                    .map((v, i) => <Mentoring key={`mentor-${i}`} {...v} />)}
+                    .map((v, i) => <MentoringMain key={`mentor-${i}`} {...v} />)}
                 {MentoringInfo
-                    .filter((v) => !v.isMentor && v.isMentee)
+                    .filter((v) => !isMentor(v, userInfo) && isMentee(v, userInfo))
                     .sort((a, b) => a.code - b.code)
-                    .map((v, i) => <Mentoring key={`mentee-${i}`} {...v} />)}
+                    .map((v, i) => <MentoringMain key={`mentee-${i}`} {...v} />)}
                 {MentoringInfo
-                    .filter((v) => !v.isMentor && !v.isMentee)
+                    .filter((v) => !isMentor(v, userInfo) && !isMentee(v, userInfo))
                     .sort((a, b) => a.code - b.code)
-                    .map((v, i) => <Mentoring key={`normal-${i}`} {...v} />)}
+                    .map((v, i) => <MentoringMain key={`normal-${i}`} {...v} />)}
             </GridBox>
             <VBox height={32} />
         </Content>

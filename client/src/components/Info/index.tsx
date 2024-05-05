@@ -35,15 +35,17 @@ export const MentoringInfo: React.FC = () => {
     useEffect(() => {
         const code = parseInt(id ?? "0")
         ;(async () => {
-            if (!ws.isOpen) {
-                await ws.open()
-                ws.addEventListener("mentoring_update", (res) => {
-                    if (code === res.code) forceUpdate()
-                })
-                ws.request("mentoring_subscribe", { code })
-            }
+            console.log("open")
+            ws.open()
+            ws.addEventListener("mentoring_update", (res) => {
+                if (code === res.code) forceUpdate()
+            })
+            ws.request("mentoring_subscribe", { code })
         })()
-        return ws.close()
+        return () => {
+            console.log("close")
+            ws.close()
+        }
     }, [forceUpdate, id])
 
     if (id === undefined || info === undefined) return <></>
@@ -61,7 +63,7 @@ export const MentoringInfo: React.FC = () => {
             <VBox height={48} />
             {info.mentors.some((mtr) => mtr.id === userInfo.id) && info.working !== null &&
                 <Fragment>
-                    <Attendance queue={info.working.attendQueue} code={info.code} />
+                    <Attendance queue={info.working.attendQueue} code={info.code} forceUpdate={forceUpdate} />
                     <VBox height={48} />
                 </Fragment>}
             <History logs={info.logs} />

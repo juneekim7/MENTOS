@@ -52,7 +52,8 @@ namespace TableElement {
 
 interface IAttendanceProps {
     queue: User[],
-    code: number
+    code: number,
+    forceUpdate: () => void
 }
 
 const Hover: React.FC<DivProps> = (props) => {
@@ -121,6 +122,7 @@ export const Attendance: React.FC<IAttendanceProps> = (props) => {
                                                         menteeId: user.id
                                                     })
                                                     if (!res.success) console.log(res.error)
+                                                    else props.forceUpdate()
                                                 }
                                             }
                                         >
@@ -135,6 +137,7 @@ export const Attendance: React.FC<IAttendanceProps> = (props) => {
                                                         menteeId: user.id
                                                     })
                                                     if (!res.success) console.log(res.error)
+                                                    else props.forceUpdate()
                                                 }
                                             }
                                         >

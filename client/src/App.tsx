@@ -7,6 +7,7 @@ import { Home } from "./components/Home"
 import { MentoringInfo } from "./components/Info"
 import { Ranking } from "./components/Ranking"
 import { UserProvider } from "./components/context/User"
+import { ModalContainer } from "./components/common/Modal"
 
 export const App: React.FC = () => {
     return (
@@ -15,6 +16,7 @@ export const App: React.FC = () => {
                 <UserProvider>
                     <Header />
                     <NotiContainer />
+                    <ModalContainer />
                     <div css={css`padding-top: 60px;`}>
                         <Routes>
                             <Route path="/" element={<Home />} />

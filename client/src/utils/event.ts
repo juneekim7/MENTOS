@@ -2,7 +2,9 @@ import { useEffect } from "react"
 
 interface ClientEvents {
     "notification": [type: "allowed" | "forbidden", content: string]
+    "modal": [content: (React.ReactNode | null)]
 }
+
 type Event = keyof ClientEvents
 
 export class EventHandler {

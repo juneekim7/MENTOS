@@ -12,7 +12,6 @@ export const request = async <T extends keyof Connection>(event: T, body: Connec
     const data = await response.json() as Response<Connection[T][1]>
     if (!data.success) throw new Error(data.error)
 
-    console.log(event, body, data)
     return data
 }
 
@@ -44,7 +43,7 @@ export class WS {
     }
 
     public open() {
-        if (this.ws !== null) throw new Error("The Websocket has already opened.")
+        if (this.ws !== null) return // throw new Error("The Websocket has already opened.")
         return new Promise<void>((resolve, reject) => {
             const ws = new WebSocket(WEBSOCKET_HOST)
             ws.addEventListener("open", () => {

@@ -1,9 +1,9 @@
 import { createContext, useState } from "react"
-import { type User } from "../../types/user"
+import { type ClientUser } from "../../types/user"
 
 interface IUserInfoContext {
-    userInfo: User
-    setUserInfo: React.Dispatch<React.SetStateAction<User>> | null
+    userInfo: ClientUser
+    setUserInfo: React.Dispatch<React.SetStateAction<ClientUser>> | null
 }
 
 const defaultInfo = {
@@ -19,7 +19,7 @@ export const UserInfoContext = createContext<IUserInfoContext>({
 })
 
 export const UserProvider: React.FC<React.PropsWithChildren> = (props) => {
-    const [userInfo, setUserInfo] = useState<User>(defaultInfo)
+    const [userInfo, setUserInfo] = useState<ClientUser>(defaultInfo)
 
     return (
         <UserInfoContext.Provider value={{ userInfo, setUserInfo }}>

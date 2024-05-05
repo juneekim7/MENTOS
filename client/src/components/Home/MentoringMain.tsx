@@ -4,28 +4,47 @@ import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBuilding, faClock, faUser } from "@fortawesome/free-solid-svg-icons"
-import { IHomeMentoring } from "../../types/mentoring"
 import { useNavigate } from "react-router-dom"
-import { Fragment } from "react"
+import { Fragment, useContext, useEffect, useRef, useState } from "react"
+import { Mentoring } from "../../../../models/mentoring"
+import { UserInfoContext } from "../context/User"
+import { isMentee, isMentor } from "../../utils/mentoring"
+import { dateFormat, milliToHMS } from "../../utils/time"
 
-type IMentoringProps = IHomeMentoring
+type IMentoringProps = Mentoring
 
-export const Mentoring: React.FC<IMentoringProps> = (props) => {
+export const MentoringMain: React.FC<IMentoringProps> = (props) => {
     const navigate = useNavigate()
+    const { userInfo } = useContext(UserInfoContext)
+    const intervalRef = useRef<NodeJS.Timeout>()
+    const [ timer, setTimer ] = useState("00:00:00")
+    
+    useEffect(() => {
+        const { plan } = props
+        if (plan === null) return
 
-    const textColor = props.isMentee || props.isMentor ? "var(--official-text)" : "black"
-    const iconColor = props.isMentee || props.isMentor ? "var(--official-text)" : "var(--section-icon)"
-    const bgColor = props.isMentor
+        intervalRef.current = setInterval(() => {
+            setTimer(
+                milliToHMS((new Date(plan.start)).getTime() - Date.now())
+            )
+        }, 1000)
+
+        return () => clearInterval(intervalRef.current)
+    }, [props])
+
+    const textColor = isMentee(props, userInfo) || isMentor(props, userInfo) ? "var(--official-text)" : "black"
+    const iconColor = isMentee(props, userInfo) || isMentor(props, userInfo) ? "var(--official-text)" : "var(--section-icon)"
+    const bgColor = isMentor(props, userInfo)
         ? "var(--mentos-blue)"
-        : (props.isMentee
+        : (isMentee(props, userInfo)
             ? "var(--mentos-official)"
             : "var(--mentos-section)")
-    const hoverColor = props.isMentor
+    const hoverColor = isMentor(props, userInfo)
         ? "var(--mentos-blue-dark)"
-        : (props.isMentee
+        : (isMentee(props, userInfo)
             ? "var(--mentos-official-dark)"
             : "var(--mentos-section-dark)")
-
+    
     return (
         <VFlexBox
             css={css`
@@ -60,13 +79,17 @@ export const Mentoring: React.FC<IMentoringProps> = (props) => {
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faBuilding} size="sm" style={{ color: iconColor }} />
                     </VFlexBox>
-                    {props.place}
+                    {props.working?.location ?? props.plan?.location ?? "-"}
                 </HFlexBox>
                 <HFlexBox gap={4} center>
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faClock} size="sm" style={{ color: iconColor }} />
                     </VFlexBox>
-                    {props.plan}
+                    {props.working !== null
+                        ? dateFormat(new Date(props.working.start))
+                        : (props.plan !== null
+                            ? dateFormat(new Date(props.plan.start))
+                            : "-")}
                 </HFlexBox>
             </VFlexBox>
             <VBox
@@ -77,15 +100,14 @@ export const Mentoring: React.FC<IMentoringProps> = (props) => {
             />
             <VBox height={16} />
             <div css={css`margin: 0 auto;`}>
-                {props.hasStarted
-                    ? <TextBox size={20}>In progress...</TextBox>
+                {props.working !== null
+                    ? <TextBox size={20}>진행 중...</TextBox>
                     : <Fragment>
-                        <TextBox inline>Start in </TextBox>
-                        {props.plan === "-"
+                        <TextBox inline>시작까지 </TextBox>
+                        {props.plan === null
                             ? <TextBox size={20} inline>--:--:--</TextBox>
-                            : <></>}
-                    </Fragment>
-                }
+                            : <TextBox size={20} inline>{timer}</TextBox>}
+                    </Fragment>}
             </div>
         </VFlexBox>
     )
