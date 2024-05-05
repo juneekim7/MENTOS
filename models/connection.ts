@@ -1,4 +1,4 @@
-import { Mentoring, Plan, RankMentoring, Semester } from './mentoring'
+import { Mentoring, Plan, Semester } from './mentoring'
 import { User } from './user'
 
 export interface Failure {
@@ -97,12 +97,5 @@ export interface Connection {
             menteeId: string
         },
         null
-    ],
-    'mentoring_rank': [
-        {
-            accessToken: string
-            semester: Semester
-        },
-        RankMentoring[]
     ]
 }

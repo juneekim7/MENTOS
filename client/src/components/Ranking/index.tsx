@@ -4,9 +4,10 @@ import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 import { DivisonSelector } from "./DivisionSelector"
 import { useContext, useEffect, useState } from "react"
-import { RankMentoring, currentSemester } from "../../../../models/mentoring"
+import { currentSemester } from "../../../../models/mentoring"
 import { UserInfoContext } from "../context/User"
 import { request } from "../../utils/connection"
+import { RankMentoring, toMentoringRank } from "../../utils/mentoring"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -54,13 +55,13 @@ export const Ranking: React.FC = () => {
         (async () => {
             if (userInfo.accessToken === "") return
 
-            const res = await request("mentoring_rank", {
+            const res = await request("mentoring_list", {
                 accessToken: userInfo.accessToken,
                 semester: currentSemester()
             })
 
             if (!res.success) return // TODO: Error
-            setMentoringRanking(res.data)
+            setMentoringRanking(toMentoringRank(res.data))
         })()
     }, [userInfo])
     return (

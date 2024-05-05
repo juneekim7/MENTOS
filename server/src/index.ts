@@ -7,7 +7,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb'
 import { Response, failure, success, type Connection } from '../../models/connection'
 import { WSClientReq, WSClientReqCont, WSServerRes, WSServerResCont } from '../../models/ws'
 import { User } from '../../models/user'
-import { Log, LogImage, Mentoring, Semester, WorkingLog, currentSemester, toRankMentoring } from '../../models/mentoring'
+import { Log, LogImage, Mentoring, Semester, WorkingLog, currentSemester } from '../../models/mentoring'
 import { getUser } from './user'
 import { KeyOfMap, getRes } from './utils'
 import { checkLog, getMentoring } from './mentoring'
@@ -355,15 +355,3 @@ addServerEventListener('mentoring_attend_decline', async (body) => {
     })
     return success(null)
 })
-
-addServerEventListener('mentoring_rank', getRes(async (body) => {
-    const { accessToken, semester } = body
-    const getUserRes = await getUser(accessToken)
-    if (!getUserRes.success) return getUserRes
-
-    const mentoringList = (await mentoringColl(semester).find({}, withoutId).toArray())
-        .map((m) => toRankMentoring(m))
-    mentoringList.sort((a, b) => a.time - b.time)
-
-    return success(mentoringList)
-}))

@@ -45,19 +45,3 @@ export interface Mentoring {
     plan: Plan | null
     logs: Log[]
 }
-
-export interface RankMentoring {
-    code: number
-    name: string
-    time: number
-}
-
-export function toRankMentoring(mentoring: Mentoring) {
-    const { code, name } = mentoring
-    const time = mentoring.logs.reduce((acc, log) => acc + log.end.getTime() - log.start.getTime(), 0)
-    return {
-        code,
-        name,
-        time
-    } as RankMentoring
-}

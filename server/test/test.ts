@@ -42,9 +42,6 @@ async function test() {
         code: 25,
         endImage: 'exampleimage'
     })
-    await testReq('mentoring_rank', {
-        semester: currentSemester()
-    })
 }
 
 executeAfterDelay(test)

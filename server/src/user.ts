@@ -3,6 +3,7 @@ import { userColl, withoutId } from '.'
 import { failure, success } from '../../models/connection'
 import { User } from '../../models/user'
 import { getRes } from './utils'
+import { Semester, currentSemester } from '../../models/mentoring'
 
 interface googleData {
     data: {
@@ -14,7 +15,7 @@ interface googleData {
 
 const savedUser: Record<string, User> = {}
 
-export const getUser = getRes(async (accessToken: string) => {
+export const getUser = getRes(async (accessToken: string, semester: Semester = currentSemester()) => {
     if (accessToken === process.env.TEST_JUNEEACCESSTOKEN) {
         return success({
             name: '김준이',
@@ -33,8 +34,8 @@ export const getUser = getRes(async (accessToken: string) => {
             id: '23-035'
         })
     }
-    if (savedUser[accessToken] !== undefined) {
-        return success(savedUser[accessToken])
+    if (savedUser[semester + accessToken] !== undefined) {
+        return success(savedUser[semester + accessToken])
     }
 
     const { data } = await axios.get<unknown, googleData>(
@@ -45,7 +46,7 @@ export const getUser = getRes(async (accessToken: string) => {
     }
     const studentId = data.email.split('@')[0]
 
-    const foundUser = await userColl().findOne({
+    const foundUser = await userColl(semester).findOne({
         id: studentId
     }, withoutId)
     const user = foundUser ?? {
@@ -54,9 +55,9 @@ export const getUser = getRes(async (accessToken: string) => {
     }
 
     if (foundUser === null) {
-        await userColl().insertOne(user)
+        await userColl(semester).insertOne(user)
     }
 
-    savedUser[accessToken] = user
+    savedUser[semester + accessToken] = user
     return success(user)
 })
