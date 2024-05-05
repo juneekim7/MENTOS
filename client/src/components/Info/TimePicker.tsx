@@ -10,6 +10,7 @@ const HOURS = new Array(24).fill(0).map((_v, i) => i)
 const MINUTES = new Array(12).fill(0).map((_v, i) => 5 * i)
 
 interface ITimeSwiperProps {
+    initialSlide: number
     onSlideChange: (swiper: SwiperClass) => void
     values: number[]
 }
@@ -18,6 +19,7 @@ const TimeSwiper: React.FC<ITimeSwiperProps> = (props) => {
     return (
         <Swiper
             css={css`height: 72px;`}
+            initialSlide={props.initialSlide}
             direction="vertical"
             slidesPerView={2}
             mousewheel={{
@@ -40,7 +42,7 @@ const TimeSwiper: React.FC<ITimeSwiperProps> = (props) => {
         >
             {props.values.map((v) => (
                 <SwiperSlide key={v}>
-                    {(data) => 
+                    {(data) =>
                         <CenterBox css={css`width: 100%; height: 36px;`}>
                             <TextBox weight={600} size={30} center
                                 css={css`
@@ -57,19 +59,39 @@ const TimeSwiper: React.FC<ITimeSwiperProps> = (props) => {
     )
 }
 
-export const TimePicker = () => {
+interface ITimePickerProps {
+    startTime: Date
+    setStartTime: React.Dispatch<React.SetStateAction<Date>>
+    endTime: Date
+    setEndTime: React.Dispatch<React.SetStateAction<Date>>
+}
+
+export const TimePicker: React.FC<ITimePickerProps> = (props) => {
+
     return (
         <HFlexBox gap={24} center css={css`margin: 0 auto;`}>
             <HFlexBox gap={8} center>
                 <TimeSwiper
-                    onSlideChange={(swiper) => swiper.realIndex}
+                    initialSlide={props.startTime.getHours()}
+                    onSlideChange={(swiper) => {
+                        const hours = swiper.realIndex
+                        const newStartTime = new Date(props.startTime.getTime())
+                        newStartTime.setHours(hours)
+                        props.setStartTime(newStartTime)
+                    }}
                     values={HOURS}
                 />
                 <TextBox weight={600} size={20}>
                     :
                 </TextBox>
                 <TimeSwiper
-                    onSlideChange={(swiper) => swiper.realIndex}
+                    initialSlide={Math.ceil(props.startTime.getMinutes() / 5)}
+                    onSlideChange={(swiper) => {
+                        const minutes = swiper.realIndex * 5
+                        const newStartTime = new Date(props.startTime.getTime())
+                        newStartTime.setMinutes(minutes)
+                        props.setStartTime(newStartTime)
+                    }}
                     values={MINUTES}
                 />
             </HFlexBox>
@@ -78,18 +100,30 @@ export const TimePicker = () => {
             </TextBox>
             <HFlexBox gap={8} center>
                 <TimeSwiper
-                    onSlideChange={(swiper) => swiper.realIndex}
+                    initialSlide={props.endTime.getHours()}
+                    onSlideChange={(swiper) => {
+                        const hours = swiper.realIndex
+                        const newEndTime = new Date(props.endTime.getTime())
+                        newEndTime.setHours(hours)
+                        props.setEndTime(newEndTime)
+                    }}
                     values={HOURS}
                 />
                 <TextBox weight={600} size={20}>
                     :
                 </TextBox>
                 <TimeSwiper
-                    onSlideChange={(swiper) => swiper.realIndex}
+                    initialSlide={Math.ceil(props.startTime.getMinutes() / 5)}
+                    onSlideChange={(swiper) => {
+                        const minutes = swiper.realIndex * 5
+                        const newEndTime = new Date(props.endTime.getTime())
+                        newEndTime.setMinutes(minutes)
+                        props.setEndTime(newEndTime)
+                    }}
                     values={MINUTES}
                 />
             </HFlexBox>
         </HFlexBox>
-        
+
     )
 }

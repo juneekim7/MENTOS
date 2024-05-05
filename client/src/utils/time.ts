@@ -10,7 +10,7 @@ export const dateFormat = (d: Date) => {
 
 export const intervalFormat = (s: Date, e: Date) => {
     const year = s.getFullYear()
-    const month = s.getMonth()
+    const month = s.getMonth() + 1
     const date = s.getDate()
     const sHour = s.getHours().toString().padStart(2, "0")
     const sMinute = s.getMinutes().toString().padStart(2, "0")

@@ -8,8 +8,22 @@ import { CenterBox } from "../common/CenterBox"
 import { EventHandler } from "../../utils/event"
 import { TimePicker } from "./TimePicker"
 import { ModalCalendar } from "./Calendar"
+import { useContext, useState } from "react"
+import { request } from "../../utils/connection"
+import { UserInfoContext } from "../context/User"
+import { Mentoring, maxDuration } from "../../../../models/mentoring"
 
-export const ModalContent: React.FC = () => {
+interface IModalContentProps {
+    info: Mentoring
+}
+
+export const ModalContent: React.FC<IModalContentProps> = (props) => {
+    const { userInfo } = useContext(UserInfoContext)
+    const [location, setLocation] = useState("")
+    const [day, setDay] = useState<Date>(new Date())
+    const [startTime, setStartTime] = useState<Date>(new Date())
+    const [endTime, setEndTime] = useState<Date>(new Date(startTime.getTime() + 2 * 60 * 60 * 1000))
+
     return (
         <div
             css={css`
@@ -29,7 +43,7 @@ export const ModalContent: React.FC = () => {
             </TextBox>
             <VBox height={4} />
             <TextBox center color="gray">
-                - 10. 시그마 정멘
+                - {props.info.code}. {props.info.name}
             </TextBox>
             <CenterBox
                 css={css`
@@ -56,14 +70,15 @@ export const ModalContent: React.FC = () => {
             </CenterBox>
             <VBox height={32} />
             <VFlexBox gap={16}>
-                <div>
+                {/* <div>
                     <TextBox weight={600} size={20}>
                         일시
                     </TextBox>
                     <VBox height={4} />
-                </div>
-                <ModalCalendar />
-                <TimePicker />
+                </div> */}
+                <ModalCalendar day={day} setDay={setDay} />
+                <input placeholder="장소" onChange={(e) => setLocation(e.target.value)} />
+                <TimePicker startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} />
                 <CenterBox
                     css={css`
                         margin: 0 auto;
@@ -83,12 +98,47 @@ export const ModalContent: React.FC = () => {
                         size={20}
                         color="white"
                         weight={500}
+                        onClick={async () => {
+                            const start = new Date(day)
+                            start.setHours(startTime.getHours())
+                            start.setMinutes(startTime.getMinutes())
+
+                            const end = new Date(day)
+                            end.setHours(endTime.getHours())
+                            end.setMinutes(endTime.getMinutes())
+
+                            if (location === "") {
+                                alert("장소가 없어용 ㅠㅠ.")
+                                return
+                            }
+                            if (start >= end) {
+                                alert("끝나는 시각은 시작 시각보다 미래여야 합니다.")
+                                return
+                            }
+                            if (end.getTime() - start.getTime() > maxDuration) {
+                                alert(`멘토링은 최대 ${maxDuration / (60 * 60 * 1000)}시간까지만 가능합니다.`)
+                                return
+                            }
+
+                            const res = await request("mentoring_reserve", {
+                                accessToken: userInfo.accessToken,
+                                code: props.info.code,
+                                plan: {
+                                    location,
+                                    start,
+                                    end
+                                }
+                            })
+
+                            if (!res.success) console.log(res.error)
+                            EventHandler.trigger("modal", null)
+                        }}
                     >
                         예약하기
                     </TextBox>
                 </CenterBox>
             </VFlexBox>
-            
+
         </div>
     )
 }

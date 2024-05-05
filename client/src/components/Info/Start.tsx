@@ -72,10 +72,10 @@ export const Start: React.FC<IStart> = (props) => {
                 시작
             </Button>
             <Button
-                onClick={() => EventHandler.trigger("modal", <ModalContent />)}
+                onClick={() => EventHandler.trigger("modal", <ModalContent info={props.info} />)}
             >
-                예약
+                {props.info.plan === null ? "예약" : "예약 변경"}
             </Button>
         </HFlexBox>
-    ) 
+    )
 }

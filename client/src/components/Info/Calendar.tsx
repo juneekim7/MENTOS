@@ -122,13 +122,22 @@ const CalendarWrapper: React.FC<React.PropsWithChildren> = (props) => {
     )
 }
 
-export const ModalCalendar: React.FC = () => {
+interface IModalCalendarProps {
+    day: Date
+    setDay: React.Dispatch<React.SetStateAction<Date>>
+}
+
+export const ModalCalendar: React.FC<IModalCalendarProps> = (props) => {
     return (
         <CalendarWrapper>
             <Calendar
                 minDetail="month"
                 maxDetail="month"
                 formatDay={(_locale, date) => moment(date).format("D")}
+                defaultValue={props.day}
+                onClickDay={(value) => {
+                    props.setDay(value)
+                }}
             />
         </CalendarWrapper>
     )
