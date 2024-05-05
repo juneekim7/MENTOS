@@ -60,7 +60,6 @@ export class WS {
     }
 
     public close() {
-        console.log(1)
         if (this.ws === null) return
         this.ws.close()
         this.ws = null

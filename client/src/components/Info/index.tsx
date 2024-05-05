@@ -35,8 +35,7 @@ export const MentoringInfo: React.FC = () => {
     useEffect(() => {
         const code = parseInt(id ?? "0")
         ;(async () => {
-            console.log("open")
-            ws.open()
+            await ws.open()
             ws.addEventListener("mentoring_update", (res) => {
                 if (code === res.code) forceUpdate()
             })

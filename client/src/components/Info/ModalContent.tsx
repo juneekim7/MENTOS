@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faXmark } from "@fortawesome/free-solid-svg-icons"
 import { CenterBox } from "../common/CenterBox"
 import { EventHandler } from "../../utils/event"
+import { TimePicker } from "./TimePicker"
+import { ModalCalendar } from "./Calendar"
 
 export const ModalContent: React.FC = () => {
     return (
@@ -20,9 +22,14 @@ export const ModalContent: React.FC = () => {
                 max-width: 500px;
                 position: relative;
             `}
+            onClick={(e) => e.stopPropagation()}
         >
             <TextBox weight={600} size={24} center>
-                멘토링 예약하기
+                멘토링 예약
+            </TextBox>
+            <VBox height={4} />
+            <TextBox center color="gray">
+                - 10. 시그마 정멘
             </TextBox>
             <CenterBox
                 css={css`
@@ -51,18 +58,35 @@ export const ModalContent: React.FC = () => {
             <VFlexBox gap={16}>
                 <div>
                     <TextBox weight={600} size={20}>
-                        멘토링
-                    </TextBox>
-                    <VBox height={4} />
-                    10. 시그마 정멘
-                </div>
-                <div>
-                    <TextBox weight={600} size={20}>
                         일시
                     </TextBox>
                     <VBox height={4} />
-                    10. 시그마 정멘
                 </div>
+                <ModalCalendar />
+                <TimePicker />
+                <CenterBox
+                    css={css`
+                        margin: 0 auto;
+                        padding: 12px 24px;
+                        border-radius: 8px;
+                        background-color: var(--mentos-official);
+                        transition: all 0.3s linear;
+                        cursor: pointer;
+
+                        :hover {
+                            background-color: var(--mentos-official-dark);
+                            transform: translateY(-5px);
+                        }
+                    `}
+                >
+                    <TextBox
+                        size={20}
+                        color="white"
+                        weight={500}
+                    >
+                        예약하기
+                    </TextBox>
+                </CenterBox>
             </VFlexBox>
             
         </div>

@@ -1,9 +1,7 @@
 import { css } from "@emotion/react"
 import { DivProps } from "../../global"
 import { omit } from "../../utils/omit"
-import { useState } from "react"
-
-type TDivision = "mentor" | "mentee"
+import { TDivision } from "."
 
 interface IDivision {
     selected: boolean
@@ -33,20 +31,23 @@ const Division: React.FC<DivProps<IDivision>> = (props) => {
     )
 }
 
-export const DivisonSelector: React.FC = () => {
-    const [division, setDivision] = useState<TDivision>("mentor")
+interface IDSProps {
+    division: TDivision
+    setDivision: React.Dispatch<React.SetStateAction<TDivision>>
+}
 
+export const DivisonSelector: React.FC<IDSProps> = (props) => {
     return (
         <div>
             <Division
-                selected={division === "mentor"}
-                onClick={() => setDivision("mentor")}
+                selected={props.division === "mentor"}
+                onClick={() => props.setDivision("mentor")}
             >
                 멘토
             </Division>
             <Division
-                selected={division === "mentee"}
-                onClick={() => setDivision("mentee")}
+                selected={props.division === "mentee"}
+                onClick={() => props.setDivision("mentee")}
             >
                 멘티
             </Division>

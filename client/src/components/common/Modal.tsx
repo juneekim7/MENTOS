@@ -1,5 +1,5 @@
 import { css } from "@emotion/react"
-import { useEvent } from "../../utils/event"
+import { EventHandler, useEvent } from "../../utils/event"
 import { useState } from "react"
 import { CenterBox } from "./CenterBox"
 
@@ -8,6 +8,8 @@ export const ModalContainer: React.FC = () => {
 
     useEvent("modal", (content: React.ReactNode | null) => {
         setContent(content)
+        if (content === null) document.body.style.overflow = "scroll"
+        else document.body.style.overflow = "hidden"
     })
 
     if (content === null) return <></>
@@ -23,6 +25,7 @@ export const ModalContainer: React.FC = () => {
                 height: 100%;
                 z-index: 100;
             `}
+            onClick={() => EventHandler.trigger("modal", null)}
         >
             {content}
         </CenterBox>
