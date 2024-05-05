@@ -15,7 +15,7 @@ export interface RankMentoring {
     time: number
 }
 
-export const toMentoringRank = (mtrList: Mentoring[]) => {
+export const toMentoringRanking = (mtrList: Mentoring[]) => {
     const rankMtrList = mtrList.map((mtr) => {
         const { code, name } = mtr
         const time = mtr.logs.reduce((acc, log) => acc + new Date(log.end).getTime() - new Date(log.start).getTime(), 0)

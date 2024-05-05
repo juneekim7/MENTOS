@@ -7,7 +7,8 @@ import { useContext, useEffect, useState } from "react"
 import { currentSemester } from "../../../../models/mentoring"
 import { UserInfoContext } from "../context/User"
 import { request } from "../../utils/connection"
-import { RankMentoring, toMentoringRank } from "../../utils/mentoring"
+import { RankMentoring, toMentoringRanking } from "../../utils/mentoring"
+import { RankUser, toUserRanking } from "../../utils/user"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -50,6 +51,7 @@ namespace TableElement {
 export const Ranking: React.FC = () => {
     const { userInfo } = useContext(UserInfoContext)
     const [MentoringRanking, setMentoringRanking] = useState<RankMentoring[]>([])
+    const [UserRanking, setUserRanking] = useState<RankUser[]>([])
 
     useEffect(() => {
         (async () => {
@@ -61,7 +63,8 @@ export const Ranking: React.FC = () => {
             })
 
             if (!res.success) return // TODO: Error
-            setMentoringRanking(toMentoringRank(res.data))
+            setMentoringRanking(toMentoringRanking(res.data))
+            setUserRanking(toUserRanking(res.data))
         })()
     }, [userInfo])
     return (
@@ -83,10 +86,28 @@ export const Ranking: React.FC = () => {
                 </thead>
                 <tbody>
                     {
-                        MentoringRanking.map((m, index) => <TableElement.Row>
+                        MentoringRanking.map((mtr, index) => <TableElement.Row>
                             <TableElement.Data>{index + 1}</TableElement.Data>
-                            <TableElement.Data>{m.name}</TableElement.Data>
-                            <TableElement.Data>{Math.floor(m.time / (60 * 60 * 1000))}h {Math.floor(m.time / (60 * 1000) % 60)}m</TableElement.Data>
+                            <TableElement.Data>{mtr.name}</TableElement.Data>
+                            <TableElement.Data>{Math.floor(mtr.time / (60 * 60 * 1000))}h {Math.floor(mtr.time / (60 * 1000) % 60)}m</TableElement.Data>
+                        </TableElement.Row>)
+                    }
+                </tbody>
+            </table>
+            <table css={css`width: 100%; border-collapse: collapse;`}>
+                <thead>
+                    <TableElement.Row>
+                        <TableElement.Head>#</TableElement.Head>
+                        <TableElement.Head>학번/이름</TableElement.Head>
+                        <TableElement.Head>참여 횟수</TableElement.Head>
+                    </TableElement.Row>
+                </thead>
+                <tbody>
+                    {
+                        UserRanking.map((user, index) => <TableElement.Row>
+                            <TableElement.Data>{index + 1}</TableElement.Data>
+                            <TableElement.Data>{user.id} {user.name}</TableElement.Data>
+                            <TableElement.Data>{user.part}회</TableElement.Data>
                         </TableElement.Row>)
                     }
                 </tbody>

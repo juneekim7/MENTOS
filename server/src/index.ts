@@ -355,3 +355,15 @@ addServerEventListener('mentoring_attend_decline', async (body) => {
     })
     return success(null)
 })
+
+addServerEventListener('user_list', async (body) => {
+    const { accessToken, semester } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+
+    const userList = await userColl(semester).find({}, withoutId).toArray()
+    if (userList === null) {
+        return failure(`No mentoring in the semester ${semester}`)
+    }
+    return success(userList)
+})

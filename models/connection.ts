@@ -97,5 +97,12 @@ export interface Connection {
             menteeId: string
         },
         null
+    ],
+    'user_list': [
+        {
+            accessToken: string
+            semester: Semester
+        },
+        User[]
     ]
 }
