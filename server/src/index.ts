@@ -361,8 +361,9 @@ addServerEventListener('mentoring_rank', getRes(async (body) => {
     const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
 
-    return success(
-        (await mentoringColl(semester).find({}, withoutId).toArray())
-            .map((m) => toRankMentoring(m))
-    )
+    const mentoringList = (await mentoringColl(semester).find({}, withoutId).toArray())
+        .map((m) => toRankMentoring(m))
+    mentoringList.sort((a, b) => a.time - b.time)
+
+    return success(mentoringList)
 }))

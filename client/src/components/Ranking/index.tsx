@@ -3,6 +3,10 @@ import { Content } from "../common/Content"
 import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 import { DivisonSelector } from "./DivisionSelector"
+import { useContext, useEffect, useState } from "react"
+import { RankMentoring, currentSemester } from "../../../../models/mentoring"
+import { UserInfoContext } from "../context/User"
+import { request } from "../../utils/connection"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -43,6 +47,22 @@ namespace TableElement {
 }
 
 export const Ranking: React.FC = () => {
+    const { userInfo } = useContext(UserInfoContext)
+    const [MentoringRanking, setMentoringRanking] = useState<RankMentoring[]>([])
+
+    useEffect(() => {
+        (async () => {
+            if (userInfo.accessToken === "") return
+
+            const res = await request("mentoring_rank", {
+                accessToken: userInfo.accessToken,
+                semester: currentSemester()
+            })
+
+            if (!res.success) return // TODO: Error
+            setMentoringRanking(res.data)
+        })()
+    }, [userInfo])
     return (
         <Content>
             <VBox height={32} />
@@ -61,16 +81,13 @@ export const Ranking: React.FC = () => {
                     </TableElement.Row>
                 </thead>
                 <tbody>
-                    <TableElement.Row>
-                        <TableElement.Data>1</TableElement.Data>
-                        <TableElement.Data>정보과학1</TableElement.Data>
-                        <TableElement.Data>03h 00m</TableElement.Data>
-                    </TableElement.Row>
-                    <TableElement.Row>
-                        <TableElement.Data>2</TableElement.Data>
-                        <TableElement.Data>웹 개발</TableElement.Data>
-                        <TableElement.Data>06h 00m</TableElement.Data>
-                    </TableElement.Row>
+                    {
+                        MentoringRanking.map((m, index) => <TableElement.Row>
+                            <TableElement.Data>{index + 1}</TableElement.Data>
+                            <TableElement.Data>{m.name}</TableElement.Data>
+                            <TableElement.Data>{Math.floor(m.time / (60 * 60 * 1000))}h {Math.floor(m.time / (60 * 1000) % 60)}m</TableElement.Data>
+                        </TableElement.Row>)
+                    }
                 </tbody>
             </table>
         </Content>
