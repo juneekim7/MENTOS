@@ -21,7 +21,7 @@ export const toUserRanking = (mtrList: Mentoring[]) => {
                         id
                     })
                 }
-                partOfUser.set(user.id, partOfUser.get(user.id) ?? 0 + 1)
+                partOfUser.set(user.id, (partOfUser.get(user.id) ?? 0) + 1)
             }
         }
     }
@@ -34,6 +34,6 @@ export const toUserRanking = (mtrList: Mentoring[]) => {
             part: partOfUser.get(id)
         } as RankUser
     })
-    rankUserList.sort((a, b) => a.part - b.part)
+    rankUserList.sort((a, b) => b.part - a.part)
     return rankUserList
 }

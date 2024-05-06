@@ -29,12 +29,9 @@ export const webDev: Mentoring = {
 
 export const sigma: Mentoring = {
     code: 10,
-    name: '시그마 정멘',
+    name: '정보과학1',
     mentors: [changha, gaon],
-    mentees: [{
-        name: '총무부',
-        id: 'ksacommuni'
-    }],
+    mentees: [junee],
     classification: 'academic',
     working: null,
     logs: [],
@@ -45,7 +42,7 @@ export const latex: Mentoring = {
     code: 28,
     name: 'LaTeX',
     mentors: [changha],
-    mentees: [gaon],
+    mentees: [],
     classification: 'artisan',
     working: null,
     logs: [],
@@ -56,7 +53,7 @@ export const valorant: Mentoring = {
     code: 35,
     name: '발로란트',
     mentors: [junee],
-    mentees: [changha],
+    mentees: [gaon],
     classification: 'artisan',
     working: null,
     logs: [],

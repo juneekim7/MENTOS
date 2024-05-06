@@ -25,6 +25,6 @@ export const toMentoringRanking = (mtrList: Mentoring[]): RankMentoring[] => {
             time
         }
     })
-    rankMtrList.sort((a, b) => a.time - b.time)
+    rankMtrList.sort((a, b) => b.time - a.time)
     return rankMtrList
 }
