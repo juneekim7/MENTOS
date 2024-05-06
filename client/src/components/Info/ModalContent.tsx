@@ -12,6 +12,7 @@ import { useContext, useState } from "react"
 import { request } from "../../utils/connection"
 import { UserInfoContext } from "../context/User"
 import { Mentoring, maxDuration } from "../../../../models/mentoring"
+import { Input } from "../common/Input"
 
 interface IModalContentProps {
     info: Mentoring
@@ -77,8 +78,8 @@ export const ModalContent: React.FC<IModalContentProps> = (props) => {
                     <VBox height={4} />
                 </div> */}
                 <ModalCalendar day={day} setDay={setDay} />
-                <input placeholder="장소" onChange={(e) => setLocation(e.target.value)} />
                 <TimePicker startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} />
+                <Input placeholder="장소" onChange={(e) => setLocation(e.target.value)} />
                 <CenterBox
                     css={css`
                         margin: 0 auto;
@@ -108,11 +109,11 @@ export const ModalContent: React.FC<IModalContentProps> = (props) => {
                             end.setMinutes(endTime.getMinutes())
 
                             if (location === "") {
-                                alert("장소가 없어용 ㅠㅠ.")
+                                alert("장소를 입력해주세요.")
                                 return
                             }
                             if (start >= end) {
-                                alert("끝나는 시각은 시작 시각보다 미래여야 합니다.")
+                                alert("종료 시각은 시작 시각 이후여야 합니다.")
                                 return
                             }
                             if (end.getTime() - start.getTime() > maxDuration) {
@@ -138,7 +139,6 @@ export const ModalContent: React.FC<IModalContentProps> = (props) => {
                     </TextBox>
                 </CenterBox>
             </VFlexBox>
-
         </div>
     )
 }
