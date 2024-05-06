@@ -58,6 +58,13 @@ export interface Connection {
         },
         null
     ],
+    'mentoring_reserve_cancel': [
+        {
+            accessToken: string
+            code: number
+        },
+        null
+    ],
     'mentoring_start': [
         {
             accessToken: string
@@ -72,6 +79,13 @@ export interface Connection {
             accessToken: string
             code: number
             endImage: string
+        },
+        null
+    ],
+    'mentoring_cancel': [
+        {
+            accessToken: string
+            code: number
         },
         null
     ],

@@ -1,11 +1,10 @@
-import { executeAfterDelay, testReq } from './basic'
+import { changhaAccessToken, executeAfterDelay, testReq } from './basic'
 
 async function execute() {
     console.log('execute started')
-    await testReq('mentoring_end', {
-        code: 25,
-        endImage: 'exampleimage'
-    })
+    await testReq('mentoring_cancel', {
+        code: 28
+    }, changhaAccessToken)
 }
 
 executeAfterDelay(execute)

@@ -172,6 +172,29 @@ addServerEventListener('mentoring_reserve', async (body) => {
     return success(null)
 })
 
+addServerEventListener('mentoring_reserve_cancel', async (body) => {
+    const { accessToken, code } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+    const user = getUserRes.data
+
+    const getMentoringRes = await getMentoring(code, user, 'mentor')
+    if (!getMentoringRes.success) return getMentoringRes
+    const mentoring = getMentoringRes.data
+    if (mentoring.plan === null) {
+        return failure('There is no plan to cancel.')
+    }
+
+    await mentoringColl().updateOne({ code }, {
+        $set: { plan: null }
+    })
+
+    WS.send(code.toString(), 'mentoring_update', {
+        code
+    })
+    return success(null)
+})
+
 addServerEventListener('mentoring_start', async (body) => {
     const { accessToken, code, location, startImage } = body
     const getUserRes = await getUser(accessToken)
@@ -204,6 +227,28 @@ addServerEventListener('mentoring_start', async (body) => {
 
     await mentoringColl().updateOne({ code }, {
         $set: { working, plan: null }
+    })
+
+    WS.send(code.toString(), 'mentoring_update', {
+        code
+    })
+    return success(null)
+})
+
+addServerEventListener('mentoring_cancel', async (body) => {
+    const { accessToken, code } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+    const user = getUserRes.data
+
+    const getMentoringRes = await getMentoring(code, user, 'mentor')
+    if (!getMentoringRes.success) return getMentoringRes
+    if (getMentoringRes.data.working === null) {
+        return failure('Mentoring is not in progress.')
+    }
+
+    await mentoringColl().updateOne({ code }, {
+        $set: { working: null }
     })
 
     WS.send(code.toString(), 'mentoring_update', {

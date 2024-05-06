@@ -4,6 +4,9 @@ import { addHours, changhaAccessToken, executeAfterDelay, socketRequest, testReq
 async function test() {
     console.log('test started')
     await testReq('login', {})
+    await socketRequest('mentoring_subscribe', {
+        code: 25
+    })
     await testReq('mentoring_list', { semester: currentSemester() })
     await testReq('mentoring_info', { semester: currentSemester(), code: 25 })
     await testReq('mentoring_reserve', {
@@ -14,14 +17,13 @@ async function test() {
             end: addHours('2024-12-31', 2)
         }
     })
+    await testReq('mentoring_reserve_cancel', {
+        code: 25
+    })
     await testReq('mentoring_start', {
         code: 25,
         location: '형설관 3303',
         startImage: 'exampleimage'
-    })
-
-    await socketRequest('mentoring_subscribe', {
-        code: 25
     })
     await testReq('mentoring_attend_req', {
         code: 25
@@ -29,6 +31,14 @@ async function test() {
     await testReq('mentoring_attend_decline', {
         code: 25,
         menteeId: '23-035'
+    })
+    await testReq('mentoring_cancel', {
+        code: 25
+    })
+    await testReq('mentoring_start', {
+        code: 25,
+        location: '형설관 3303',
+        startImage: 'exampleimage'
     })
     await testReq('mentoring_attend_req', {
         code: 25
