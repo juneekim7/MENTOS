@@ -1,10 +1,13 @@
-import { changhaAccessToken, executeAfterDelay, testReq } from './basic'
+import { adminColl } from '../src'
+import { executeAfterDelay } from './basic'
 
 async function execute() {
     console.log('execute started')
-    await testReq('mentoring_cancel', {
-        code: 28
-    }, changhaAccessToken)
+    await adminColl.insertMany([
+        { id: '23-031' },
+        { id: '23-031' },
+        { id: 'scivol' }
+    ])
 }
 
 executeAfterDelay(execute)

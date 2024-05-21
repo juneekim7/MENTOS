@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { userColl, withoutId } from '.'
+import { adminColl, userColl, withoutId } from '.'
 import { failure, success } from '../../models/connection'
 import { User } from '../../models/user'
 import { getRes } from './utils'
@@ -61,3 +61,12 @@ export const getUser = getRes(async (accessToken: string, semester: Semester = c
     savedUser[semester + accessToken] = user
     return success(user)
 })
+
+export const isAdmin = async (accessToken: string, semester: Semester = currentSemester()) => {
+    const getUserRes = await getUser(accessToken, semester)
+    if (!getUserRes.success) return getUserRes
+    if (adminColl.findOne({ id: getUserRes.data.id }) === null) {
+        return failure('You are not admin.')
+    }
+    return success(null)
+}

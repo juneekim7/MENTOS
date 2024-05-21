@@ -8,31 +8,16 @@ import { Response, failure, success, type Connection } from '../../models/connec
 import { WSClientReq, WSClientReqCont, WSServerRes, WSServerResCont } from '../../models/ws'
 import { User } from '../../models/user'
 import { Log, LogImage, Mentoring, Semester, WorkingLog, currentSemester } from '../../models/mentoring'
-import { getUser } from './user'
+import { getUser, isAdmin } from './user'
 import { KeyOfMap, getRes } from './utils'
 import { checkLog, getMentoring } from './mentoring'
 
+// #region app setting
 export type ParamDict = Record<string, string>
 
 const app = express()
 app.use(bodyParser.json())
 app.use(cors())
-
-const wss = new WebSocketServer({ port: 3000 })
-
-configDotenv()
-const DB = new MongoClient(`mongodb+srv://${process.env.MONGODB_ID}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URI}/?retryWrites=true&w=majority`, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true
-    }
-})
-
-export const userColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<User>('user')
-export const mentoringColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<Mentoring>('mentoring')
-export const logImageColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<LogImage>('logImage')
-export const withoutId = { projection: { _id: false } }
 
 app.listen(8080, () => {
     console.log('The server has started.')
@@ -46,6 +31,27 @@ const addServerEventListener = <T extends keyof Connection>(
         res.json(await getRes(cb)(req.body as Connection[T][0]))
     })
 }
+// #endregion
+
+// #region db setting
+configDotenv()
+const DB = new MongoClient(`mongodb+srv://${process.env.MONGODB_ID}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URI}/?retryWrites=true&w=majority`, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true
+    }
+})
+
+export const userColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<User>('user')
+export const mentoringColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<Mentoring>('mentoring')
+export const logImageColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<LogImage>('logImage')
+export const adminColl = DB.db('admins').collection<Record<'id', string>>('adminId')
+export const withoutId = { projection: { _id: false } }
+// #endregion
+
+// #region ws setting
+const wss = new WebSocketServer({ port: 3000 })
 
 type WSEventCallback<C extends keyof WSClientReqCont> = (socket: WebSocket, content: WSClientReqCont[C]) => Promise<Response<null>>
 
@@ -105,6 +111,7 @@ wss.on('connection', (socket, _request) => {
         }
     })
 })
+// #endregion
 
 WS.addSocketEventListener('mentoring_subscribe', getRes(async (socket, content) => {
     const { code } = content
@@ -112,6 +119,7 @@ WS.addSocketEventListener('mentoring_subscribe', getRes(async (socket, content) 
     return success(null)
 }))
 
+// #region mentoring
 addServerEventListener('login', async (body) => {
     const { accessToken } = body
     return await getUser(accessToken)
@@ -411,4 +419,71 @@ addServerEventListener('user_list', async (body) => {
         return failure(`No mentoring in the semester ${semester}`)
     }
     return success(userList)
+})
+// #endregion
+
+addServerEventListener('is_admin', async (body) => {
+    const { accessToken } = body
+    const isAdminRes = await isAdmin(accessToken)
+    if (!isAdminRes.success) return isAdminRes
+    return success(null)
+})
+
+addServerEventListener('add_users', async (body) => {
+    const { accessToken, userListString, semester } = body
+    const isAdminRes = await isAdmin(accessToken)
+    if (!isAdminRes.success) return isAdminRes
+
+    const userList: User[] = []
+    for (const userString of userListString.split('\n')) {
+        const [id, name] = userString.split(' ')
+        userList.push({
+            id,
+            name
+        })
+    }
+
+    await userColl(semester).insertMany(userList)
+    return success(null)
+})
+
+addServerEventListener('add_mentorings', async (body) => {
+    const { accessToken, mentoringListString, semester } = body
+    const isAdminRes = await isAdmin(accessToken)
+    if (!isAdminRes.success) return isAdminRes
+
+    const mentoringList: Mentoring[] = []
+    for (const mentoringString of mentoringListString.split('\n\n')) {
+        const [codeString, name, mentorsId, menteesId, classification] = mentoringString.split('\n')
+        const code = Number(codeString)
+        if (isNaN(code)) return failure('Code is NaN.')
+        const mentors = await Promise.all(
+            mentorsId.split(' ').map(async (id) => {
+                const mentorUser: User | null = await userColl(semester).findOne({ id }, withoutId)
+                if (mentorUser === null) throw new Error(`Invalid mentor id in mentoring ${code} ${name}`)
+                return mentorUser
+            })
+        )
+        const mentees = await Promise.all(
+            menteesId.split(' ').map(async (id) => {
+                const menteeUser = await userColl(semester).findOne({ id }, withoutId)
+                if (menteeUser === null) throw new Error(`Invalid mentee id in mentoring ${code} ${name}`)
+                return menteeUser
+            })
+        )
+        if (!(classification === 'academic' || classification === 'artisan')) return failure('Invalid classification')
+
+        mentoringList.push({
+            code,
+            name,
+            mentors,
+            mentees,
+            classification,
+            working: null,
+            plan: null,
+            logs: []
+        })
+    }
+    await mentoringColl(semester).insertMany(mentoringList)
+    return success(null)
 })

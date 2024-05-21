@@ -118,5 +118,27 @@ export interface Connection {
             semester: Semester
         },
         User[]
+    ],
+    'is_admin': [
+        {
+            accessToken: string
+        },
+        null
+    ],
+    'add_users': [
+        {
+            accessToken: string
+            userListString: string
+            semester: Semester
+        },
+        null
+    ]
+    'add_mentorings': [
+        {
+            accessToken: string
+            mentoringListString: string
+            semester: Semester
+        },
+        null
     ]
 }
