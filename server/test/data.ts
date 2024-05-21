@@ -29,7 +29,7 @@ export const webDev: Mentoring = {
 
 export const sigma: Mentoring = {
     code: 10,
-    name: '정보과학1',
+    name: '정보과학1 (시그마 정멘)',
     mentors: [changha, gaon],
     mentees: [junee],
     classification: 'academic',
