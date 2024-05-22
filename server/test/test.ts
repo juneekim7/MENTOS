@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
-import { currentSemester } from '../../models/mentoring'
 import { addHours, changhaAccessToken, executeAfterDelay, socketRequest, testReq } from './basic'
 import { resolve } from 'path'
+import { currentSemester } from '../src/utils'
 
 async function _test() {
     console.log('test started')
@@ -64,12 +64,13 @@ async function adminTest() {
     console.log('admin test started')
 
     await testReq('is_admin', {})
-    const user2024 = readFileSync(resolve(__dirname, './test/user2024.txt'), 'utf-8')
+
     await testReq('add_users', {
         semester: '2024-1',
-        userListString: user2024
+        userListString: '21-124 황성진'
     })
-    const mentoring20241 = readFileSync(resolve(__dirname, './test/mentoring2024-1.txt'), 'utf-8')
+
+    const mentoring20241 = readFileSync(resolve(__dirname, './data/mentoring2024-1.txt'), 'utf-8')
     await testReq('add_mentorings', {
         semester: '2024-1',
         mentoringListString: mentoring20241

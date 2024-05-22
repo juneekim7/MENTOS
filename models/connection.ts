@@ -35,6 +35,12 @@ export interface Connection {
         },
         User
     ],
+    'get_current_semester': [
+        {
+            accessToken: string
+        },
+        Semester
+    ]
     'mentoring_list': [
         {
             accessToken: string

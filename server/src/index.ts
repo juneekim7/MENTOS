@@ -7,10 +7,10 @@ import { MongoClient, ServerApiVersion } from 'mongodb'
 import { Response, failure, success, type Connection } from '../../models/connection'
 import { WSClientReq, WSClientReqCont, WSServerRes, WSServerResCont } from '../../models/ws'
 import { User } from '../../models/user'
-import { Log, LogImage, Mentoring, Semester, WorkingLog } from '../../models/mentoring'
+import { Log, LogImage, Mentoring, WorkingLog } from '../../models/mentoring'
 import { getUser, isAdmin } from './user'
-import { KeyOfMap, getRes } from './utils'
-import { checkLog, currentSemester, getMentoring } from './mentoring'
+import { KeyOfMap, currentSemester, getRes, splitStringIntoChunks } from './utils'
+import { checkLog, getMentoring } from './mentoring'
 
 // #region app setting
 export type ParamDict = Record<string, string>
@@ -44,9 +44,9 @@ const DB = new MongoClient(`mongodb+srv://${process.env.MONGODB_ID}:${process.en
     }
 })
 
-export const userColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<User>('user')
-export const mentoringColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<Mentoring>('mentoring')
-export const logImageColl = (semester: Semester = currentSemester()) => DB.db(semester).collection<LogImage>('logImage')
+export const userColl = (semester = currentSemester()) => DB.db(semester).collection<User>('user')
+export const mentoringColl = (semester = currentSemester()) => DB.db(semester).collection<Mentoring>('mentoring')
+export const logImageColl = (semester = currentSemester()) => DB.db(semester).collection<LogImage>('logImage')
 export const adminColl = DB.db('admins').collection<Record<'id', string>>('adminId')
 export const withoutId = { projection: { _id: false } }
 // #endregion
@@ -444,7 +444,7 @@ addServerEventListener('add_users', async (body) => {
 
     const userList: User[] = []
     for (const userString of userListString.split('\n')) {
-        const [id, name] = userString.split(' ')
+        const [id, name] = userString.split(' ').map((v) => v.trim())
         userList.push({
             id,
             name
@@ -461,21 +461,27 @@ addServerEventListener('add_mentorings', async (body) => {
     if (!isAdminRes.success) return isAdminRes
 
     const mentoringList: Mentoring[] = []
-    for (const mentoringString of mentoringListString.split('\n\n')) {
-        const [codeString, name, mentorsId, menteesId, classification] = mentoringString.split('\n')
+    const userList = await userColl(semester).find().toArray()
+    for (const mentoringString of splitStringIntoChunks(mentoringListString, 5)) {
+        const [codeString, name, mentorsId, menteesId, classification] = mentoringString.split('\n').map((v) => v.trim())
         const code = Number(codeString)
         if (isNaN(code)) return failure('Code is NaN.')
+
         const mentors = await Promise.all(
             mentorsId.split(' ').map(async (id) => {
-                const mentorUser: User | null = await userColl(semester).findOne({ id }, withoutId)
-                if (mentorUser === null) throw new Error(`Invalid mentor id in mentoring ${code} ${name}`)
+                const mentorUser = userList.find((u) => u.id === id)
+                if (mentorUser === undefined) {
+                    throw new Error(`Invalid mentor id ${id} in ${semester} mentoring ${code} ${name}`)
+                }
                 return mentorUser
             })
         )
         const mentees = await Promise.all(
             menteesId.split(' ').map(async (id) => {
-                const menteeUser = await userColl(semester).findOne({ id }, withoutId)
-                if (menteeUser === null) throw new Error(`Invalid mentee id in mentoring ${code} ${name}`)
+                const menteeUser = userList.find((u) => u.id === id)
+                if (menteeUser === undefined) {
+                    throw new Error(`Invalid mentee id ${id} in ${semester} mentoring ${code} ${name}`)
+                }
                 return menteeUser
             })
         )
