@@ -7,10 +7,10 @@ import { MongoClient, ServerApiVersion } from 'mongodb'
 import { Response, failure, success, type Connection } from '../../models/connection'
 import { WSClientReq, WSClientReqCont, WSServerRes, WSServerResCont } from '../../models/ws'
 import { User } from '../../models/user'
-import { Log, LogImage, Mentoring, Semester, WorkingLog, currentSemester } from '../../models/mentoring'
+import { Log, LogImage, Mentoring, Semester, WorkingLog } from '../../models/mentoring'
 import { getUser, isAdmin } from './user'
 import { KeyOfMap, getRes } from './utils'
-import { checkLog, getMentoring } from './mentoring'
+import { checkLog, currentSemester, getMentoring } from './mentoring'
 
 // #region app setting
 export type ParamDict = Record<string, string>
@@ -21,6 +21,7 @@ app.use(cors())
 
 app.listen(8080, () => {
     console.log('The server has started.')
+    console.log(`current semester: ${currentSemester()}`)
 })
 
 const addServerEventListener = <T extends keyof Connection>(
@@ -123,6 +124,13 @@ WS.addSocketEventListener('mentoring_subscribe', getRes(async (socket, content) 
 addServerEventListener('login', async (body) => {
     const { accessToken } = body
     return await getUser(accessToken)
+})
+
+addServerEventListener('get_current_semester', async (body) => {
+    const { accessToken } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+    return success(currentSemester())
 })
 
 addServerEventListener('mentoring_list', async (body) => {

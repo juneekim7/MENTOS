@@ -3,7 +3,8 @@ import { adminColl, userColl, withoutId } from '.'
 import { failure, success } from '../../models/connection'
 import { User } from '../../models/user'
 import { getRes } from './utils'
-import { Semester, currentSemester } from '../../models/mentoring'
+import { Semester } from '../../models/mentoring'
+import { currentSemester } from './mentoring'
 
 interface googleData {
     data: {

@@ -1,8 +1,14 @@
 import { mentoringColl, withoutId } from '.'
 import { failure, success } from '../../models/connection'
-import { Auth, Log, maxDuration } from '../../models/mentoring'
+import { Auth, Log, Semester, maxDuration } from '../../models/mentoring'
 import { User } from '../../models/user'
 import { getRes } from './utils'
+
+export const currentSemester: () => Semester = () => {
+    const now = new Date()
+    const oneMonthBefore = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    return `${oneMonthBefore.getFullYear()}-${oneMonthBefore.getMonth() <= 7 ? 1 : 2}`
+}
 
 export const getMentoring = getRes(async (code: number, user: User, auth: Auth = 'any') => {
     const mentoring = await mentoringColl().findOne({ code }, withoutId)
