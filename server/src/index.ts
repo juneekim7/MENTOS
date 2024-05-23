@@ -44,10 +44,10 @@ const DB = new MongoClient(`mongodb+srv://${process.env.MONGODB_ID}:${process.en
     }
 })
 
-export const userColl = (semester = currentSemester()) => DB.db(semester).collection<User>('user')
+export const userColl = DB.db('user').collection<User>('user')
+export const adminColl = DB.db('user').collection<Record<'id', string>>('adminId')
 export const mentoringColl = (semester = currentSemester()) => DB.db(semester).collection<Mentoring>('mentoring')
 export const logImageColl = (semester = currentSemester()) => DB.db(semester).collection<LogImage>('logImage')
-export const adminColl = DB.db('admins').collection<Record<'id', string>>('adminId')
 export const withoutId = { projection: { _id: false } }
 // #endregion
 
@@ -420,14 +420,11 @@ addServerEventListener('mentoring_attend_decline', async (body) => {
 })
 
 addServerEventListener('user_list', async (body) => {
-    const { accessToken, semester } = body
+    const { accessToken } = body
     const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
 
-    const userList = await userColl(semester).find({}, withoutId).toArray()
-    if (userList === null) {
-        return failure(`No mentoring in the semester ${semester}`)
-    }
+    const userList = await userColl.find({}, withoutId).toArray()
     return success(userList)
 })
 // #endregion
@@ -440,7 +437,7 @@ addServerEventListener('is_admin', async (body) => {
 })
 
 addServerEventListener('add_users', async (body) => {
-    const { accessToken, userListString, semester } = body
+    const { accessToken, userListString } = body
     const isAdminRes = await isAdmin(accessToken)
     if (!isAdminRes.success) return isAdminRes
 
@@ -453,7 +450,7 @@ addServerEventListener('add_users', async (body) => {
         })
     }
 
-    await userColl(semester).insertMany(userList)
+    await userColl.insertMany(userList)
     return success(null)
 })
 
@@ -463,7 +460,7 @@ addServerEventListener('add_mentorings', async (body) => {
     if (!isAdminRes.success) return isAdminRes
 
     const mentoringList: Mentoring[] = []
-    const userList = await userColl(semester).find().toArray()
+    const userList = await userColl.find().toArray()
     for (const mentoringString of splitStringIntoChunks(mentoringListString, 5)) {
         const [codeString, name, mentorsId, menteesId, classification] = mentoringString.split('\n').map((v) => v.trim())
         const code = Number(codeString)

@@ -121,7 +121,6 @@ export interface Connection {
     'user_list': [
         {
             accessToken: string
-            semester: Semester
         },
         User[]
     ],
@@ -135,7 +134,6 @@ export interface Connection {
         {
             accessToken: string
             userListString: string
-            semester: Semester
         },
         null
     ]
