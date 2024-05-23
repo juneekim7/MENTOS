@@ -131,7 +131,7 @@ export interface Connection {
         },
         string
     ]
-    'is_admin': [
+    'verify_admin': [
         {
             accessToken: string
         },
@@ -158,6 +158,14 @@ export interface Connection {
             semester: Semester
             code: number
             mentoring: Mentoring
+        },
+        null
+    ]
+    'delete_mentoring': [
+        {
+            accessToken: string
+            semester: Semester
+            code: number
         },
         null
     ]

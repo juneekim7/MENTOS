@@ -61,11 +61,11 @@ export const getUser = getRes(async (accessToken: string) => {
     return success(user)
 })
 
-export const isAdmin = async (accessToken: string) => {
+export const verifyAdmin = async (accessToken: string) => {
     const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
     if (adminColl.findOne({ id: getUserRes.data.id }) === null) {
-        return failure('You are not admin.')
+        return success(false)
     }
-    return success(null)
+    return success(true)
 }

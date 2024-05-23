@@ -7,7 +7,7 @@ import { Response, failure, success, type Connection } from '../../models/connec
 import { WSClientReq, WSClientReqCont, WSServerRes, WSServerResCont } from '../../models/ws'
 import { User } from '../../models/user'
 import { Log, LogImage, Mentoring, WorkingLog, maxDuration } from '../../models/mentoring'
-import { getUser, isAdmin } from './user'
+import { getUser, verifyAdmin } from './user'
 import { KeyOfMap, currentSemester, getRes, splitStringIntoChunks } from './utils'
 import { checkLog, getMentoring } from './mentoring'
 
@@ -469,17 +469,17 @@ addServerEventListener('get_user_name', async (body) => {
 // #endregion
 
 // #region admin
-addServerEventListener('is_admin', async (body) => {
+addServerEventListener('verify_admin', async (body) => {
     const { accessToken } = body
-    const isAdminRes = await isAdmin(accessToken)
-    if (!isAdminRes.success) return isAdminRes
+    const verifyAdminRes = await verifyAdmin(accessToken)
+    if (!verifyAdminRes.success) return verifyAdminRes
     return success(null)
 })
 
 addServerEventListener('add_users', async (body) => {
     const { accessToken, userListString } = body
-    const isAdminRes = await isAdmin(accessToken)
-    if (!isAdminRes.success) return isAdminRes
+    const verifyAdminRes = await verifyAdmin(accessToken)
+    if (!verifyAdminRes.success) return verifyAdminRes
 
     const userList: User[] = []
     for (const userString of userListString.split('\n')) {
@@ -496,8 +496,8 @@ addServerEventListener('add_users', async (body) => {
 
 addServerEventListener('add_mentorings', async (body) => {
     const { accessToken, mentoringListString, semester } = body
-    const isAdminRes = await isAdmin(accessToken)
-    if (!isAdminRes.success) return isAdminRes
+    const verifyAdminRes = await verifyAdmin(accessToken)
+    if (!verifyAdminRes.success) return verifyAdminRes
 
     const mentoringList: Mentoring[] = []
     const userList = await userColl.find().toArray()
@@ -543,10 +543,19 @@ addServerEventListener('add_mentorings', async (body) => {
 
 addServerEventListener('edit_mentoring', async (body) => {
     const { accessToken, semester, code, mentoring } = body
-    const isAdminRes = await isAdmin(accessToken)
-    if (!isAdminRes.success) return isAdminRes
+    const verifyAdminRes = await verifyAdmin(accessToken)
+    if (!verifyAdminRes.success) return verifyAdminRes
 
     await mentoringColl(semester).findOneAndReplace({ code }, mentoring)
+    return success(null)
+})
+
+addServerEventListener('delete_mentoring', async (body) => {
+    const { accessToken, semester, code } = body
+    const verifyAdminRes = await verifyAdmin(accessToken)
+    if (!verifyAdminRes.success) return verifyAdminRes
+
+    await mentoringColl(semester).findOneAndDelete({ code })
     return success(null)
 })
 // #endregion
