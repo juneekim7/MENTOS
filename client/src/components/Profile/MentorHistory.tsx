@@ -54,7 +54,7 @@ export const MentorHistory: React.FC = () => {
                 멘토 활동 내역
             </TextBox>
             <VBox height={8} />
-            <HFlexBox gap={4} center>
+            <HFlexBox center>
                 <TextBox weight={500}>활동 멘토링 : </TextBox>
                 <TextBox>
                     <MentoringLink name="시그마 정멘" code={10} />

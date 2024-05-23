@@ -37,8 +37,8 @@ export const MentoringScreen: React.FC<Mentoring> = (props) => {
             </HFlexBox>
             <VBox height={30} />
             <VFlexBox full gap={8}>
-                <HFlexBox gap={4} center>
-                    <VFlexBox css={css`width: 14px;`} center>
+                <HFlexBox center>
+                    <VFlexBox css={css`width: 14px; margin-right: 4px;`} center>
                         <FontAwesomeIcon icon={faUser} size="sm" style={{ color: "var(--section-icon)" }} />
                     </VFlexBox>
                     {props.mentors.map((mtr, i, origin) => 
