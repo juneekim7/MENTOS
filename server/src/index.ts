@@ -513,3 +513,12 @@ addServerEventListener('add_mentorings', async (body) => {
     await mentoringColl(semester).insertMany(mentoringList)
     return success(null)
 })
+
+addServerEventListener('edit_mentoring', async (body) => {
+    const { accessToken, semester, code, mentoring } = body
+    const isAdminRes = await isAdmin(accessToken)
+    if (!isAdminRes.success) return isAdminRes
+
+    await mentoringColl(semester).findOneAndReplace({ code }, mentoring)
+    return success(null)
+})
