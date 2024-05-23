@@ -13,6 +13,31 @@ import { request } from "../../utils/connection"
 import { UserInfoContext } from "../context/User"
 import { Mentoring, maxDuration } from "../../../../models/mentoring"
 import { Input } from "../common/Input"
+import { omit } from "../../utils/omit"
+import { DivProps } from "../../global"
+
+const Button: React.FC<DivProps> = (props) => {
+    return (
+        <CenterBox
+            css={css`
+                margin: 0 auto;
+                padding: 12px 24px;
+                border-radius: 8px;
+                background-color: var(--mentos-official);
+                transition: all 0.3s linear;
+                cursor: pointer;
+
+                :hover {
+                    background-color: var(--mentos-official-dark);
+                    transform: translateY(-5px);
+                }
+            `}
+            {...omit(props, "children")}
+        >
+            {props.children}
+        </CenterBox>
+    )
+}
 
 interface RsvModalContentProps {
     info: Mentoring
@@ -25,6 +50,7 @@ export const RsvModalContent: React.FC<RsvModalContentProps> = (props) => {
     const [day, setDay] = useState<Date>(new Date())
     const [startTime, setStartTime] = useState<Date>(new Date())
     const [endTime, setEndTime] = useState<Date>(new Date(startTime.getTime() + 2 * 60 * 60 * 1000))
+    const [page, setPage] = useState<"first" | "second">("first")
 
     return (
         <div
@@ -71,33 +97,18 @@ export const RsvModalContent: React.FC<RsvModalContentProps> = (props) => {
                 />
             </CenterBox>
             <VBox height={32} />
-            <VFlexBox>
-                <ModalCalendar day={day} setDay={setDay} />
-                <VBox height={16} />
-                <TimePicker startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} />
-                <VBox height={32} />
-                <Input placeholder="장소" onChange={(e) => setLocation(e.target.value)} />
-                <VBox height={32} />
-                <CenterBox
-                    css={css`
-                        margin: 0 auto;
-                        padding: 12px 24px;
-                        border-radius: 8px;
-                        background-color: var(--mentos-official);
-                        transition: all 0.3s linear;
-                        cursor: pointer;
-
-                        :hover {
-                            background-color: var(--mentos-official-dark);
-                            transform: translateY(-5px);
-                        }
-                    `}
-                >
-                    <TextBox
-                        size={20}
-                        color="white"
-                        weight={500}
-                        onClick={async () => {
+            {page === "first"
+                ? <VFlexBox>
+                    <TextBox weight={600} size={20}>
+                        일시
+                    </TextBox>
+                    <VBox height={8} />
+                    <ModalCalendar day={day} setDay={setDay} />
+                    <VBox height={16} />
+                    <TimePicker startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} />
+                    <VBox height={32} />
+                    <Button
+                        onClick={() => {
                             const start = new Date(day)
                             start.setHours(startTime.getHours())
                             start.setMinutes(startTime.getMinutes())
@@ -106,10 +117,6 @@ export const RsvModalContent: React.FC<RsvModalContentProps> = (props) => {
                             end.setHours(endTime.getHours())
                             end.setMinutes(endTime.getMinutes())
 
-                            if (location === "") {
-                                alert("장소를 입력해주세요.")
-                                return
-                            }
                             if (start >= end) {
                                 alert("종료 시각은 시작 시각 이후여야 합니다.")
                                 return
@@ -118,6 +125,39 @@ export const RsvModalContent: React.FC<RsvModalContentProps> = (props) => {
                                 alert(`멘토링은 최대 ${maxDuration / (60 * 60 * 1000)}시간까지만 가능합니다.`)
                                 return
                             }
+                            setPage("second")
+                        }}
+                    >
+                        <TextBox
+                            size={20}
+                            color="white"
+                            weight={500}
+                        >
+                            다음
+                        </TextBox>
+                    </Button>
+                </VFlexBox>
+                : <VFlexBox>
+                    <TextBox weight={600} size={20}>
+                        장소
+                    </TextBox>
+                    <VBox height={8} />
+                    <Input onChange={(e) => setLocation(e.target.value)} />
+                    <VBox height={32} />
+                    <Button
+                        onClick={async () => {
+                            if (location === "") {
+                                alert("장소를 입력해주세요.")
+                                return
+                            }
+
+                            const start = new Date(day)
+                            start.setHours(startTime.getHours())
+                            start.setMinutes(startTime.getMinutes())
+
+                            const end = new Date(day)
+                            end.setHours(endTime.getHours())
+                            end.setMinutes(endTime.getMinutes())
 
                             const res = await request("mentoring_reserve", {
                                 accessToken: userInfo.accessToken,
@@ -136,10 +176,15 @@ export const RsvModalContent: React.FC<RsvModalContentProps> = (props) => {
                             }
                         }}
                     >
-                        예약하기
-                    </TextBox>
-                </CenterBox>
-            </VFlexBox>
+                        <TextBox
+                            size={20}
+                            color="white"
+                            weight={500}
+                        >
+                            예약
+                        </TextBox>
+                    </Button>
+                </VFlexBox>}
         </div>
     )
 }

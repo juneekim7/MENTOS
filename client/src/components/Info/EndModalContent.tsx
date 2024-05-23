@@ -92,6 +92,16 @@ export const EndModalContent: React.FC<EndModalContentProps> = (props) => {
             </CenterBox>
             <VBox height={32} />
             <VFlexBox center>
+                <div css={css`width: 100%;`}>
+                    <TextBox weight={600} size={20}>
+                        종료 사진
+                    </TextBox>
+                    <VBox height={4} />
+                    <TextBox size={12} color="red">
+                        주의 : https://vclock.kr/을 이용해주세요.
+                    </TextBox>
+                </div>
+                <VBox height={8} />
                 <CenterBox
                     css={css`
                         width: 100%;

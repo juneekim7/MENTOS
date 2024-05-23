@@ -9,11 +9,17 @@ import { useContext, useEffect, useState } from "react"
 import { Mentoring } from "../../../../models/mentoring"
 import { isMentee, isMentor } from "../../utils/mentoring"
 
-const defaultMentoringInfo: Mentoring[] = []
+const mentoringSort = (a: Mentoring, b: Mentoring) => {
+    if (a.working === null && b.working !== null) return 1
+    if (a.working !== null && b.working === null) return -1
+    if (a.plan === null && b.plan !== null) return 1
+    if (a.plan !== null && b.plan === null) return -1
+    return a.code - b.code
+}
 
 export const Home: React.FC = () => {
     const { userInfo } = useContext(UserInfoContext)
-    const [ MentoringInfo, setMentoringInfo ] = useState<Mentoring[]>(defaultMentoringInfo)
+    const [ MentoringInfo, setMentoringInfo ] = useState<Mentoring[]>([])
 
     useEffect(() => {
         (async () => {
@@ -37,15 +43,15 @@ export const Home: React.FC = () => {
             >
                 {MentoringInfo
                     .filter((v) => isMentor(v, userInfo))
-                    .sort((a, b) => a.code - b.code)
+                    .sort(mentoringSort)
                     .map((v, i) => <MentoringMain key={`mentor-${i}`} {...v} />)}
                 {MentoringInfo
                     .filter((v) => !isMentor(v, userInfo) && isMentee(v, userInfo))
-                    .sort((a, b) => a.code - b.code)
+                    .sort(mentoringSort)
                     .map((v, i) => <MentoringMain key={`mentee-${i}`} {...v} />)}
                 {MentoringInfo
                     .filter((v) => !isMentor(v, userInfo) && !isMentee(v, userInfo))
-                    .sort((a, b) => a.code - b.code)
+                    .sort(mentoringSort)
                     .map((v, i) => <MentoringMain key={`normal-${i}`} {...v} />)}
             </GridBox>
             <VBox height={32} />

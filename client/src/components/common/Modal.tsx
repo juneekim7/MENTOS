@@ -8,7 +8,7 @@ export const ModalContainer: React.FC = () => {
 
     useEvent("modal", (content: React.ReactNode | null) => {
         setContent(content)
-        if (content === null) document.body.style.overflow = "scroll"
+        if (content === null) document.body.style.overflow = "auto"
         else document.body.style.overflow = "hidden"
     })
 

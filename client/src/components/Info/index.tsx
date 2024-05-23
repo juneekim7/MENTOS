@@ -40,10 +40,7 @@ export const MentoringInfo: React.FC = () => {
             })
             ws.request("mentoring_subscribe", { code })
         })()
-        return () => {
-            console.log("close")
-            ws.close()
-        }
+        return () => ws.close()
     }, [forceUpdate, id])
 
     if (id === undefined || info === undefined) return <></>

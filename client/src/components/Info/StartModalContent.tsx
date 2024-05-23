@@ -97,7 +97,7 @@ export const StartModalContent: React.FC<StartModalContentProps> = (props) => {
             {page === "first"
                 ? <VFlexBox>
                     <TextBox weight={600} size={20}>
-                        멘토링 장소
+                        장소
                     </TextBox>
                     <VBox height={8} />
                     <Input onChange={(e) => setLocation(e.target.value)} />

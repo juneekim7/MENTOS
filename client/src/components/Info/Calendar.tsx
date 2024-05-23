@@ -138,6 +138,7 @@ export const ModalCalendar: React.FC<IModalCalendarProps> = (props) => {
                 onClickDay={(value) => {
                     props.setDay(value)
                 }}
+                css={css`max-width: 350px;`}
             />
         </CalendarWrapper>
     )
