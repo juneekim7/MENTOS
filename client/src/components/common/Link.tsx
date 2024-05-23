@@ -14,12 +14,14 @@ export const MentoringLink: React.FC<MentoringLinkProps> = (props) => {
 
     return (
         <HFlexBox
-            gap={2}
             onClick={(e) => {
                 e.stopPropagation()
                 navigate(`/info/${props.code}`)
             }}
-            css={css`cursor: pointer;`}
+            css={css`
+                cursor: pointer;
+                margin-right: 2px;
+            `}
         >
             <TextBox size={12} css={css`line-height: 16px;`}>
                 {props.code}
@@ -47,13 +49,15 @@ export const ProfileLink: React.FC<ProfileLinkProps> = (props) => {
     const navigate = useNavigate()
 
     return (
-        <HFlexBox 
-            gap={2}
+        <HFlexBox
             onClick={(e) => {
                 e.stopPropagation()
                 navigate(`/profile/${props.id}`)
             }}
-            css={css`cursor: pointer;`}
+            css={css`
+                cursor: pointer;
+                margin-right: 2px;
+            `}
         >
             {props.showId && <TextBox size={12} css={css`line-height: 16px;`}>
                 {props.id}

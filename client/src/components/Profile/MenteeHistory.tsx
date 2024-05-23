@@ -55,7 +55,7 @@ export const MenteeHistory: React.FC<{ id: string }> = () => {
                 멘티 활동 내역
             </TextBox>
             <VBox height={8} />
-            <HFlexBox gap={4} center>
+            <HFlexBox center>
                 <TextBox weight={500}>참여 횟수 : </TextBox>
                 <TextBox>3회</TextBox>
             </HFlexBox>

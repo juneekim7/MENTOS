@@ -96,7 +96,11 @@ export const StartModalContent: React.FC<StartModalContentProps> = (props) => {
             <VBox height={32} />
             {page === "first"
                 ? <VFlexBox>
-                    <Input placeholder="장소" onChange={(e) => setLocation(e.target.value)} />
+                    <TextBox weight={600} size={20}>
+                        멘토링 장소
+                    </TextBox>
+                    <VBox height={8} />
+                    <Input onChange={(e) => setLocation(e.target.value)} />
                     <VBox height={32} />
                     <Button
                         onClick={() => {
@@ -117,6 +121,16 @@ export const StartModalContent: React.FC<StartModalContentProps> = (props) => {
                     </Button>
                 </VFlexBox>
                 : <VFlexBox center>
+                    <div css={css`width: 100%;`}>
+                        <TextBox weight={600} size={20}>
+                            시작 사진
+                        </TextBox>
+                        <VBox height={4} />
+                        <TextBox size={12} color="red">
+                            주의 : https://vclock.kr/을 이용해주세요.
+                        </TextBox>
+                    </div>
+                    <VBox height={8} />
                     <CenterBox
                         css={css`
                             width: 100%;
@@ -164,7 +178,7 @@ export const StartModalContent: React.FC<StartModalContentProps> = (props) => {
                                 weight={500}
                                 color={image === null ? "white" : "black"}
                             >
-                                {image === null ? "파일 선택" : "재선택"}
+                                {image === null ? "파일 선택" : "파일 변경"}
                             </TextBox>
                             <input
                                 type="file"
