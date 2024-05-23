@@ -124,6 +124,13 @@ export interface Connection {
         },
         User[]
     ],
+    'get_user_name': [
+        {
+            accessToken: string
+            id: string
+        },
+        string
+    ],
     'is_admin': [
         {
             accessToken: string

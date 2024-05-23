@@ -47,7 +47,7 @@ namespace TableElement {
     }
 }
 
-export const MentorHistory: React.FC = () => {
+export const MentorHistory: React.FC<{ id: string }> = () => {
     return (
         <Fragment>
             <TextBox weight={700} size={24}>

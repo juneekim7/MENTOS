@@ -4,7 +4,7 @@ import { CenterBox } from "../common/CenterBox"
 import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 
-export const ProfileCard: React.FC = () => {
+export const ProfileCard: React.FC<{ id: string }> = () => {
     return (
         <div>
             <CenterBox
