@@ -2,8 +2,7 @@ import axios from 'axios'
 import { adminColl, userColl, withoutId } from '.'
 import { failure, success } from '../../models/connection'
 import { User } from '../../models/user'
-import { currentSemester, getRes } from './utils'
-import { Semester } from '../../models/mentoring'
+import { getRes } from './utils'
 
 interface googleData {
     data: {
@@ -15,7 +14,7 @@ interface googleData {
 
 const savedUser: Record<string, User> = {}
 
-export const getUser = getRes(async (accessToken: string, semester: Semester = currentSemester()) => {
+export const getUser = getRes(async (accessToken: string) => {
     if (accessToken === process.env.TEST_JUNEEACCESSTOKEN) {
         return success({
             name: '김준이',
@@ -34,8 +33,8 @@ export const getUser = getRes(async (accessToken: string, semester: Semester = c
             id: '23-035'
         })
     }
-    if (savedUser[semester + accessToken] !== undefined) {
-        return success(savedUser[semester + accessToken])
+    if (savedUser[accessToken] !== undefined) {
+        return success(savedUser[accessToken])
     }
 
     const { data } = await axios.get<unknown, googleData>(
@@ -46,7 +45,7 @@ export const getUser = getRes(async (accessToken: string, semester: Semester = c
     }
     const studentId = data.email.split('@')[0]
 
-    const foundUser = await userColl(semester).findOne({
+    const foundUser = await userColl.findOne({
         id: studentId
     }, withoutId)
     const user = foundUser ?? {
@@ -55,15 +54,15 @@ export const getUser = getRes(async (accessToken: string, semester: Semester = c
     }
 
     if (foundUser === null) {
-        await userColl(semester).insertOne(user)
+        await userColl.insertOne(user)
     }
 
-    savedUser[semester + accessToken] = user
+    savedUser[accessToken] = user
     return success(user)
 })
 
-export const isAdmin = async (accessToken: string, semester = currentSemester()) => {
-    const getUserRes = await getUser(accessToken, semester)
+export const isAdmin = async (accessToken: string) => {
+    const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
     if (adminColl.findOne({ id: getUserRes.data.id }) === null) {
         return failure('You are not admin.')

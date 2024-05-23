@@ -65,15 +65,21 @@ async function adminTest() {
 
     await testReq('is_admin', {})
 
+    const s21 = readFileSync(resolve(__dirname, './data/21학번표.txt'), 'utf-8')
+    const s22 = readFileSync(resolve(__dirname, './data/22학번표.txt'), 'utf-8')
+    const s23 = readFileSync(resolve(__dirname, './data/23학번표.txt'), 'utf-8')
+    const s24 = readFileSync(resolve(__dirname, './data/24학번표.txt'), 'utf-8')
     await testReq('add_users', {
-        semester: '2024-1',
-        userListString: '21-124 황성진'
+        userListString: s21
     })
-
-    const mentoring20241 = readFileSync(resolve(__dirname, './data/mentoring2024-1.txt'), 'utf-8')
-    await testReq('add_mentorings', {
-        semester: '2024-1',
-        mentoringListString: mentoring20241
+    await testReq('add_users', {
+        userListString: s22
+    })
+    await testReq('add_users', {
+        userListString: s23
+    })
+    await testReq('add_users', {
+        userListString: s24
     })
 }
 
