@@ -21,6 +21,7 @@ export const intervalFormat = (s: Date, e: Date) => {
 }
 
 export const milliToHMS = (milli: number) => {
+    if (milli < 0) return "00:00:00"
     const s = Math.floor(milli / 1000)
     const hour = Math.floor(s / 3600)
     const minute = Math.floor((s - 3600 * hour) / 60)

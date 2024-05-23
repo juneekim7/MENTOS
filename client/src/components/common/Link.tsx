@@ -21,6 +21,7 @@ export const MentoringLink: React.FC<MentoringLinkProps> = (props) => {
             css={css`
                 cursor: pointer;
                 margin-right: 2px;
+                font-variant-numeric: normal;
             `}
         >
             <TextBox size={12} css={css`line-height: 16px;`}>
