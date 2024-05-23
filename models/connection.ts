@@ -34,7 +34,7 @@ export interface Connection {
             accessToken: string
         },
         User
-    ],
+    ]
     'get_current_semester': [
         {
             accessToken: string
@@ -47,7 +47,7 @@ export interface Connection {
             semester?: Semester
         },
         Mentoring[]
-    ],
+    ]
     'mentoring_info': [
         {
             accessToken: string
@@ -55,7 +55,7 @@ export interface Connection {
             code: number
         },
         Mentoring
-    ],
+    ]
     'mentoring_reserve': [
         {
             accessToken: string
@@ -63,14 +63,14 @@ export interface Connection {
             plan: Plan
         },
         null
-    ],
+    ]
     'mentoring_reserve_cancel': [
         {
             accessToken: string
             code: number
         },
         null
-    ],
+    ]
     'mentoring_start': [
         {
             accessToken: string
@@ -79,7 +79,7 @@ export interface Connection {
             startImage: string
         },
         null
-    ],
+    ]
     'mentoring_end': [
         {
             accessToken: string
@@ -87,21 +87,21 @@ export interface Connection {
             endImage: string
         },
         null
-    ],
+    ]
     'mentoring_cancel': [
         {
             accessToken: string
             code: number
         },
         null
-    ],
+    ]
     'mentoring_attend_req': [
         {
             accessToken: string
             code: number
         },
         null
-    ],
+    ]
     'mentoring_attend_accept': [
         {
             accessToken: string
@@ -109,7 +109,7 @@ export interface Connection {
             menteeId: string
         },
         null
-    ],
+    ]
     'mentoring_attend_decline': [
         {
             accessToken: string
@@ -117,26 +117,26 @@ export interface Connection {
             menteeId: string
         },
         null
-    ],
+    ]
     'user_list': [
         {
             accessToken: string
         },
         User[]
-    ],
+    ]
     'get_user_name': [
         {
             accessToken: string
             id: string
         },
         string
-    ],
+    ]
     'is_admin': [
         {
             accessToken: string
         },
         null
-    ],
+    ]
     'add_users': [
         {
             accessToken: string
@@ -149,6 +149,15 @@ export interface Connection {
             accessToken: string
             mentoringListString: string
             semester: Semester
+        },
+        null
+    ]
+    'edit_mentoring': [
+        {
+            accessToken: string
+            semester: Semester
+            code: number
+            mentoring: Mentoring
         },
         null
     ]

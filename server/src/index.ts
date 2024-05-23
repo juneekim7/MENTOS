@@ -6,7 +6,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb'
 import { Response, failure, success, type Connection } from '../../models/connection'
 import { WSClientReq, WSClientReqCont, WSServerRes, WSServerResCont } from '../../models/ws'
 import { User } from '../../models/user'
-import { Log, LogImage, Mentoring, WorkingLog } from '../../models/mentoring'
+import { Log, LogImage, Mentoring, WorkingLog, maxDuration } from '../../models/mentoring'
 import { getUser, isAdmin } from './user'
 import { KeyOfMap, currentSemester, getRes, splitStringIntoChunks } from './utils'
 import { checkLog, getMentoring } from './mentoring'
@@ -160,6 +160,16 @@ addServerEventListener('mentoring_info', async (body) => {
     return success(mentoring)
 })
 
+const cancelMentoringReservation = async (code: number) => {
+    await mentoringColl().updateOne({ code }, {
+        $set: { plan: null }
+    })
+
+    WS.send(code.toString(), 'mentoring_update', {
+        code
+    })
+}
+
 addServerEventListener('mentoring_reserve', async (body) => {
     const { accessToken, code, plan } = body
     plan.start = new Date(plan.start)
@@ -184,6 +194,15 @@ addServerEventListener('mentoring_reserve', async (body) => {
     await mentoringColl().updateOne({ code }, {
         $set: { plan: plan }
     })
+    setTimeout(async () => {
+        const updatedMentoring = await mentoringColl().findOne({ code })
+        if (updatedMentoring === null) return
+        const updatedPlan = updatedMentoring.plan
+        if (updatedPlan === null) return
+        if (JSON.stringify(updatedPlan) === JSON.stringify(plan)) {
+            cancelMentoringReservation(code)
+        }
+    }, plan.end.getTime() - new Date().getTime() + 1000)
 
     WS.send(code.toString(), 'mentoring_update', {
         code
@@ -204,15 +223,19 @@ addServerEventListener('mentoring_reserve_cancel', async (body) => {
         return failure('There is no plan to cancel.')
     }
 
+    cancelMentoringReservation(code)
+    return success(null)
+})
+
+const cancelMentoring = async (code: number) => {
     await mentoringColl().updateOne({ code }, {
-        $set: { plan: null }
+        $set: { working: null }
     })
 
     WS.send(code.toString(), 'mentoring_update', {
         code
     })
-    return success(null)
-})
+}
 
 addServerEventListener('mentoring_start', async (body) => {
     const { accessToken, code, location, startImage } = body
@@ -247,6 +270,15 @@ addServerEventListener('mentoring_start', async (body) => {
     await mentoringColl().updateOne({ code }, {
         $set: { working, plan: null }
     })
+    setTimeout(async () => {
+        const updatedMentoring = await mentoringColl().findOne({ code })
+        if (updatedMentoring === null) return
+        const updatedWorking = updatedMentoring.working
+        if (updatedWorking === null) return
+        if (JSON.stringify(updatedWorking) === JSON.stringify(working)) {
+            cancelMentoring(code)
+        }
+    }, maxDuration + 1000)
 
     WS.send(code.toString(), 'mentoring_update', {
         code
@@ -266,13 +298,7 @@ addServerEventListener('mentoring_cancel', async (body) => {
         return failure('Mentoring is not in progress.')
     }
 
-    await mentoringColl().updateOne({ code }, {
-        $set: { working: null }
-    })
-
-    WS.send(code.toString(), 'mentoring_update', {
-        code
-    })
+    cancelMentoring(code)
     return success(null)
 })
 
@@ -442,6 +468,7 @@ addServerEventListener('get_user_name', async (body) => {
 })
 // #endregion
 
+// #region admin
 addServerEventListener('is_admin', async (body) => {
     const { accessToken } = body
     const isAdminRes = await isAdmin(accessToken)
@@ -513,3 +540,13 @@ addServerEventListener('add_mentorings', async (body) => {
     await mentoringColl(semester).insertMany(mentoringList)
     return success(null)
 })
+
+addServerEventListener('edit_mentoring', async (body) => {
+    const { accessToken, semester, code, mentoring } = body
+    const isAdminRes = await isAdmin(accessToken)
+    if (!isAdminRes.success) return isAdminRes
+
+    await mentoringColl(semester).findOneAndReplace({ code }, mentoring)
+    return success(null)
+})
+// #endregion
