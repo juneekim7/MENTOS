@@ -1,6 +1,6 @@
-import { readFileSync } from 'fs'
+// import { readFileSync } from 'fs'
 import { addHours, changhaAccessToken, executeAfterDelay, socketRequest, testReq } from './basic'
-import { resolve } from 'path'
+// import { resolve } from 'path'
 import { currentSemester } from '../src/utils'
 
 async function _test() {
@@ -63,23 +63,9 @@ async function _test() {
 async function adminTest() {
     console.log('admin test started')
 
-    await testReq('is_admin', {})
-
-    const s21 = readFileSync(resolve(__dirname, './data/21학번표.txt'), 'utf-8')
-    const s22 = readFileSync(resolve(__dirname, './data/22학번표.txt'), 'utf-8')
-    const s23 = readFileSync(resolve(__dirname, './data/23학번표.txt'), 'utf-8')
-    const s24 = readFileSync(resolve(__dirname, './data/24학번표.txt'), 'utf-8')
-    await testReq('add_users', {
-        userListString: s21
-    })
-    await testReq('add_users', {
-        userListString: s22
-    })
-    await testReq('add_users', {
-        userListString: s23
-    })
-    await testReq('add_users', {
-        userListString: s24
+    await testReq('add_mentorings', {
+        semester: '2024-1',
+        mentoringListString: '35\n발로란트\n23-031\n23-046\nartisan'
     })
 }
 
