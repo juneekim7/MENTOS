@@ -1,4 +1,3 @@
-import bodyParser from 'body-parser'
 import express from 'express'
 import cors from 'cors'
 import { configDotenv } from 'dotenv'
@@ -16,7 +15,9 @@ import { checkLog, getMentoring } from './mentoring'
 export type ParamDict = Record<string, string>
 
 const app = express()
-app.use(bodyParser.json())
+app.use(express.json({
+    limit: '5mb'
+}))
 app.use(cors())
 
 app.listen(8080, () => {
@@ -426,6 +427,18 @@ addServerEventListener('user_list', async (body) => {
 
     const userList = await userColl.find({}, withoutId).toArray()
     return success(userList)
+})
+
+addServerEventListener('get_user_name', async (body) => {
+    const { accessToken, id } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+
+    const targetUser = await userColl.findOne({ id }, withoutId)
+    if (targetUser === null) {
+        return failure(`No user with id ${id}.`)
+    }
+    return success(targetUser.name)
 })
 // #endregion
 

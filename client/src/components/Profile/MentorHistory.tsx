@@ -1,4 +1,4 @@
-import { Fragment } from "react"
+import { Fragment, useContext, useEffect, useState } from "react"
 import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 import { MentoringLink } from "../common/Link"
@@ -7,6 +7,10 @@ import { css } from "@emotion/react"
 import { CenterBox } from "../common/CenterBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons"
+import { UserInfoContext } from "../context/User"
+import { request } from "../../utils/connection"
+import { Mentoring } from "../../../../models/mentoring"
+import { LogWithMentoringInfo } from "."
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -47,7 +51,35 @@ namespace TableElement {
     }
 }
 
-export const MentorHistory: React.FC<{ id: string }> = () => {
+export const MentorHistory: React.FC<{ id: string }> = (props) => {
+    const { id } = props
+    const { userInfo } = useContext(UserInfoContext)
+    const [mentorings, setMentorings] = useState<Mentoring[]>([])
+    const [logs, setLogs] = useState<LogWithMentoringInfo[]>([])
+    useEffect(() => {
+        (async () => {
+            const res = await request("mentoring_list", {
+                accessToken: userInfo.accessToken
+            })
+
+            if (!res.success) return
+            setMentorings(res.data.filter(
+                (men) => men.mentors.find((user) => user.id === id)
+            ))
+            setLogs(
+                mentorings.reduce<LogWithMentoringInfo[]>(
+                    (acc, men) => acc.concat(men.logs.map((log) => {
+                        return {
+                            ...log,
+                            start: new Date(log.start),
+                            mentoringName: men.name,
+                            mentoringCode: men.code
+                        }
+                    })), []
+                ).reverse()
+            )
+        })()
+    }, [id, userInfo, mentorings])
     return (
         <Fragment>
             <TextBox weight={700} size={24}>
@@ -57,7 +89,9 @@ export const MentorHistory: React.FC<{ id: string }> = () => {
             <HFlexBox center>
                 <TextBox weight={500}>활동 멘토링 : </TextBox>
                 <TextBox>
-                    <MentoringLink name="시그마 정멘" code={10} />
+                    {
+                        mentorings.map((men) => <MentoringLink name={men.name} code={men.code} />)
+                    }
                 </TextBox>
             </HFlexBox>
             <VBox height={16} />
@@ -70,15 +104,19 @@ export const MentorHistory: React.FC<{ id: string }> = () => {
                     </TableElement.Row>
                 </thead>
                 <tbody>
-                    <TableElement.Row>
-                        <TableElement.Data>1</TableElement.Data>
-                        <TableElement.Data>
-                            <CenterBox>
-                                <MentoringLink name="웹 개발" code={25} />
-                            </CenterBox>
-                        </TableElement.Data>
-                        <TableElement.Data>2024.05.23.</TableElement.Data>
-                    </TableElement.Row>
+                    {
+                        logs.map(
+                            (log, index) => <TableElement.Row>
+                                <TableElement.Data>{index + 1}</TableElement.Data>
+                                <TableElement.Data>
+                                    <CenterBox>
+                                        <MentoringLink name={log.mentoringName} code={log.mentoringCode} />
+                                    </CenterBox>
+                                </TableElement.Data>
+                                <TableElement.Data>{log.start.getFullYear()}.{log.start.getMonth() + 1}.{log.start.getDate()}</TableElement.Data>
+                            </TableElement.Row>
+                        )
+                    }
                 </tbody>
             </table>
             <VBox height={16} />

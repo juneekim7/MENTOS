@@ -3,8 +3,26 @@ import { VFlexBox } from "../common/FlexBox"
 import { CenterBox } from "../common/CenterBox"
 import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
+import { useContext, useEffect, useState } from "react"
+import { UserInfoContext } from "../context/User"
+import { request } from "../../utils/connection"
 
-export const ProfileCard: React.FC<{ id: string }> = () => {
+export const ProfileCard: React.FC<{ id: string }> = (props) => {
+    const { id } = props
+    const { userInfo } = useContext(UserInfoContext)
+    const [name, setName] = useState("")
+    const imageSrc = `https://ksain.net/files/stuPhoto/${id}.jpg`
+    useEffect(() => {
+        (async () => {
+            const res = await request("get_user_name", {
+                accessToken: userInfo.accessToken,
+                id
+            })
+
+            if (!res.success) return
+            setName(res.data)
+        })()
+    }, [id, userInfo])
     return (
         <div>
             <CenterBox
@@ -18,16 +36,16 @@ export const ProfileCard: React.FC<{ id: string }> = () => {
                     max-width: 200px;
                 `}
             >
-                <img src="https://ksain.net/files/stuPhoto/23-031.jpg" alt="프로필 사진" css={css`width: 100%;`} />
+                <img src={imageSrc} alt="프로필 사진" css={css`width: 100%;`} />
             </CenterBox>
             <VBox height={16} />
             <VFlexBox center css={css`width: fit-content; margin: 0 auto;`}>
                 <TextBox weight={600} size={24}>
-                    김준이
+                    {name}
                 </TextBox>
                 <VBox height={4} />
                 <TextBox color="gray">
-                    23-031
+                    {id}
                 </TextBox>
             </VFlexBox>
         </div>

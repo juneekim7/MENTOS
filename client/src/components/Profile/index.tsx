@@ -5,10 +5,16 @@ import { MentorHistory } from "./MentorHistory"
 import { ProfileCard } from "./ProfileCard"
 import { MenteeHistory } from "./MenteeHistory"
 import { useParams } from "react-router-dom"
+import { Log } from "../../../../models/mentoring"
+
+export interface LogWithMentoringInfo extends Log {
+    mentoringName: string
+    mentoringCode: number
+}
 
 export const Profile: React.FC = () => {
-    const { id } = useParams()
-    if (id === undefined) {
+    const { stdid } = useParams()
+    if (stdid === undefined) {
         return (
             <>Error: No Id</>
         )
@@ -17,12 +23,12 @@ export const Profile: React.FC = () => {
     return (
         <Content>
             <VBox height={32} />
-            <ProfileCard id={id} />
+            <ProfileCard id={stdid} />
             <VBox height={32} css={css`border-bottom: 1px solid var(--nav-border);`} />
             <VBox height={32} />
-            <MentorHistory id={id} />
+            <MentorHistory id={stdid} />
             <VBox height={32} />
-            <MenteeHistory id={id} />
+            <MenteeHistory id={stdid} />
             <VBox height={32} />
         </Content>
     )
