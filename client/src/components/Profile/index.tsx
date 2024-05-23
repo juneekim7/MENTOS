@@ -14,11 +14,7 @@ export interface LogWithMentoringInfo extends Log {
 
 export const Profile: React.FC = () => {
     const { stdid } = useParams()
-    if (stdid === undefined) {
-        return (
-            <>Error: No Id</>
-        )
-    }
+    if (stdid === undefined) return <></>
 
     return (
         <Content>

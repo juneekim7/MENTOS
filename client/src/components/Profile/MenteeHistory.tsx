@@ -5,8 +5,6 @@ import { MentoringLink } from "../common/Link"
 import { HFlexBox } from "../common/FlexBox"
 import { css } from "@emotion/react"
 import { CenterBox } from "../common/CenterBox"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons"
 import { UserInfoContext } from "../context/User"
 import { Mentoring } from "../../../../models/mentoring"
 import { LogWithMentoringInfo } from "."
@@ -95,16 +93,31 @@ export const MenteeHistory: React.FC<{ id: string }> = (props) => {
             <VBox height={16} />
             <table css={css`width: 100%; border-collapse: collapse;`}>
                 <thead>
-                    <TableElement.Row>
-                        <TableElement.Head>#</TableElement.Head>
-                        <TableElement.Head>멘토링</TableElement.Head>
-                        <TableElement.Head>일시</TableElement.Head>
-                    </TableElement.Row>
+                    {logs.length === 0
+                        ? <TableElement.Row /> 
+                        : <TableElement.Row>
+                            <TableElement.Head>#</TableElement.Head>
+                            <TableElement.Head>멘토링</TableElement.Head>
+                            <TableElement.Head>일시</TableElement.Head>
+                        </TableElement.Row>}
                 </thead>
                 <tbody>
-                    {
-                        logs.map(
-                            (log, index) => <TableElement.Row>
+                    {logs.length === 0
+                        ? <TableElement.Row>
+                            <TableElement.Data>
+                                <TextBox
+                                    weight={500}
+                                    size={18}
+                                    css={css`line-height: 24px;`}
+                                    color="#808080"
+                                    center
+                                >
+                                    해당 학기에 멘티로 활동한 기록이 없습니다.
+                                </TextBox>
+                            </TableElement.Data>    
+                        </TableElement.Row>
+                        : logs.map((log, index) =>
+                            <TableElement.Row>
                                 <TableElement.Data>{index + 1}</TableElement.Data>
                                 <TableElement.Data>
                                     <CenterBox>
@@ -112,31 +125,9 @@ export const MenteeHistory: React.FC<{ id: string }> = (props) => {
                                     </CenterBox>
                                 </TableElement.Data>
                                 <TableElement.Data>{log.start.getFullYear()}.{log.start.getMonth() + 1}.{log.start.getDate()}</TableElement.Data>
-                            </TableElement.Row>
-                        )
-                    }
+                            </TableElement.Row>)}
                 </tbody>
             </table>
-            <VBox height={16} />
-            <HFlexBox center gap={8} css={css`justify-content: center;`}>
-                <FontAwesomeIcon
-                    icon={faCaretLeft}
-                    css={css`
-                        color: var(--mentos-official);
-                        cursor: pointer;
-                    `}
-                    size="xl"
-                />
-                <TextBox weight={500} size={18}>2024-1</TextBox>
-                <FontAwesomeIcon
-                    icon={faCaretRight}
-                    css={css`
-                        color: var(--mentos-official);
-                        cursor: pointer;
-                    `}
-                    size="xl"
-                />
-            </HFlexBox>
         </Fragment>
     )
 }
