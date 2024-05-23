@@ -4,11 +4,12 @@ import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 import { DivisonSelector } from "./DivisionSelector"
 import { useContext, useEffect, useState } from "react"
-import { currentSemester } from "../../../../models/mentoring"
 import { UserInfoContext } from "../context/User"
 import { request } from "../../utils/connection"
 import { RankMentoring, toMentoringRanking } from "../../utils/mentoring"
 import { RankUser, toUserRanking } from "../../utils/user"
+import { MentoringLink, ProfileLink } from "../common/Link"
+import { CenterBox } from "../common/CenterBox"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -61,8 +62,7 @@ export const Ranking: React.FC = () => {
             if (userInfo.accessToken === "") return
 
             const res = await request("mentoring_list", {
-                accessToken: userInfo.accessToken,
-                semester: currentSemester()
+                accessToken: userInfo.accessToken
             })
 
             if (!res.success) return // TODO: Error
@@ -90,29 +90,40 @@ export const Ranking: React.FC = () => {
                         </TableElement.Row>
                     </thead>
                     <tbody>
-                        {mentoringRanking.map((mtr, index) => <TableElement.Row>
-                            <TableElement.Data>{index + 1}</TableElement.Data>
-                            <TableElement.Data>{mtr.name}</TableElement.Data>
-                            <TableElement.Data>{Math.floor(mtr.time / (60 * 60 * 1000))}h {Math.floor(mtr.time / (60 * 1000) % 60)}m</TableElement.Data>
-                        </TableElement.Row>)}
+                        {mentoringRanking.map((mtr, index) =>
+                            <TableElement.Row key={index}>
+                                <TableElement.Data>{index + 1}</TableElement.Data>
+                                <TableElement.Data>
+                                    <CenterBox>
+                                        <MentoringLink name={mtr.name} code={mtr.code} />
+                                    </CenterBox>
+                                </TableElement.Data>
+                                <TableElement.Data>{Math.floor(mtr.time / (60 * 60 * 1000))}h {Math.floor(mtr.time / (60 * 1000) % 60)}m</TableElement.Data>
+                            </TableElement.Row>)}
                     </tbody>
                 </table>
                 : <table css={css`width: 100%; border-collapse: collapse;`}>
                     <thead>
                         <TableElement.Row>
                             <TableElement.Head>#</TableElement.Head>
-                            <TableElement.Head>학번 / 이름</TableElement.Head>
+                            <TableElement.Head>이름</TableElement.Head>
                             <TableElement.Head>참여 횟수</TableElement.Head>
                         </TableElement.Row>
                     </thead>
                     <tbody>
-                        {userRanking.map((user, index) => <TableElement.Row>
-                            <TableElement.Data>{index + 1}</TableElement.Data>
-                            <TableElement.Data>{user.id} {user.name}</TableElement.Data>
-                            <TableElement.Data>{user.part}회</TableElement.Data>
-                        </TableElement.Row>)}
+                        {userRanking.map((user, index) =>
+                            <TableElement.Row key={index}>
+                                <TableElement.Data>{index + 1}</TableElement.Data>
+                                <TableElement.Data>
+                                    <CenterBox>
+                                        <ProfileLink id={user.id} name={user.name} />
+                                    </CenterBox>
+                                </TableElement.Data>
+                                <TableElement.Data>{user.part}회</TableElement.Data>
+                            </TableElement.Row>)}
                     </tbody>
                 </table>}
+            <VBox height={32} />
         </Content>
     )
 }

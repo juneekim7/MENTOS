@@ -8,6 +8,7 @@ import { MentoringInfo } from "./components/Info"
 import { Ranking } from "./components/Ranking"
 import { UserProvider } from "./components/context/User"
 import { ModalContainer } from "./components/common/Modal"
+import { Profile } from "./components/Profile"
 
 export const App: React.FC = () => {
     return (
@@ -22,6 +23,7 @@ export const App: React.FC = () => {
                             <Route path="/" element={<Home />} />
                             <Route path="/info/:id" element={<MentoringInfo />} />
                             <Route path="/ranking" element={<Ranking />} />
+                            <Route path="/profile/:stdid" element={<Profile />} />
                         </Routes>
                     </div>
                 </UserProvider>

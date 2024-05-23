@@ -5,6 +5,7 @@ import { TextBox } from "../common/TextBox"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faFolder, faHourglass, faUser } from "@fortawesome/free-solid-svg-icons"
 import { Log, Mentoring } from "../../../../models/mentoring"
+import { ProfileLink } from "../common/Link"
 
 const format = (logs: Log[]) => {
     let accTime = 0
@@ -40,7 +41,14 @@ export const MentoringScreen: React.FC<Mentoring> = (props) => {
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faUser} size="sm" style={{ color: "var(--section-icon)" }} />
                     </VFlexBox>
-                    {props.mentors.map((mtr) => mtr.name).join(", ")}
+                    {props.mentors.map((mtr, i, origin) => 
+                        <ProfileLink
+                            key={i}
+                            name={mtr.name}
+                            id={mtr.id}
+                            addComma={i < origin.length - 1}
+                            underline
+                        />)}
                 </HFlexBox>
                 <HFlexBox gap={4} center>
                     <VFlexBox css={css`width: 14px;`} center>
@@ -52,7 +60,7 @@ export const MentoringScreen: React.FC<Mentoring> = (props) => {
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faHourglass} size="sm" style={{ color: "var(--section-icon)" }} />
                     </VFlexBox>
-                    {`${format(props.logs)} (-위)`}
+                    {format(props.logs)}
                 </HFlexBox>
             </VFlexBox>
         </VFlexBox>

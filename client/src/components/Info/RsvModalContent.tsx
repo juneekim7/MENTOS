@@ -14,11 +14,12 @@ import { UserInfoContext } from "../context/User"
 import { Mentoring, maxDuration } from "../../../../models/mentoring"
 import { Input } from "../common/Input"
 
-interface IModalContentProps {
+interface RsvModalContentProps {
     info: Mentoring
+    forceUpdate: () => void
 }
 
-export const ModalContent: React.FC<IModalContentProps> = (props) => {
+export const RsvModalContent: React.FC<RsvModalContentProps> = (props) => {
     const { userInfo } = useContext(UserInfoContext)
     const [location, setLocation] = useState("")
     const [day, setDay] = useState<Date>(new Date())
@@ -33,7 +34,7 @@ export const ModalContent: React.FC<IModalContentProps> = (props) => {
                 border-radius: 8px;
                 
                 box-sizing: border-box;
-                width: 80vw;
+                width: 90vw;
                 max-width: 500px;
                 position: relative;
             `}
@@ -70,16 +71,13 @@ export const ModalContent: React.FC<IModalContentProps> = (props) => {
                 />
             </CenterBox>
             <VBox height={32} />
-            <VFlexBox gap={16}>
-                {/* <div>
-                    <TextBox weight={600} size={20}>
-                        일시
-                    </TextBox>
-                    <VBox height={4} />
-                </div> */}
+            <VFlexBox>
                 <ModalCalendar day={day} setDay={setDay} />
+                <VBox height={16} />
                 <TimePicker startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} />
+                <VBox height={32} />
                 <Input placeholder="장소" onChange={(e) => setLocation(e.target.value)} />
+                <VBox height={32} />
                 <CenterBox
                     css={css`
                         margin: 0 auto;
@@ -132,7 +130,10 @@ export const ModalContent: React.FC<IModalContentProps> = (props) => {
                             })
 
                             if (!res.success) console.log(res.error)
-                            EventHandler.trigger("modal", null)
+                            else {
+                                EventHandler.trigger("modal", null)
+                                props.forceUpdate()
+                            }
                         }}
                     >
                         예약하기

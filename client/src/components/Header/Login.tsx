@@ -4,9 +4,11 @@ import { css } from "@emotion/react"
 import { UserInfoContext } from "../context/User"
 import { request } from "../../utils/connection"
 import { HeaderElement } from "./Element"
+import { useNavigate } from "react-router-dom"
 
 export const Login: React.FC = () => {
     const { userInfo, setUserInfo } = useContext(UserInfoContext)
+    const navigate = useNavigate()
 
     const googleAuthLogin = useGoogleLogin({
         onSuccess: async (res) => {
@@ -56,7 +58,7 @@ export const Login: React.FC = () => {
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID as string}>
             <div css={css`margin: 0 0 0 auto;`}>
-                <HeaderElement.Hover onClick={() => userInfo.isLoggedIn || googleAuthLogin()}>
+                <HeaderElement.Hover onClick={() => userInfo.isLoggedIn ? navigate(`./profile/${userInfo.id}`) : googleAuthLogin()}>
                     {userInfo.isLoggedIn ? userInfo.name : "로그인"}
                 </HeaderElement.Hover>
             </div>

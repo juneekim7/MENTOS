@@ -8,14 +8,10 @@ export const currentSemester = (): Semester => {
 }
 
 export const splitStringIntoChunks = (str: string, linesPerChunk: number) => {
-    // 문자열을 줄 단위로 분할
     const lines = str.split('\n')
-
-    // 결과를 저장할 배열
     const chunks = []
 
     for (let i = 0; i < lines.length; i += linesPerChunk) {
-        // 현재 범위의 줄들을 잘라서 하나의 문자열로 합치기
         const chunk = lines.slice(i, i + linesPerChunk).join('\n')
         chunks.push(chunk)
     }

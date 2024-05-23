@@ -30,7 +30,7 @@ export const AttendanceButton: React.FC<IAttendanceProps> = (props) => {
                     code: props.info.code
                 })
                 if (!res.success) console.log(res.error)
-                else ws.request("attend_subscribe", { code: props.info.code })
+                else ws.request("mentoring_subscribe", { code: props.info.code })
             }}
         >
             출석

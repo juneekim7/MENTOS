@@ -6,7 +6,7 @@ import { css } from "@emotion/react"
 import { request } from "../../utils/connection"
 import { UserInfoContext } from "../context/User"
 import { useContext, useEffect, useState } from "react"
-import { Mentoring, currentSemester } from "../../../../models/mentoring"
+import { Mentoring } from "../../../../models/mentoring"
 import { isMentee, isMentor } from "../../utils/mentoring"
 
 const defaultMentoringInfo: Mentoring[] = []
@@ -20,8 +20,7 @@ export const Home: React.FC = () => {
             if (userInfo.accessToken === "") return
 
             const res = await request("mentoring_list", {
-                accessToken: userInfo.accessToken,
-                semester: currentSemester()
+                accessToken: userInfo.accessToken
             })
 
             if (!res.success) return // TODO: Error

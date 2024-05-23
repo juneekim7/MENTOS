@@ -1,15 +1,13 @@
 import { css } from "@emotion/react"
 import { CenterBox } from "../common/CenterBox"
 import { TextBox } from "../common/TextBox"
-import { request } from "../../utils/connection"
-import { useContext } from "react"
-import { UserInfoContext } from "../context/User"
 import { Mentoring } from "../../../../models/mentoring"
 import { HFlexBox } from "../common/FlexBox"
 import { DivProps } from "../../global"
 import { omit } from "../../utils/omit"
 import { EventHandler } from "../../utils/event"
-import { ModalContent } from "./ModalContent"
+import { RsvModalContent } from "./RsvModalContent"
+import { StartModalContent } from "./StartModalContent"
 
 const Button: React.FC<DivProps> = (props) => {
     return (
@@ -40,14 +38,12 @@ const Button: React.FC<DivProps> = (props) => {
     )
 }
 
-interface IStart {
+interface StartProps {
     info: Mentoring
     forceUpdate: () => void
 }
 
-export const Start: React.FC<IStart> = (props) => {
-    const { userInfo } = useContext(UserInfoContext)
-
+export const Start: React.FC<StartProps> = (props) => {
     return (
         <HFlexBox
             css={css`
@@ -57,23 +53,10 @@ export const Start: React.FC<IStart> = (props) => {
             gap={16}
             center
         >
-            <Button
-                onClick={async () => {
-                    const res = await request("mentoring_start", {
-                        accessToken: userInfo.accessToken,
-                        code: props.info.code,
-                        location: "견407",
-                        startImage: "Junee Kim"
-                    })
-                    if (!res.success) console.log(res.error)
-                    else props.forceUpdate()
-                }}
-            >
+            <Button onClick={() => EventHandler.trigger("modal", <StartModalContent {...props} />)}>
                 시작
             </Button>
-            <Button
-                onClick={() => EventHandler.trigger("modal", <ModalContent info={props.info} />)}
-            >
+            <Button onClick={() => EventHandler.trigger("modal", <RsvModalContent {...props} />)}>
                 {props.info.plan === null ? "예약" : "예약 변경"}
             </Button>
         </HFlexBox>

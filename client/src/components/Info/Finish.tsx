@@ -5,19 +5,18 @@ import { GridBox } from "../common/GridBox"
 import { faClock } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Mentoring } from "../../../../models/mentoring"
-import { request } from "../../utils/connection"
-import { UserInfoContext } from "../context/User"
-import { useContext, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { milliToHMS } from "../../utils/time"
 import { MtrInfoButton } from "./MtrInfoButton"
+import { EndModalContent } from "./EndModalContent"
+import { EventHandler } from "../../utils/event"
 
-interface IFinish {
+interface FinishProps {
     info: Mentoring
     forceUpdate: () => void
 }
 
-export const Finish: React.FC<IFinish> = (props) => {
-    const { userInfo } = useContext(UserInfoContext)
+export const Finish: React.FC<FinishProps> = (props) => {
     const intervalRef = useRef<NodeJS.Timeout>()
     const [ timer, setTimer ] = useState("00:00:00")
     
@@ -38,15 +37,7 @@ export const Finish: React.FC<IFinish> = (props) => {
         <MtrInfoButton
             hover
             nonText
-            onClick={async () => {
-                const res = await request("mentoring_end", {
-                    accessToken: userInfo.accessToken,
-                    code: props.info.code,
-                    endImage: "Gaon"
-                })
-                if (!res.success) console.log(res.error)
-                else props.forceUpdate()
-            }}
+            onClick={() => EventHandler.trigger("modal", <EndModalContent {...props} />)}
         >
             <GridBox column={2} css={css`width: 100%;`}>
                 <CenterBox css={css`border-right: 1px dashed white;`}>

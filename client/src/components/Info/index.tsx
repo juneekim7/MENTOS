@@ -6,7 +6,7 @@ import { History } from "./History"
 import { Fragment, useCallback, useContext, useEffect, useState } from "react"
 import { request, ws } from "../../utils/connection"
 import { UserInfoContext } from "../context/User"
-import { Mentoring, currentSemester } from "../../../../models/mentoring"
+import { Mentoring } from "../../../../models/mentoring"
 import { MentoringScreen } from "./Mentoring"
 import { Start } from "./Start"
 import { Finish } from "./Finish"
@@ -23,7 +23,6 @@ export const MentoringInfo: React.FC = () => {
         (async () => {
             const res = await request("mentoring_info", {
                 accessToken: userInfo.accessToken,
-                semester: currentSemester(),
                 code: parseInt(id ?? "0")
             })
 

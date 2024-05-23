@@ -10,6 +10,7 @@ import { Mentoring } from "../../../../models/mentoring"
 import { UserInfoContext } from "../context/User"
 import { isMentee, isMentor } from "../../utils/mentoring"
 import { dateFormat, milliToHMS } from "../../utils/time"
+import { ProfileLink } from "../common/Link"
 
 type IMentoringProps = Mentoring
 
@@ -73,7 +74,13 @@ export const MentoringMain: React.FC<IMentoringProps> = (props) => {
                     <VFlexBox css={css`width: 14px;`} center>
                         <FontAwesomeIcon icon={faUser} size="sm" style={{ color: iconColor }} />
                     </VFlexBox>
-                    {props.mentors.map((mt) => mt.name).join(", ")}
+                    {props.mentors.map((mt, i, origin) => 
+                        <ProfileLink 
+                            key={i}
+                            name={mt.name}
+                            id={mt.id}
+                            addComma={i < origin.length - 1}
+                        />)} 
                 </HFlexBox>
                 <HFlexBox gap={4} center>
                     <VFlexBox css={css`width: 14px;`} center>

@@ -44,14 +44,14 @@ export interface Connection {
     'mentoring_list': [
         {
             accessToken: string
-            semester: Semester
+            semester?: Semester
         },
         Mentoring[]
     ],
     'mentoring_info': [
         {
             accessToken: string
-            semester: Semester
+            semester?: Semester
             code: number
         },
         Mentoring

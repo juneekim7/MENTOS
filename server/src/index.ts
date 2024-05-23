@@ -134,6 +134,7 @@ addServerEventListener('get_current_semester', async (body) => {
 })
 
 addServerEventListener('mentoring_list', async (body) => {
+    body.semester ??= currentSemester()
     const { accessToken, semester } = body
     const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
@@ -146,6 +147,7 @@ addServerEventListener('mentoring_list', async (body) => {
 })
 
 addServerEventListener('mentoring_info', async (body) => {
+    body.semester ??= currentSemester()
     const { accessToken, semester, code } = body
     const getUserRes = await getUser(accessToken)
     if (!getUserRes.success) return getUserRes
