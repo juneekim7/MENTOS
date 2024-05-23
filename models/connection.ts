@@ -131,6 +131,7 @@ export interface Connection {
         },
         string
     ]
+    // below here is only for admin
     'verify_admin': [
         {
             accessToken: string
@@ -141,6 +142,13 @@ export interface Connection {
         {
             accessToken: string
             userListString: string
+        },
+        null
+    ]
+    'delete_user': [
+        {
+            accessToken: string
+            id: string
         },
         null
     ]
@@ -168,5 +176,13 @@ export interface Connection {
             code: number
         },
         null
+    ]
+    'log_image': [
+        {
+            accessToken: string
+            semester: Semester
+            imageId: string
+        },
+        string
     ]
 }

@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { configDotenv } from 'dotenv'
 import { RawData, WebSocket, WebSocketServer } from 'ws'
-import { MongoClient, ServerApiVersion } from 'mongodb'
+import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
 import { Response, failure, success, type Connection } from '../../models/connection'
 import { WSClientReq, WSClientReqCont, WSServerRes, WSServerResCont } from '../../models/ws'
 import { User } from '../../models/user'
@@ -466,6 +466,18 @@ addServerEventListener('get_user_name', async (body) => {
     }
     return success(targetUser.name)
 })
+
+addServerEventListener('get_user_name', async (body) => {
+    const { accessToken, id } = body
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+
+    const targetUser = await userColl.findOne({ id }, withoutId)
+    if (targetUser === null) {
+        return failure(`No user with id ${id}.`)
+    }
+    return success(targetUser.name)
+})
 // #endregion
 
 // #region admin
@@ -491,6 +503,15 @@ addServerEventListener('add_users', async (body) => {
     }
 
     await userColl.insertMany(userList)
+    return success(null)
+})
+
+addServerEventListener('delete_user', async (body) => {
+    const { accessToken, id } = body
+    const verifyAdminRes = await verifyAdmin(accessToken)
+    if (!verifyAdminRes.success) return verifyAdminRes
+
+    await userColl.findOneAndDelete({ id })
     return success(null)
 })
 
@@ -557,5 +578,17 @@ addServerEventListener('delete_mentoring', async (body) => {
 
     await mentoringColl(semester).findOneAndDelete({ code })
     return success(null)
+})
+
+addServerEventListener('log_image', async (body) => {
+    const { accessToken, semester, imageId } = body
+    const verifyAdminRes = await verifyAdmin(accessToken)
+    if (!verifyAdminRes.success) return verifyAdminRes
+
+    const logImage = await logImageColl(semester).findOne({ _id: new ObjectId(imageId) })
+    if (logImage === null) {
+        return failure(`No log image ${imageId}`)
+    }
+    return success(logImage.image)
 })
 // #endregion

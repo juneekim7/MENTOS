@@ -5,6 +5,7 @@ import React from "react"
 import { VBox } from "../common/VBox"
 import { Log } from "../../../../models/mentoring"
 import { intervalFormat } from "../../utils/time"
+import { LogImage } from "../Admin/logImage"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -85,6 +86,29 @@ export const History: React.FC<IHistoryProps> = (props) => {
                             <TableElement.Data>{i + 1}</TableElement.Data>
                             <TableElement.Data>{interval}</TableElement.Data>
                             <TableElement.Data>{accTime}</TableElement.Data>
+                        </TableElement.Row>
+                    ))}
+                </tbody>
+            </table>
+
+            <table css={css`width: 100%; border-collapse: collapse;`}>
+                <thead>
+                    <TableElement.Row>
+                        <TableElement.Head>#</TableElement.Head>
+                        <TableElement.Head>시작 이미지</TableElement.Head>
+                        <TableElement.Head>종료 이미지</TableElement.Head>
+                    </TableElement.Row>
+                </thead>
+                <tbody>
+                    {props.logs.map((log, i) => (
+                        <TableElement.Row key={`log${i}`}>
+                            <TableElement.Data>{i + 1}</TableElement.Data>
+                            <TableElement.Data>
+                                <LogImage semester={"2024-1"} imageId={log.startImageId} />
+                            </TableElement.Data>
+                            <TableElement.Data>
+                                <LogImage semester={"2024-1"} imageId={log.endImageId} />
+                            </TableElement.Data>
                         </TableElement.Row>
                     ))}
                 </tbody>

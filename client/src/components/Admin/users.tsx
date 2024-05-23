@@ -84,11 +84,12 @@ export const AdminUsers: React.FC = () => {
                 onChange={async (e) => {
                     if (e.target.files === null) return
                     for (const file of e.target.files) {
-                        request("add_users", {
+                        await request("add_users", {
                             accessToken: userInfo.accessToken,
                             userListString: await file.text()
                         })
                     }
+                    alert("추가되었습니다. 새로고침 하세요.")
                 }}
             />
             <VBox height={16} />
@@ -97,6 +98,7 @@ export const AdminUsers: React.FC = () => {
                     <TableElement.Row>
                         <TableElement.Head>학번</TableElement.Head>
                         <TableElement.Head>이름</TableElement.Head>
+                        <TableElement.Head>삭제</TableElement.Head>
                     </TableElement.Row>
                 </thead>
                 <tbody>
@@ -107,6 +109,16 @@ export const AdminUsers: React.FC = () => {
                                 <CenterBox>
                                     <ProfileLink id={user.id} name={user.name} />
                                 </CenterBox>
+                            </TableElement.Data>
+                            <TableElement.Data>
+                                <button onClick={async () => {
+                                    await request("delete_user", {
+                                        accessToken: userInfo.accessToken,
+                                        id: user.id
+                                    })
+                                    alert("삭제되었습니다. 새로고침 하세요.")
+                                }}
+                                >삭제</button>
                             </TableElement.Data>
                         </TableElement.Row>
                     )}

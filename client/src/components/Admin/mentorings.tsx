@@ -66,7 +66,7 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
     return (
         <Fragment>
             <TextBox weight={700} size={24}>
-                Mentorings
+                Mentorings {semester}
             </TextBox>
             <VBox height={8} />
             학기:
@@ -100,14 +100,16 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
                 onChange={async (e) => {
                     if (e.target.files === null) return
                     for (const file of e.target.files) {
-                        request("add_mentorings", {
+                        await request("add_mentorings", {
                             accessToken: userInfo.accessToken,
                             semester,
                             mentoringListString: await file.text()
                         })
                     }
+                    alert("추가되었습니다. 새로고침 하세요.")
                 }}
             />
+            <VBox height={8} />
             <VBox height={16} />
             <table css={css`width: 100%; border-collapse: collapse;`}>
                 <thead>
