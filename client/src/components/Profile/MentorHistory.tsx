@@ -9,6 +9,7 @@ import { UserInfoContext } from "../context/User"
 import { request } from "../../utils/connection"
 import { Mentoring } from "../../../../models/mentoring"
 import { LogWithMentoringInfo } from "."
+import { dateFormat } from "../../utils/time"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -87,7 +88,12 @@ export const MentorHistory: React.FC<{ id: string }> = (props) => {
             <HFlexBox center>
                 <TextBox weight={500}>활동 멘토링 : </TextBox>
                 {mentorings.map((mtr, i, origin) =>
-                    <MentoringLink name={mtr.name} code={mtr.code} addComma={i < origin.length - 1} />)}
+                    <MentoringLink
+                        name={mtr.name}
+                        code={mtr.code}
+                        addComma={i < origin.length - 1}
+                        underline
+                    />)}
             </HFlexBox>
             <VBox height={16} />
             <table css={css`width: 100%; border-collapse: collapse;`}>
@@ -123,7 +129,9 @@ export const MentorHistory: React.FC<{ id: string }> = (props) => {
                                         <MentoringLink name={log.mentoringName} code={log.mentoringCode} />
                                     </CenterBox>
                                 </TableElement.Data>
-                                <TableElement.Data>{log.start.getFullYear()}.{log.start.getMonth() + 1}.{log.start.getDate()}</TableElement.Data>
+                                <TableElement.Data>
+                                    {dateFormat(log.start)}
+                                </TableElement.Data>
                             </TableElement.Row>)}
                 </tbody>
             </table>

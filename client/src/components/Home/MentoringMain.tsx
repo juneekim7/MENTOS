@@ -9,12 +9,10 @@ import { Fragment, useContext, useEffect, useRef, useState } from "react"
 import { Mentoring } from "../../../../models/mentoring"
 import { UserInfoContext } from "../context/User"
 import { isMentee, isMentor } from "../../utils/mentoring"
-import { dateFormat, milliToHMS } from "../../utils/time"
+import { timeFormat, milliToHMS } from "../../utils/time"
 import { ProfileLink } from "../common/Link"
 
-type IMentoringProps = Mentoring
-
-export const MentoringMain: React.FC<IMentoringProps> = (props) => {
+export const MentoringMain: React.FC<Mentoring> = (props) => {
     const navigate = useNavigate()
     const { userInfo } = useContext(UserInfoContext)
     const intervalRef = useRef<NodeJS.Timeout>()
@@ -93,9 +91,9 @@ export const MentoringMain: React.FC<IMentoringProps> = (props) => {
                         <FontAwesomeIcon icon={faClock} size="sm" style={{ color: iconColor }} />
                     </VFlexBox>
                     {props.working !== null
-                        ? dateFormat(new Date(props.working.start))
+                        ? timeFormat(new Date(props.working.start))
                         : (props.plan !== null
-                            ? dateFormat(new Date(props.plan.start))
+                            ? timeFormat(new Date(props.plan.start))
                             : "-")}
                 </HFlexBox>
             </VFlexBox>
@@ -108,7 +106,7 @@ export const MentoringMain: React.FC<IMentoringProps> = (props) => {
             <VBox height={16} />
             <div css={css`margin: 0 auto;`}>
                 {props.working !== null
-                    ? <TextBox size={20}>진행 중...</TextBox>
+                    ? <TextBox size={20} weight={700}>진행 중...</TextBox>
                     : <Fragment>
                         <TextBox inline>시작까지 </TextBox>
                         {props.plan === null

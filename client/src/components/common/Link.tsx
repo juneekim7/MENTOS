@@ -7,6 +7,7 @@ interface MentoringLinkProps {
     name: string
     code: number
     addComma?: boolean
+    underline?: boolean
 }
 
 export const MentoringLink: React.FC<MentoringLinkProps> = (props) => {
@@ -27,7 +28,11 @@ export const MentoringLink: React.FC<MentoringLinkProps> = (props) => {
             <TextBox size={12} css={css`line-height: 16px;`}>
                 {props.code}
             </TextBox>
-            <TextBox css={css`line-height: 1.2;`}>
+            <TextBox
+                css={css`
+                    line-height: 1.2;
+                `}
+            >
                 {props.name}
             </TextBox>
             {props.addComma &&

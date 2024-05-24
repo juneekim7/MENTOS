@@ -10,7 +10,8 @@ const defaultInfo = {
     name: "",
     id: "",
     isLoggedIn: false,
-    accessToken: ""
+    accessToken: "",
+    isAdmin: false
 }
 
 export const UserInfoContext = createContext<IUserInfoContext>({
