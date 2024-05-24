@@ -16,7 +16,7 @@ export type ParamDict = Record<string, string>
 
 const app = express()
 app.use(express.json({
-    limit: '5mb'
+    limit: '10mb'
 }))
 app.use(cors())
 
