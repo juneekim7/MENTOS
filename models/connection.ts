@@ -1,5 +1,5 @@
 import { Mentoring, Plan, Semester } from './mentoring'
-import { User } from './user'
+import { User, UserWithIsAdmin } from './user'
 
 export interface Failure {
     success: false
@@ -33,7 +33,7 @@ export interface Connection {
         {
             accessToken: string
         },
-        User
+        UserWithIsAdmin
     ]
     'get_current_semester': [
         {

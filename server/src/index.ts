@@ -124,7 +124,12 @@ WS.addSocketEventListener('mentoring_subscribe', getRes(async (socket, content) 
 // #region mentoring
 addServerEventListener('login', async (body) => {
     const { accessToken } = body
-    return await getUser(accessToken)
+    const getUserRes = await getUser(accessToken)
+    if (!getUserRes.success) return getUserRes
+    return success({
+        ...getUserRes.data,
+        isAdmin: await adminColl.findOne({ id: getUserRes.data.id }) !== null
+    })
 })
 
 addServerEventListener('get_current_semester', async (body) => {
