@@ -180,9 +180,13 @@ export interface Connection {
     'log_image': [
         {
             accessToken: string
-            semester: Semester
-            imageId: string
+            semester?: Semester
+            startImageId: string
+            endImageId: string
         },
-        string
+        {
+            startImage: string
+            endImage: string
+        }
     ]
 }

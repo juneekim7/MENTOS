@@ -586,14 +586,22 @@ addServerEventListener('delete_mentoring', async (body) => {
 })
 
 addServerEventListener('log_image', async (body) => {
-    const { accessToken, semester, imageId } = body
+    body.semester ??= currentSemester()
+    const { accessToken, semester, startImageId, endImageId } = body
     const verifyAdminRes = await verifyAdmin(accessToken)
     if (!verifyAdminRes.success) return verifyAdminRes
 
-    const logImage = await logImageColl(semester).findOne({ _id: new ObjectId(imageId) })
-    if (logImage === null) {
-        return failure(`No log image ${imageId}`)
+    const startLogImage = await logImageColl(semester).findOne({ _id: new ObjectId(startImageId) })
+    if (startLogImage === null) {
+        return failure(`No start image ${startImageId}`)
     }
-    return success(logImage.image)
+    const endLogImage = await logImageColl(semester).findOne({ _id: new ObjectId(endImageId) })
+    if (endLogImage === null) {
+        return failure(`No end image ${endImageId}`)
+    }
+    return success({
+        startImage: startLogImage.image,
+        endImage: endLogImage.image
+    })
 })
 // #endregion
