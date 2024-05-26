@@ -158,7 +158,8 @@ const LogModalContent: React.FC<LogModalContentProps> = (props) => {
                         object-fit: scale-down;
                     `}
                 />
-            </CenterBox><VBox height={32} />
+            </CenterBox>
+            <VBox height={32} />
             <TextBox weight={600} size={20}>
                 종료 사진
             </TextBox>
@@ -187,14 +188,12 @@ interface HistoryProps {
 }
 
 export const History: React.FC<HistoryProps> = (props) => {
-    const { userInfo } = useContext(UserInfoContext)
-    
     return (
         <VFlexBox full>
             <TextBox size={24} weight={700}>
                 멘토링 내역
             </TextBox>
-            <VBox height={16    } />
+            <VBox height={16} />
             <table css={css`width: 100%; border-collapse: collapse;`}>
                 <thead>
                     {props.logs.length === 0 
@@ -224,13 +223,12 @@ export const History: React.FC<HistoryProps> = (props) => {
                             <TableElement.Row
                                 key={i}
                                 onClick={() => {
-                                    if (userInfo.isAdmin || props.mentors.some((mtr) => mtr.id === userInfo.id))
-                                        EventHandler.trigger("modal",
-                                            <LogModalContent
-                                                startImageId={props.logs[i].startImageId}
-                                                endImageId={props.logs[i].endImageId}
-                                                time={interval}
-                                            />)
+                                    EventHandler.trigger("modal",
+                                        <LogModalContent
+                                            startImageId={props.logs[i].startImageId}
+                                            endImageId={props.logs[i].endImageId}
+                                            time={interval}
+                                        />)
                                 }}
                             >
                                 <TableElement.Data>{i + 1}</TableElement.Data>
