@@ -188,6 +188,8 @@ interface HistoryProps {
 }
 
 export const History: React.FC<HistoryProps> = (props) => {
+    const { userInfo } = useContext(UserInfoContext)
+     
     return (
         <VFlexBox full>
             <TextBox size={24} weight={700}>
@@ -223,6 +225,7 @@ export const History: React.FC<HistoryProps> = (props) => {
                             <TableElement.Row
                                 key={i}
                                 onClick={() => {
+                                    if (!userInfo.isAdmin) return
                                     EventHandler.trigger("modal",
                                         <LogModalContent
                                             startImageId={props.logs[i].startImageId}
