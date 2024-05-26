@@ -1,6 +1,14 @@
 export const dateFormat = (d: Date) => {
     const year = d.getFullYear()
-    const month = d.getMonth()
+    const month = d.getMonth() + 1
+    const date = d.getDate()
+
+    return `${year}. ${month}. ${date}.`
+}
+
+export const timeFormat = (d: Date) => {
+    const year = d.getFullYear()
+    const month = d.getMonth() + 1
     const date = d.getDate()
     const hour = d.getHours().toString().padStart(2, "0")
     const minute = d.getMinutes().toString().padStart(2, "0")

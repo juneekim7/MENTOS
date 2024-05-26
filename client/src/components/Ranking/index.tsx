@@ -65,7 +65,7 @@ export const Ranking: React.FC = () => {
                 accessToken: userInfo.accessToken
             })
 
-            if (!res.success) return // TODO: Error
+            if (!res.success) return
             setMentoringRanking(toMentoringRanking(res.data))
             setUserRanking(toUserRanking(res.data))
         })()
@@ -92,7 +92,11 @@ export const Ranking: React.FC = () => {
                     <tbody>
                         {mentoringRanking.map((mtr, index) =>
                             <TableElement.Row key={index}>
-                                <TableElement.Data>{index + 1}</TableElement.Data>
+                                <TableElement.Data>
+                                    <div css={css`${index < 4 && "color: #EC9A00; font-weight: 600;"}`}>
+                                        {index + 1}
+                                    </div>
+                                </TableElement.Data>
                                 <TableElement.Data>
                                     <CenterBox>
                                         <MentoringLink name={mtr.name} code={mtr.code} />

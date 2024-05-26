@@ -61,7 +61,7 @@ export const MentoringInfo: React.FC = () => {
                     <Attendance queue={info.working.attendQueue} code={info.code} forceUpdate={forceUpdate} />
                     <VBox height={48} />
                 </Fragment>}
-            <History logs={info.logs} />
+            <History logs={info.logs} mentors={info.mentors} />
             <VBox height={32} />
         </Content>
     )

@@ -3,17 +3,18 @@ import { DivProps } from "../../global"
 import { omit } from "../../utils/omit"
 import { TDivision } from "."
 
-interface IDivision {
+interface DivisionProps {
     selected: boolean
 }
 
-const Division: React.FC<DivProps<IDivision>> = (props) => {
+const Division: React.FC<DivProps<DivisionProps>> = (props) => {
     return (
         <div
             css={css`
                 padding: 16px;
                 transition: background-color 0.5s;
                 display: inline-block;
+                cursor: pointer;
                 ${props.selected && `
                     border-bottom: 2px solid black;
                     font-weight: 700;
@@ -31,12 +32,12 @@ const Division: React.FC<DivProps<IDivision>> = (props) => {
     )
 }
 
-interface IDSProps {
+interface DivisonSelectorProps {
     division: TDivision
     setDivision: React.Dispatch<React.SetStateAction<TDivision>>
 }
 
-export const DivisonSelector: React.FC<IDSProps> = (props) => {
+export const DivisonSelector: React.FC<DivisonSelectorProps> = (props) => {
     return (
         <div>
             <Division
