@@ -11,7 +11,7 @@ import { ModalCalendar } from "./Calendar"
 import { useContext, useState } from "react"
 import { request } from "../../utils/connection"
 import { UserInfoContext } from "../context/User"
-import { Mentoring, maxDuration } from "../../../../models/mentoring"
+import { Mentoring } from "../../../../models/mentoring"
 import { Input } from "../common/Input"
 import { omit } from "../../utils/omit"
 import { DivProps } from "../../global"
@@ -119,10 +119,6 @@ export const RsvModalContent: React.FC<RsvModalContentProps> = (props) => {
 
                             if (start >= end) {
                                 alert("종료 시각은 시작 시각 이후여야 합니다.")
-                                return
-                            }
-                            if (end.getTime() - start.getTime() > maxDuration) {
-                                alert(`멘토링은 최대 ${maxDuration / (60 * 60 * 1000)}시간까지만 가능합니다.`)
                                 return
                             }
                             setPage("second")
