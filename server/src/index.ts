@@ -18,7 +18,11 @@ const app = express()
 app.use(express.json({
     limit: '10mb'
 }))
-app.use(cors())
+const corsOptions = {
+    origin: 'http://localhost',
+    optionsSuccessStatus: 200
+}
+app.use(cors(corsOptions))
 
 app.listen(8080, () => {
     console.log('The server has started.')
