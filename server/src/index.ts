@@ -325,6 +325,10 @@ addServerEventListener('mentoring_end', async (body) => {
     }
     const { location, start, attend, startImageId } = working
 
+    if (attend.length === 0) {
+        return failure('Empty attend')
+    }
+
     if (endImage === '') {
         return failure('Empty endImage')
     }
