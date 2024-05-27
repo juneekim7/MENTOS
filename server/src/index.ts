@@ -17,9 +17,9 @@ import { createServer as viteCreateServer } from 'vite'
 // #region app setting
 export type ParamDict = Record<string, string>
 
-const privateKey = readFileSync('/etc/letsencrypt/live/도메인 입력/privkey.pem', 'utf8')
-const certificate = readFileSync('/etc/letsencrypt/live/도메인 입력/cert.pem', 'utf8')
-const ca = readFileSync('/etc/letsencrypt/live/도메인 입력/chain.pem', 'utf8')
+const privateKey = readFileSync('/etc/letsencrypt/live/ksamentos.kr/privkey.pem', 'utf8')
+const certificate = readFileSync('/etc/letsencrypt/live/ksamentos.kr/cert.pem', 'utf8')
+const ca = readFileSync('/etc/letsencrypt/live/ksamentos.kr/chain.pem', 'utf8')
 const credentials = {
     key: privateKey,
     cert: certificate,
