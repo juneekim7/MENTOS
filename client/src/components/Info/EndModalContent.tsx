@@ -149,7 +149,7 @@ export const EndModalContent: React.FC<EndModalContentProps> = (props) => {
                             weight={500}
                             color={image === null ? "white" : "black"}
                         >
-                            {image === null ? "파일 선택" : "재선택"}
+                            {image === null ? "파일 선택" : "파일 변경"}
                         </TextBox>
                         <input
                             type="file"
