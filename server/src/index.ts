@@ -324,7 +324,10 @@ addServerEventListener('mentoring_end', async (body) => {
         return failure('Mentoring is not in progress.')
     }
     const { location, start, attend, startImageId } = working
-
+    const end = new Date()
+    if (end.getTime() - start.getTime() > maxDuration) {
+        end.setTime(start.getTime() + maxDuration)
+    }
     if (attend.length === 0) {
         cancelMentoring(code)
         return failure('Empty Attend')
