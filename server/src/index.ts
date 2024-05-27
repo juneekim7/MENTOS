@@ -26,11 +26,7 @@ ViteExpress.config({
     }
 })
 ViteExpress.listen(app, 80, () => {
-    console.log('The vite-express server has started!')
-})
-
-app.listen(8080, () => {
-    console.log('The server has started.')
+    console.log('The server has started!')
 })
 
 const addServerEventListener = <T extends keyof Connection>(
