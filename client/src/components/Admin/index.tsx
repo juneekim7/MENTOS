@@ -22,7 +22,7 @@ export const Admin: React.FC = () => {
             const verifyAdminRes = await request("verify_admin", {
                 accessToken: userInfo.accessToken
             })
-            
+
             if (!verifyAdminRes.success) return
             setVerifyAdmin(true)
 
