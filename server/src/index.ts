@@ -1,5 +1,4 @@
 import express from 'express'
-// import cors from 'cors'
 import { configDotenv } from 'dotenv'
 import { RawData, WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
@@ -19,11 +18,6 @@ const app = express()
 app.use(express.json({
     limit: '10mb'
 }))
-// const corsOptions = {
-//     origin: 'http://localhost',
-//     optionsSuccessStatus: 200
-// }
-// app.use(cors(corsOptions))
 ViteExpress.config({
     mode: 'production',
     inlineViteConfig: {
@@ -33,7 +27,7 @@ ViteExpress.config({
     }
 })
 ViteExpress.listen(app, 80, () => {
-    console.log('The server has started!')
+    console.log('The vite-express server has started!')
 })
 
 app.listen(8080, () => {
