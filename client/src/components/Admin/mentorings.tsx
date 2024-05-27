@@ -8,6 +8,8 @@ import { Mentoring, Semester } from "../../../../models/mentoring"
 import { MentoringLink, ProfileLink } from "../common/Link"
 import { CenterBox } from "../common/CenterBox"
 import { GridBox } from "../common/GridBox"
+import { Button } from "../common/Button"
+import { Input } from "../common/Input"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -52,8 +54,9 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
     const { userInfo } = useContext(UserInfoContext)
     const [semester, setSemester] = useState<Semester>(props.defaultSemester)
     const [mentorings, setMentorings] = useState<Mentoring[]>([])
-    const [_r, rerender] = useState({})
+    const [r, rerender] = useState({})
     const forceUpdate = useCallback(() => rerender({}), [])
+
     useEffect(() => {
         (async () => {
             const res = await request("mentoring_list", {
@@ -64,25 +67,28 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
             if (!res.success) return
             setMentorings(res.data)
         })()
-    }, [semester, userInfo])
+    }, [semester, userInfo, r])
+
     return (
         <Fragment>
-            <TextBox weight={700} size={24}>
-                Mentorings {semester}
+            <TextBox weight={600} size={20}>
+                학기
             </TextBox>
             <VBox height={8} />
-            학기:
-            <input
-                placeholder="학기 입력(20XX-1)"
+            <Input
+                placeholder="학기(20XX-X)"
                 defaultValue={props.defaultSemester}
                 onChange={(e) => {
                     if (/20\d\d-[12]/.test(e.target.value)) setSemester(e.target.value as Semester)
                 }}
+                css={css`display: inline;`}
             />
+            <VBox height={32} />
+            <TextBox weight={600} size={20}>
+                멘토링 추가하기
+            </TextBox>
             <VBox height={8} />
-            멘토링 추가하기:
-            <VBox height={8} />
-            파일 예시:
+            {/* 파일 예시:
             <textarea
                 readOnly={true}
                 placeholder={
@@ -94,7 +100,7 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
                     width: 500px;
                     height: 230px;
                 `}
-            />
+            /> */}
             <VBox height={8} />
             <input
                 type="file"
@@ -113,54 +119,66 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
             />
             <VBox height={8} />
             <VBox height={16} />
-            <table css={css`width: 100%; border-collapse: collapse;`}>
+            <table css={css`width: 100%; border-collapse: collapse; table-layout: fixed;`}>
                 <thead>
                     <TableElement.Row>
-                        <TableElement.Head>코드</TableElement.Head>
+                        <TableElement.Head>#</TableElement.Head>
                         <TableElement.Head>이름</TableElement.Head>
                         <TableElement.Head>멘토</TableElement.Head>
                         <TableElement.Head>멘티</TableElement.Head>
+                        <TableElement.Head>삭제</TableElement.Head>
                     </TableElement.Row>
                 </thead>
                 <tbody>
-                    {mentorings.map((men) =>
-                        <TableElement.Row>
+                    {mentorings.sort((a, b) => a.code - b.code).map((men, i) =>
+                        <TableElement.Row key={i}>
                             <TableElement.Data>{men.code}</TableElement.Data>
                             <TableElement.Data>
-                                <CenterBox><MentoringLink name={men.name} code={men.code} /></CenterBox>
-                                <button onClick={async () => {
-                                    await request("delete_mentoring", {
-                                        accessToken: userInfo.accessToken,
-                                        semester,
-                                        code: men.code
-                                    })
-                                    forceUpdate()
-                                }}
-                                >삭제</button>
+                                <CenterBox>
+                                    <MentoringLink name={men.name} code={men.code} />
+                                </CenterBox>
                             </TableElement.Data>
                             <TableElement.Data>
                                 <GridBox column={1}>
-                                    {men.mentors.map(
-                                        (user) => <CenterBox>
-                                            <ProfileLink name={user.name + " "} id={user.id} />
+                                    {men.mentors.map((user, i) => {
+                                        console.log(user.name, user.id)
+                                        return <CenterBox key={i}>
+                                            <ProfileLink name={user.name} id={user.id} />
+                                        </CenterBox>
+                                    })}
+                                </GridBox>
+                            </TableElement.Data>
+                            <TableElement.Data>
+                                <GridBox
+                                    column={3}
+                                    gap={2}
+                                    css={css`margin: 0 auto;`}
+                                >
+                                    {men.mentees.map((user, i) =>
+                                        <CenterBox key={i}>
+                                            <ProfileLink name={user.name} id={user.id} />
                                         </CenterBox>
                                     )}
                                 </GridBox>
                             </TableElement.Data>
                             <TableElement.Data>
-                                <GridBox column={3} gap={2}>
-                                    {men.mentees.map(
-                                        (user) => <CenterBox>
-                                            <ProfileLink name={user.name + " "} id={user.id} />
-                                        </CenterBox>
-                                    )}
-                                </GridBox>
+                                <Button onClick={async () => {
+                                    await request("delete_mentoring", {
+                                        accessToken: userInfo.accessToken,
+                                        code: men.code,
+                                        semester
+                                    })
+                                    forceUpdate()
+                                }}
+                                >
+                                    삭제
+                                </Button>
                             </TableElement.Data>
-
                         </TableElement.Row>
                     )}
                 </tbody>
             </table>
-        </Fragment >
+            <VBox height={32} />
+        </Fragment>
     )
 }
