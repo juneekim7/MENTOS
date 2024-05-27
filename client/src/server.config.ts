@@ -1,2 +1,3 @@
-export const SERVER_HOST = "http://localhost:8080"
-export const WEBSOCKET_HOST = "ws://localhost:3000"
+const ip = "13.125.104.45"
+export const SERVER_HOST = `http://${ip}:8080`
+export const WEBSOCKET_HOST = `ws://${ip}:3000`

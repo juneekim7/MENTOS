@@ -10,6 +10,7 @@ import { Log, LogImage, Mentoring, WorkingLog, maxDuration } from '../../models/
 import { getUser, verifyAdmin } from './user'
 import { KeyOfMap, currentSemester, getRes, splitStringIntoChunks } from './utils'
 import { checkLog, getMentoring } from './mentoring'
+import ViteExpress from 'vite-express'
 
 // #region app setting
 export type ParamDict = Record<string, string>
@@ -23,6 +24,17 @@ const corsOptions = {
     optionsSuccessStatus: 200
 }
 app.use(cors(corsOptions))
+ViteExpress.config({
+    mode: 'production',
+    inlineViteConfig: {
+        build: {
+            outDir: '../client/dist'
+        }
+    }
+})
+ViteExpress.listen(app, 80, () => {
+    console.log('The server has started!')
+})
 
 app.listen(8080, () => {
     console.log('The server has started.')
