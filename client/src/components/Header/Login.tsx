@@ -44,13 +44,14 @@ export const Login: React.FC = () => {
                 return
             }
 
-            const { name, id } = response.data
+            const { name, id, isAdmin } = response.data
             setUserInfo((userInfo) => ({
                 ...userInfo,
                 name,
                 id,
                 accessToken,
-                isLoggedIn: true
+                isLoggedIn: true,
+                isAdmin
             }))
         })()
     }, [setUserInfo])

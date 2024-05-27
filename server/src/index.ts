@@ -26,7 +26,6 @@ app.use(cors(corsOptions))
 
 app.listen(8080, () => {
     console.log('The server has started.')
-    console.log(`current semester: ${currentSemester()}`)
 })
 
 const addServerEventListener = <T extends keyof Connection>(

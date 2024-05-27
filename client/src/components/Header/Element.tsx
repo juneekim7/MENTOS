@@ -3,27 +3,26 @@ import { useNavigate } from "react-router-dom"
 import { DivProps } from "../../global"
 import { omit } from "../../utils/omit"
 import LogoImg from "@assets/logo.png"
+import { CenterBox } from "../common/CenterBox"
 
 export namespace HeaderElement {
     export const Logo: React.FC = () => {
         return (
-            <div
+            <CenterBox
                 css={css`
-                    font-family: "Anta", sans-serif;
-                    font-weight: 400;
-                    font-style: normal;
-                    font-size: 20px;
                     display: flex;
                     align-items: center;
+                    justify-content: center;
+                    padding: 8px 0;
                 `}
             >
                 <img
                     src={LogoImg}
                     css={css`
-                        height: 20px;
+                        height: 16px;
                     `}
                 />
-            </div>
+            </CenterBox>
         )
     }
 
@@ -33,8 +32,8 @@ export namespace HeaderElement {
                 css={css`
                     display: flex;
                     height: 100%;
-                    gap: 5px;
                     align-items: center;
+                    gap: 5px;
                 `}
             >
                 {props.children}
