@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from "react"
+import { Fragment, useCallback, useContext, useEffect, useState } from "react"
 import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 import { ProfileLink } from "../common/Link"
@@ -50,6 +50,8 @@ namespace TableElement {
 export const AdminUsers: React.FC = () => {
     const { userInfo } = useContext(UserInfoContext)
     const [users, setUsers] = useState<User[]>([])
+    const [_r, rerender] = useState({})
+    const forceUpdate = useCallback(() => rerender({}), [])
     useEffect(() => {
         (async () => {
             const res = await request("user_list", {
@@ -89,7 +91,7 @@ export const AdminUsers: React.FC = () => {
                             userListString: await file.text()
                         })
                     }
-                    alert("추가되었습니다. 새로고침 하세요.")
+                    forceUpdate()
                 }}
             />
             <VBox height={16} />
@@ -116,7 +118,7 @@ export const AdminUsers: React.FC = () => {
                                         accessToken: userInfo.accessToken,
                                         id: user.id
                                     })
-                                    alert("삭제되었습니다. 새로고침 하세요.")
+                                    forceUpdate()
                                 }}
                                 >삭제</button>
                             </TableElement.Data>

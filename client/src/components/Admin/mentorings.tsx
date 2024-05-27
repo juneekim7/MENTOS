@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from "react"
+import { Fragment, useCallback, useContext, useEffect, useState } from "react"
 import { TextBox } from "../common/TextBox"
 import { VBox } from "../common/VBox"
 import { css } from "@emotion/react"
@@ -52,6 +52,8 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
     const { userInfo } = useContext(UserInfoContext)
     const [semester, setSemester] = useState<Semester>(props.defaultSemester)
     const [mentorings, setMentorings] = useState<Mentoring[]>([])
+    const [_r, rerender] = useState({})
+    const forceUpdate = useCallback(() => rerender({}), [])
     useEffect(() => {
         (async () => {
             const res = await request("mentoring_list", {
@@ -106,7 +108,7 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
                             mentoringListString: await file.text()
                         })
                     }
-                    alert("추가되었습니다. 새로고침 하세요.")
+                    forceUpdate()
                 }}
             />
             <VBox height={8} />
@@ -132,7 +134,7 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
                                         semester,
                                         code: men.code
                                     })
-                                    alert("삭제되었습니다. 새로고침 하세요.")
+                                    forceUpdate()
                                 }}
                                 >삭제</button>
                             </TableElement.Data>
