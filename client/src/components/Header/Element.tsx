@@ -1,8 +1,8 @@
 import { css } from "@emotion/react"
 import { useNavigate } from "react-router-dom"
-import { TextBox } from "../common/TextBox"
 import { DivProps } from "../../global"
 import { omit } from "../../utils/omit"
+import LogoImg from "@assets/logo.png"
 
 export namespace HeaderElement {
     export const Logo: React.FC = () => {
@@ -17,12 +17,12 @@ export namespace HeaderElement {
                     align-items: center;
                 `}
             >
-                <TextBox color="#B26CD6" inline>M</TextBox>
-                <TextBox color="#D6D74E" inline>E</TextBox>
-                <TextBox color="#E75DC7" inline>N</TextBox>
-                <TextBox color="#E6A345" inline>T</TextBox>
-                <TextBox color="#E03E4D" inline>O</TextBox>
-                <TextBox color="#01B466" inline>S</TextBox>
+                <img
+                    src={LogoImg}
+                    css={css`
+                        height: 20px;
+                    `}
+                />
             </div>
         )
     }

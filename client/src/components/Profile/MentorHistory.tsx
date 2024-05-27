@@ -89,6 +89,7 @@ export const MentorHistory: React.FC<{ id: string }> = (props) => {
                 <TextBox weight={500}>활동 멘토링 : </TextBox>
                 {mentorings.map((mtr, i, origin) =>
                     <MentoringLink
+                        key={i}
                         name={mtr.name}
                         code={mtr.code}
                         addComma={i < origin.length - 1}
@@ -99,7 +100,7 @@ export const MentorHistory: React.FC<{ id: string }> = (props) => {
             <table css={css`width: 100%; border-collapse: collapse;`}>
                 <thead>
                     {logs.length === 0
-                        ? <TableElement.Row /> 
+                        ? <TableElement.Row />
                         : <TableElement.Row>
                             <TableElement.Head>#</TableElement.Head>
                             <TableElement.Head>멘토링</TableElement.Head>
@@ -119,7 +120,7 @@ export const MentorHistory: React.FC<{ id: string }> = (props) => {
                                 >
                                     해당 학기에 멘토로 활동한 기록이 없습니다.
                                 </TextBox>
-                            </TableElement.Data>    
+                            </TableElement.Data>
                         </TableElement.Row>
                         : logs.map((log, index) =>
                             <TableElement.Row>
