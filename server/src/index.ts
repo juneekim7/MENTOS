@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import { configDotenv } from 'dotenv'
 import { RawData, WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
@@ -13,11 +14,15 @@ import ViteExpress from 'vite-express'
 
 // #region app setting
 export type ParamDict = Record<string, string>
-
 const app = express()
 app.use(express.json({
     limit: '10mb'
 }))
+const corsOptions = {
+    origin: 'http://13.125.104.45.nip.io/',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions))
 ViteExpress.config({
     mode: 'production',
     inlineViteConfig: {
