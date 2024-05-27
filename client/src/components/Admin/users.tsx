@@ -7,6 +7,7 @@ import { CenterBox } from "../common/CenterBox"
 import { UserInfoContext } from "../context/User"
 import { request } from "../../utils/connection"
 import { User } from "../../../../models/user"
+import { Button } from "../common/Button"
 
 namespace TableElement {
     export const Row: React.FC<React.PropsWithChildren> = (props) => {
@@ -52,6 +53,7 @@ export const AdminUsers: React.FC = () => {
     const [users, setUsers] = useState<User[]>([])
     const [_r, rerender] = useState({})
     const forceUpdate = useCallback(() => rerender({}), [])
+
     useEffect(() => {
         (async () => {
             const res = await request("user_list", {
@@ -62,15 +64,14 @@ export const AdminUsers: React.FC = () => {
             setUsers(res.data)
         })()
     }, [userInfo])
+
     return (
         <Fragment>
-            <TextBox weight={700} size={24}>
-                User
+            <TextBox size={20} weight={600}>
+                유저 추가하기
             </TextBox>
             <VBox height={8} />
-            유저 추가하기:
-            <VBox height={8} />
-            파일 예시:
+            {/* 파일 예시:
             <textarea
                 readOnly={true}
                 placeholder={"23-031 김준이\n23-046 문가온\n..."}
@@ -78,7 +79,7 @@ export const AdminUsers: React.FC = () => {
                     resize: None;
                     height: 70px;
                 `}
-            />
+            /> */}
             <VBox height={8} />
             <input
                 type="file"
@@ -104,8 +105,8 @@ export const AdminUsers: React.FC = () => {
                     </TableElement.Row>
                 </thead>
                 <tbody>
-                    {users.map((user) =>
-                        <TableElement.Row>
+                    {users.map((user, i) =>
+                        <TableElement.Row key={i}>
                             <TableElement.Data>{user.id}</TableElement.Data>
                             <TableElement.Data>
                                 <CenterBox>
@@ -113,19 +114,22 @@ export const AdminUsers: React.FC = () => {
                                 </CenterBox>
                             </TableElement.Data>
                             <TableElement.Data>
-                                <button onClick={async () => {
+                                <Button onClick={async () => {
                                     await request("delete_user", {
                                         accessToken: userInfo.accessToken,
                                         id: user.id
                                     })
                                     forceUpdate()
                                 }}
-                                >삭제</button>
+                                >
+                                    삭제
+                                </Button>
                             </TableElement.Data>
                         </TableElement.Row>
                     )}
                 </tbody>
             </table>
-        </Fragment >
+            <VBox height={32} />
+        </Fragment>
     )
 }

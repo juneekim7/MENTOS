@@ -2,6 +2,7 @@ import { css } from "@emotion/react"
 import { TextBox } from "./TextBox"
 import { HFlexBox } from "./FlexBox"
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 
 interface MentoringLinkProps {
     name: string
@@ -54,6 +55,10 @@ interface ProfileLinkProps {
 export const ProfileLink: React.FC<ProfileLinkProps> = (props) => {
     const navigate = useNavigate()
 
+    useEffect(() => {
+        console.log(props)
+    }, [props])
+
     return (
         <HFlexBox
             onClick={(e) => {
@@ -76,7 +81,7 @@ export const ProfileLink: React.FC<ProfileLinkProps> = (props) => {
                     text-decoration-thickness: from-font;`}
                 `}
             >
-                {props.name}
+                {props.name.length < 5 ? props.name : props.name.slice(0, 5) + "..."}
             </TextBox>
             {props.addComma &&
                 <TextBox css={css`line-height: 1.2;`}>
