@@ -225,6 +225,7 @@ export const History: React.FC<HistoryProps> = (props) => {
                             <TableElement.Row
                                 key={i}
                                 onClick={() => {
+                                    console.log(userInfo.isAdmin)
                                     if (!userInfo.isAdmin) return
                                     EventHandler.trigger("modal",
                                         <LogModalContent

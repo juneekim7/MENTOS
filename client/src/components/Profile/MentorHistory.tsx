@@ -86,7 +86,7 @@ export const MentorHistory: React.FC<{ id: string }> = (props) => {
             </TextBox>
             <VBox height={8} />
             <HFlexBox center>
-                <TextBox weight={500}>활동 멘토링 : </TextBox>
+                <TextBox weight={500}>활동 멘토링 : {mentorings.length === 0 ? "없음" : ""}</TextBox>
                 {mentorings.map((mtr, i, origin) =>
                     <MentoringLink
                         key={i}
