@@ -5,6 +5,7 @@ import { UserInfoContext } from "../context/User"
 import { request } from "../../utils/connection"
 import { HeaderElement } from "./Element"
 import { useNavigate } from "react-router-dom"
+import { HFlexBox } from "../common/FlexBox"
 
 export const Login: React.FC = () => {
     const { userInfo, setUserInfo } = useContext(UserInfoContext)
@@ -58,11 +59,32 @@ export const Login: React.FC = () => {
 
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID as string}>
-            <div css={css`margin: 0 0 0 auto;`}>
+            <HFlexBox
+                css={css`
+                    margin: 0 0 0 auto;
+                    gap: 8px;
+                `}
+            >    
+                {userInfo.isLoggedIn &&
+                    <HeaderElement.Hover
+                        onClick={() => {
+                            if (setUserInfo === null) return
+                            setUserInfo({
+                                name: "",
+                                id: "",
+                                isLoggedIn: false,
+                                accessToken: "",
+                                isAdmin: false
+                            })
+                            localStorage.removeItem("accessToken")
+                        }}
+                    >
+                        로그아웃
+                    </HeaderElement.Hover>}
                 <HeaderElement.Hover onClick={() => userInfo.isLoggedIn ? navigate(`./profile/${userInfo.id}`) : googleAuthLogin()}>
                     {userInfo.isLoggedIn ? userInfo.name : "로그인"}
                 </HeaderElement.Hover>
-            </div>
+            </HFlexBox>
         </GoogleOAuthProvider>
     )
 }
