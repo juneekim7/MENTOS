@@ -4,7 +4,7 @@ import { useState } from "react"
 import { CenterBox } from "./CenterBox"
 
 export const ModalContainer: React.FC = () => {
-    const [ content, setContent ] = useState<React.ReactNode | null>(null)
+    const [content, setContent] = useState<React.ReactNode | null>(null)
 
     useEvent("modal", (content: React.ReactNode | null) => {
         setContent(content)
@@ -22,7 +22,7 @@ export const ModalContainer: React.FC = () => {
                 left: 0;
                 background-color: #00000088;
                 width: 100%;
-                height: 100%;
+                height: 100dvh;
                 z-index: 100;
             `}
             onClick={() => EventHandler.trigger("modal", null)}

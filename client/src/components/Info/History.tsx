@@ -81,7 +81,7 @@ interface LogModalContentProps {
 
 const LogModalContent: React.FC<LogModalContentProps> = (props) => {
     const { userInfo } = useContext(UserInfoContext)
-    const [ image, setImage ] = useState(["", ""])
+    const [image, setImage] = useState(["", ""])
 
     useEffect(() => {
         (async () => {
@@ -91,8 +91,8 @@ const LogModalContent: React.FC<LogModalContentProps> = (props) => {
                 endImageId: props.endImageId
             }, true)
 
-            if (res.success) setImage([ res.data.startImage, res.data.endImage ])
-        })() 
+            if (res.success) setImage([res.data.startImage, res.data.endImage])
+        })()
     }, [props, userInfo])
 
     return (
@@ -143,6 +143,7 @@ const LogModalContent: React.FC<LogModalContentProps> = (props) => {
             <TextBox weight={600} size={20}>
                 시작 사진
             </TextBox>
+            <VBox height={8} />
             <CenterBox
                 css={css`
                     width: 100%;
@@ -162,6 +163,7 @@ const LogModalContent: React.FC<LogModalContentProps> = (props) => {
             <TextBox weight={600} size={20}>
                 종료 사진
             </TextBox>
+            <VBox height={8} />
             <CenterBox
                 css={css`
                     width: 100%;
@@ -188,7 +190,7 @@ interface HistoryProps {
 
 export const History: React.FC<HistoryProps> = (props) => {
     const { userInfo } = useContext(UserInfoContext)
-     
+
     return (
         <VFlexBox full>
             <TextBox size={24} weight={700}>
@@ -197,7 +199,7 @@ export const History: React.FC<HistoryProps> = (props) => {
             <VBox height={16} />
             <table css={css`width: 100%; border-collapse: collapse;`}>
                 <thead>
-                    {props.logs.length === 0 
+                    {props.logs.length === 0
                         ? <TableElement.Row />
                         : <TableElement.Row>
                             <TableElement.Head>#</TableElement.Head>
@@ -218,13 +220,12 @@ export const History: React.FC<HistoryProps> = (props) => {
                                 >
                                     멘토링 내역이 없습니다.
                                 </TextBox>
-                            </TableElement.Data>    
+                            </TableElement.Data>
                         </TableElement.Row>
                         : setTableData(props.logs).map(([interval, accTime], i) =>
                             <TableElement.Row
                                 key={i}
                                 onClick={() => {
-                                    console.log(userInfo.isAdmin)
                                     if (!userInfo.isAdmin) return
                                     EventHandler.trigger("modal",
                                         <LogModalContent

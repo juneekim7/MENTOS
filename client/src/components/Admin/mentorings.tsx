@@ -140,12 +140,10 @@ export const AdminMentorings: React.FC<{ defaultSemester: Semester }> = (props) 
                             </TableElement.Data>
                             <TableElement.Data>
                                 <GridBox column={1}>
-                                    {men.mentors.map((user, i) => {
-                                        console.log(user.name, user.id)
-                                        return <CenterBox key={i}>
+                                    {men.mentors.map((user, i) =>
+                                        <CenterBox key={i}>
                                             <ProfileLink name={user.name} id={user.id} />
-                                        </CenterBox>
-                                    })}
+                                        </CenterBox>)}
                                 </GridBox>
                             </TableElement.Data>
                             <TableElement.Data>

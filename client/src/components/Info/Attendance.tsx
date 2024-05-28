@@ -82,7 +82,7 @@ export const Attendance: React.FC<IAttendanceProps> = (props) => {
     return (
         <VFlexBox full>
             <TextBox size={24} weight={700}>
-                출석체크
+                출석 요청
             </TextBox>
             <VBox height={16} />
             <table css={css`width: 100%; border-collapse: collapse;`}>
@@ -102,7 +102,7 @@ export const Attendance: React.FC<IAttendanceProps> = (props) => {
                                 >
                                     출석을 기다리고 있는 멘티가 없습니다.
                                 </TextBox>
-                            </TableElement.Data>    
+                            </TableElement.Data>
                         </TableElement.Row>
                         : props.queue.map((user, i) => (
                             <TableElement.Row key={i}>

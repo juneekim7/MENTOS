@@ -16,8 +16,8 @@ export const MentoringMain: React.FC<Mentoring> = (props) => {
     const navigate = useNavigate()
     const { userInfo } = useContext(UserInfoContext)
     const intervalRef = useRef<NodeJS.Timeout>()
-    const [ timer, setTimer ] = useState("00:00:00")
-    
+    const [timer, setTimer] = useState("00:00:00")
+
     useEffect(() => {
         const { plan } = props
         if (plan === null) return
@@ -43,7 +43,7 @@ export const MentoringMain: React.FC<Mentoring> = (props) => {
         : (isMentee(props, userInfo)
             ? "var(--mentos-official-dark)"
             : "var(--mentos-section-dark)")
-    
+
     return (
         <VFlexBox
             css={css`
@@ -72,15 +72,15 @@ export const MentoringMain: React.FC<Mentoring> = (props) => {
                     <VFlexBox css={css`width: 14px; margin-right: 4px;`} center>
                         <FontAwesomeIcon icon={faUser} size="sm" style={{ color: iconColor }} />
                     </VFlexBox>
-                    {props.mentors.slice(0, 3).map((mt, i, origin) => 
-                        <ProfileLink 
+                    {props.mentors.slice(0, 3).map((mt, i, origin) =>
+                        <ProfileLink
                             key={i}
                             name={mt.name}
                             id={mt.id}
-                            addComma={i < origin.length - 1}
+                            addComma={i < origin.length - 1 || props.mentors.length > 3}
                         />)}
                     {props.mentors.length > 3 && <div>
-                        , ...
+                        ...
                     </div>}
                 </HFlexBox>
                 <HFlexBox gap={4} center>
@@ -103,7 +103,7 @@ export const MentoringMain: React.FC<Mentoring> = (props) => {
             <VBox
                 height={16}
                 css={css`
-                    border-bottom: 1px dashed ${iconColor};`    
+                    border-bottom: 1px dashed ${iconColor};`
                 }
             />
             <VBox height={16} />

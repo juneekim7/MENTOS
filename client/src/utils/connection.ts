@@ -51,9 +51,6 @@ export class WS {
                     const el = this.eventListeners[res.query]
                     el?.forEach((cb) => cb(res.content))
                 })
-                ws.addEventListener("close", () => {
-                    console.log("closed")
-                })
                 this.ws = ws
                 resolve()
             })
@@ -65,7 +62,6 @@ export class WS {
         if (this.ws === null) return
         this.ws.close()
         this.ws = null
-        console.log("close")
     }
 
     public get isOpen() {

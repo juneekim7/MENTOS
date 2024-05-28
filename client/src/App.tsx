@@ -32,7 +32,7 @@ const Content: React.FC = () => {
         <CenterBox
             css={css`
                 padding-top: 60px;
-                height: 100vh;
+                height: 100dvh;
             `}
         >
             <TextBox weight={500} size={20}>

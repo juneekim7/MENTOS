@@ -2,7 +2,6 @@ import { css } from "@emotion/react"
 import { TextBox } from "./TextBox"
 import { HFlexBox } from "./FlexBox"
 import { useNavigate } from "react-router-dom"
-import { useEffect } from "react"
 
 interface MentoringLinkProps {
     name: string
@@ -54,10 +53,6 @@ interface ProfileLinkProps {
 
 export const ProfileLink: React.FC<ProfileLinkProps> = (props) => {
     const navigate = useNavigate()
-
-    useEffect(() => {
-        console.log(props)
-    }, [props])
 
     return (
         <HFlexBox
