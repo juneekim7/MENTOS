@@ -110,11 +110,20 @@ const WS: {
     },
 
     send<S extends keyof WSServerResCont>(key: KeyOfMap<typeof subscribers[S]>, query: S, content: WSServerRes[S]['content']) {
-        for (const socket of subscribers[query].get(key) ?? []) {
-            socket.send(JSON.stringify({
-                query,
-                content
-            } as WSServerRes[S]))
+        const socketList = subscribers[query].get(key) ?? []
+        const deleteSockets: WebSocket[] = []
+        for (const socket of socketList) {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    query,
+                    content
+                } as WSServerRes[S]))
+            } else {
+                deleteSockets.push(socket)
+            }
+        }
+        if (deleteSockets.length > 0) {
+            subscribers[query].set(key, socketList?.filter((socket) => !deleteSockets.includes(socket)))
         }
     },
 
