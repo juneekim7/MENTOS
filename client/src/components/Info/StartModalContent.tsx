@@ -207,11 +207,10 @@ export const StartModalContent: React.FC<StartModalContentProps> = (props) => {
                                         startImage: image
                                     })
 
-                                    if (!res.success) console.log(res.error)
-                                    else {
-                                        EventHandler.trigger("modal", null)
-                                        props.forceUpdate()
-                                    }
+                                    
+                                    if (!res.success) return
+                                    EventHandler.trigger("modal", null)
+                                    props.forceUpdate()
                                 }}
                             >
                                 <TextBox size={20} weight={500} color="white">시작</TextBox>

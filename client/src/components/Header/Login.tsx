@@ -17,7 +17,7 @@ export const Login: React.FC = () => {
             localStorage.setItem("accessToken", res.access_token)
             const response = await request("login", { accessToken: res.access_token })
             if (!response.success) {
-                alert(`Login Failed!\nError message: ${response.error}`)
+                if (!response.error.includes("401")) alert(`Login Failed!\nError message: ${response.error}`)
                 return
             }
 
@@ -41,7 +41,7 @@ export const Login: React.FC = () => {
         ;(async () => {
             const response = await request("login", { accessToken })
             if (!response.success) {
-                alert(`Login Failed!\nError message: ${response.error}`)
+                if (!response.error.includes("401")) alert(`Login Failed!\nError message: ${response.error}`)
                 return
             }
 

@@ -165,11 +165,9 @@ export const RsvModalContent: React.FC<RsvModalContentProps> = (props) => {
                                 }
                             })
 
-                            if (!res.success) console.log(res.error)
-                            else {
-                                EventHandler.trigger("modal", null)
-                                props.forceUpdate()
-                            }
+                            if (!res.success) return
+                            EventHandler.trigger("modal", null)
+                            props.forceUpdate()
                         }}
                     >
                         <TextBox
