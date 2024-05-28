@@ -13,6 +13,7 @@ import { Mentoring } from "../../../../models/mentoring"
 import { DivProps } from "../../global"
 import { omit } from "../../utils/omit"
 import { imageToBase64 } from "../../utils/image"
+import imageCompression from "browser-image-compression"
 
 const Button: React.FC<DivProps> = (props) => {
     return (
@@ -163,7 +164,8 @@ export const EndModalContent: React.FC<EndModalContentProps> = (props) => {
                             `}
                             onChange={async (e) => {
                                 if (e.target.files === null) return
-                                const res = await imageToBase64(e.target.files[0])
+                                const img = await imageCompression(e.target.files[0], { maxSizeMB: 1 })
+                                const res = await imageToBase64(img)
                                 setImage(res)
                             }}
                         />
