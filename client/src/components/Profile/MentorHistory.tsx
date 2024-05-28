@@ -59,7 +59,7 @@ export const MentorHistory: React.FC<{ id: string }> = (props) => {
         (async () => {
             const res = await request("mentoring_list", {
                 accessToken: userInfo.accessToken
-            })
+            }, true)
 
             if (!res.success) return
             setMentorings(res.data.filter(

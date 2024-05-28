@@ -2,7 +2,7 @@ import { Connection, Response } from "../../../models/connection"
 import { WSClientReqCont, WSServerRes } from "../../../models/ws"
 import { SERVER_HOST, WEBSOCKET_HOST } from "../server.config"
 
-export const request = async <T extends keyof Connection>(event: T, body: Connection[T][0]): Promise<Response<Connection[T][1]>> => {
+export const request = async <T extends keyof Connection>(event: T, body: Connection[T][0], alertError = false): Promise<Response<Connection[T][1]>> => {
     const response = await fetch(`${SERVER_HOST}/api/${event}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -10,6 +10,7 @@ export const request = async <T extends keyof Connection>(event: T, body: Connec
     })
 
     const data = await response.json() as Response<Connection[T][1]>
+    if (alertError && !data.success) alert(data.error)
     return data
 }
 

@@ -10,35 +10,35 @@ import { getUser, verifyAdmin } from './user'
 import { KeyOfMap, currentSemester, getRes, splitStringIntoChunks } from './utils'
 import { checkLog, getMentoring } from './mentoring'
 import ViteExpress from 'vite-express'
-import { readFileSync } from 'fs'
+// import { readFileSync } from 'fs'
 // import { createServer as httpsCreateServer } from 'https'
 // import { createServer as viteCreateServer } from 'vite'
 
 // #region app setting
 export type ParamDict = Record<string, string>
 
-const privateKey = readFileSync('/etc/letsencrypt/live/ksamentos.kr/privkey.pem', 'utf8')
-const certificate = readFileSync('/etc/letsencrypt/live/ksamentos.kr/cert.pem', 'utf8')
-const ca = readFileSync('/etc/letsencrypt/live/ksamentos.kr/chain.pem', 'utf8')
-const _credentials = {
-    key: privateKey,
-    cert: certificate,
-    ca
-}
+// const privateKey = readFileSync('/etc/letsencrypt/live/ksamentos.kr/privkey.pem', 'utf8')
+// const certificate = readFileSync('/etc/letsencrypt/live/ksamentos.kr/cert.pem', 'utf8')
+// const ca = readFileSync('/etc/letsencrypt/live/ksamentos.kr/chain.pem', 'utf8')
+// const _credentials = {
+//     key: privateKey,
+//     cert: certificate,
+//     ca
+// }
 
 const app = express()
 app.use(express.json({
     limit: '10mb'
 }))
 // const httpsServer = httpsCreateServer(credentials, app)
-ViteExpress.config({
-    mode: 'production',
-    inlineViteConfig: {
-        build: {
-            outDir: '../client/dist'
-        }
-    }
-})
+// ViteExpress.config({
+//     mode: 'production',
+//     inlineViteConfig: {
+//         build: {
+//             outDir: '../client/dist'
+//         }
+//     }
+// })
 
 ViteExpress.listen(app, 80, () => {
     console.log('The server has started!')

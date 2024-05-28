@@ -120,9 +120,8 @@ export const Attendance: React.FC<IAttendanceProps> = (props) => {
                                                         accessToken: userInfo.accessToken,
                                                         code: props.code,
                                                         menteeId: user.id
-                                                    })
-                                                    if (!res.success) console.log(res.error)
-                                                    else props.forceUpdate()
+                                                    }, true)
+                                                    if (res.success) props.forceUpdate()
                                                 }
                                             }
                                         >
@@ -135,9 +134,8 @@ export const Attendance: React.FC<IAttendanceProps> = (props) => {
                                                         accessToken: userInfo.accessToken,
                                                         code: props.code,
                                                         menteeId: user.id
-                                                    })
-                                                    if (!res.success) console.log(res.error)
-                                                    else props.forceUpdate()
+                                                    }, true)
+                                                    if (res.success) props.forceUpdate()
                                                 }
                                             }
                                         >

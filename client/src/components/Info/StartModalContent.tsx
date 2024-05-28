@@ -207,8 +207,7 @@ export const StartModalContent: React.FC<StartModalContentProps> = (props) => {
                                         code: props.info.code,
                                         location,
                                         startImage: image
-                                    })
-
+                                    }, true)
                                     
                                     if (!res.success) return
                                     EventHandler.trigger("modal", null)

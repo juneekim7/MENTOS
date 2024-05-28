@@ -12,6 +12,7 @@ export const ProfileCard: React.FC<{ id: string }> = (props) => {
     const { userInfo } = useContext(UserInfoContext)
     const [name, setName] = useState("")
     const imageSrc = `https://ksain.net/files/stuPhoto/${id}.jpg`
+    
     useEffect(() => {
         (async () => {
             const res = await request("get_user_name", {
@@ -23,6 +24,7 @@ export const ProfileCard: React.FC<{ id: string }> = (props) => {
             setName(res.data)
         })()
     }, [id, userInfo])
+
     return (
         <div>
             <CenterBox

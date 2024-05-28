@@ -24,10 +24,9 @@ export const MentoringInfo: React.FC = () => {
             const res = await request("mentoring_info", {
                 accessToken: userInfo.accessToken,
                 code: parseInt(id ?? "0")
-            })
+            }, true)
 
-            if (!res.success) return
-            setInfo(res.data)
+            if (res.success) setInfo(res.data)
         })()
     }, [id, userInfo, r])
 

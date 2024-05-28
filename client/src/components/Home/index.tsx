@@ -27,7 +27,7 @@ export const Home: React.FC = () => {
 
             const res = await request("mentoring_list", {
                 accessToken: userInfo.accessToken
-            })
+            }, true)
 
             if (!res.success) return // TODO: Error
             setMentoringInfo(res.data)

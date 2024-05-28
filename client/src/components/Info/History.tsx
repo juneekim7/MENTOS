@@ -89,10 +89,9 @@ const LogModalContent: React.FC<LogModalContentProps> = (props) => {
                 accessToken: userInfo.accessToken,
                 startImageId: props.startImageId,
                 endImageId: props.endImageId
-            })
+            }, true)
 
-            if (!res.success) return
-            setImage([ res.data.startImage, res.data.endImage ])
+            if (res.success) setImage([ res.data.startImage, res.data.endImage ])
         })() 
     }, [props, userInfo])
 

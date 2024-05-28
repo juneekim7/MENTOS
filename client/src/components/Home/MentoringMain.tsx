@@ -72,13 +72,16 @@ export const MentoringMain: React.FC<Mentoring> = (props) => {
                     <VFlexBox css={css`width: 14px; margin-right: 4px;`} center>
                         <FontAwesomeIcon icon={faUser} size="sm" style={{ color: iconColor }} />
                     </VFlexBox>
-                    {props.mentors.map((mt, i, origin) => 
+                    {props.mentors.slice(0, 3).map((mt, i, origin) => 
                         <ProfileLink 
                             key={i}
                             name={mt.name}
                             id={mt.id}
                             addComma={i < origin.length - 1}
-                        />)} 
+                        />)}
+                    {props.mentors.length > 3 && <div>
+                        , ...
+                    </div>}
                 </HFlexBox>
                 <HFlexBox gap={4} center>
                     <VFlexBox css={css`width: 14px;`} center>

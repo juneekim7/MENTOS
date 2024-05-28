@@ -177,10 +177,9 @@ export const EndModalContent: React.FC<EndModalContentProps> = (props) => {
                                     accessToken: userInfo.accessToken,
                                     code: props.info.code,
                                     endImage: image
-                                })
+                                }, true)
 
-                                if (!res.success) console.log(res.error)
-                                else {
+                                if (res.success) {
                                     EventHandler.trigger("modal", null)
                                     props.forceUpdate()
                                 }

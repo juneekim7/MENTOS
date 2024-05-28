@@ -163,7 +163,7 @@ export const RsvModalContent: React.FC<RsvModalContentProps> = (props) => {
                                     start,
                                     end
                                 }
-                            })
+                            }, true)
 
                             if (!res.success) return
                             EventHandler.trigger("modal", null)
