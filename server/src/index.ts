@@ -31,14 +31,14 @@ app.use(express.json({
     limit: '10mb'
 }))
 // const httpsServer = httpsCreateServer(credentials, app)
-// ViteExpress.config({
-//     mode: 'production',
-//     inlineViteConfig: {
-//         build: {
-//             outDir: '../client/dist'
-//         }
-//     }
-// })
+ViteExpress.config({
+    mode: 'production',
+    inlineViteConfig: {
+        build: {
+            outDir: '../client/dist'
+        }
+    }
+})
 
 ViteExpress.listen(app, 80, () => {
     console.log('The server has started!')
@@ -176,7 +176,7 @@ addServerEventListener('mentoring_list', async (body) => {
 
     const mentoringList = await mentoringColl(semester).find({}, withoutId).toArray()
     if (mentoringList === null) {
-        return failure(`No mentoring in the semester ${semester}`)
+        return failure(`${semester}학기에 멘토링이 존재하지 않습니다.`)
     }
     return success(mentoringList)
 })
@@ -189,7 +189,7 @@ addServerEventListener('mentoring_info', async (body) => {
 
     const mentoring = await mentoringColl(semester).findOne({ code }, withoutId)
     if (mentoring === null) {
-        return failure(`No mentoring in the semester ${semester} with the code ${code}`)
+        return failure(`${semester} 학기에 코드 ${code}를 가진 멘토링이 없습니다.`)
     }
     return success(mentoring)
 })
@@ -216,13 +216,13 @@ addServerEventListener('mentoring_reserve', async (body) => {
     if (!getMentoringRes.success) return getMentoringRes
     const mentoring = getMentoringRes.data
     if (mentoring.working !== null) {
-        return failure('You cannot reserve if mentoring is working.')
+        return failure('멘토링이 진행중일 때 멘토링 예약을 할 수 없습니다.')
     }
 
     const checkLogRes = await checkLog(plan)
     if (!checkLogRes.success) return checkLogRes
     if (plan.start < new Date()) {
-        return failure('You cannot reserve past')
+        return failure('과거에 예약할 수 없습니다.')
     }
 
     await mentoringColl().updateOne({ code }, {
@@ -254,7 +254,7 @@ addServerEventListener('mentoring_reserve_cancel', async (body) => {
     if (!getMentoringRes.success) return getMentoringRes
     const mentoring = getMentoringRes.data
     if (mentoring.plan === null) {
-        return failure('There is no plan to cancel.')
+        return failure('취소할 예약이 없습니다.')
     }
 
     cancelMentoringReservation(code)
@@ -280,14 +280,14 @@ addServerEventListener('mentoring_start', async (body) => {
     const getMentoringRes = await getMentoring(code, user, 'mentor')
     if (!getMentoringRes.success) return getMentoringRes
     if (getMentoringRes.data.working !== null) {
-        return failure('Mentoring already in progress.')
+        return failure('멘토링이 이미 진행중입니다.')
     }
 
     const checkLogRes = await checkLog({ location })
     if (!checkLogRes.success) return checkLogRes
 
     if (startImage === '') {
-        return failure('Empty startImage')
+        return failure('시작 이미지가 없습니다.')
     }
     const startImageId = (await logImageColl().insertOne({
         image: startImage
@@ -329,7 +329,7 @@ addServerEventListener('mentoring_cancel', async (body) => {
     const getMentoringRes = await getMentoring(code, user, 'mentor')
     if (!getMentoringRes.success) return getMentoringRes
     if (getMentoringRes.data.working === null) {
-        return failure('Mentoring is not in progress.')
+        return failure('멘토링이 진행중이 아닙니다.')
     }
 
     cancelMentoring(code)
@@ -346,7 +346,7 @@ addServerEventListener('mentoring_end', async (body) => {
     if (!getMentoringRes.success) return getMentoringRes
     const working = getMentoringRes.data.working
     if (working === null) {
-        return failure('Mentoring is not in progress.')
+        return failure('멘토링이 진행중이 아닙니다.')
     }
     const { location, start, attend, startImageId } = working
     const end = new Date()
@@ -355,11 +355,11 @@ addServerEventListener('mentoring_end', async (body) => {
     }
     if (attend.length === 0) {
         cancelMentoring(code)
-        return failure('Empty Attend')
+        return failure('출석한 멘티가 없습니다.')
     }
 
     if (endImage === '') {
-        return failure('Empty endImage')
+        return failure('종료 사진이 없습니다.')
     }
     const endImageId = (await logImageColl().insertOne({
         image: endImage
@@ -398,11 +398,11 @@ addServerEventListener('mentoring_attend_req', async (body) => {
 
     const working = getMentoringRes.data.working
     if (working === null) {
-        return failure('Mentoring is not in progress.')
+        return failure('멘토링이 진행중이 아닙니다.')
     }
     const attendQueue = working.attendQueue
     if (attendQueue.some((exist) => exist.id === user.id)) {
-        return failure(`Mentee ${user.id} is already in attendQueue.`)
+        return failure(`멘티 ${user.id}는 이미 출석 요청 목록에 있습니다.`)
     }
     attendQueue.push(user)
 
@@ -428,17 +428,17 @@ addServerEventListener('mentoring_attend_accept', async (body) => {
 
     const working = getMentoringRes.data.working
     if (working === null) {
-        return failure('Mentoring is not in progress.')
+        return failure('멘토링이 진행중이 아닙니다.')
     }
     const attendQueue = working.attendQueue
     const index = attendQueue.findIndex((exist) => exist.id === menteeId)
     if (index === -1) {
-        return failure(`Mentee ${menteeId} is not in attendQueue.`)
+        return failure(`멘티 ${menteeId}는 출석 요청 목록에 없습니다.`)
     }
     const mentee = attendQueue[index]
     const attend = working.attend
     if (attend.some((exist) => exist.id === menteeId)) {
-        return failure(`Mentee ${menteeId} is already in attend.`)
+        return failure(`멘티 ${menteeId}는 이미 출석했습니다.`)
     }
 
     attendQueue.splice(index, 1)
@@ -465,16 +465,16 @@ addServerEventListener('mentoring_attend_decline', async (body) => {
 
     const working = getMentoringRes.data.working
     if (working === null) {
-        return failure('Mentoring is not in progress.')
+        return failure('멘토링이 진행중이 아닙니다.')
     }
     const attendQueue = working.attendQueue
     const index = attendQueue.findIndex((exist) => exist.id === menteeId)
     if (index === -1) {
-        return failure(`Mentee ${menteeId} is not in attendQueue.`)
+        return failure(`멘티 ${menteeId}는 출석 요청 목록에 없습니다.`)
     }
     const attend = working.attend
     if (attend.some((exist) => exist.id === menteeId)) {
-        return failure(`Mentee ${menteeId} is already in attend.`)
+        return failure(`멘티 ${menteeId}는 이미 출석 요청 목록에 있습니다.`)
     }
 
     attendQueue.splice(index, 1)
@@ -504,7 +504,7 @@ addServerEventListener('get_user_name', async (body) => {
 
     const targetUser = await userColl.findOne({ id }, withoutId)
     if (targetUser === null) {
-        return failure(`No user with id ${id}.`)
+        return failure(`아이디가 ${id}인 유저가 존재하지 않습니다.`)
     }
     return success(targetUser.name)
 })
@@ -516,7 +516,7 @@ addServerEventListener('get_user_name', async (body) => {
 
     const targetUser = await userColl.findOne({ id }, withoutId)
     if (targetUser === null) {
-        return failure(`No user with id ${id}.`)
+        return failure(`아이디가 ${id}인 유저가 존재하지 않습니다.`)
     }
     return success(targetUser.name)
 })
@@ -567,7 +567,7 @@ addServerEventListener('add_mentorings', async (body) => {
     for (const mentoringString of splitStringIntoChunks(mentoringListString, 5)) {
         const [codeString, name, mentorsId, menteesId, classification] = mentoringString.split('\n').map((v) => v.trim())
         const code = Number(codeString)
-        if (isNaN(code)) return failure('Code is NaN.')
+        if (isNaN(code)) return failure('코드가 수가 아닙니다.')
 
         const mentors = await Promise.all(
             mentorsId.split(' ').map(async (id) => {
@@ -587,7 +587,7 @@ addServerEventListener('add_mentorings', async (body) => {
                 return menteeUser
             })
         )
-        if (!(classification === 'academic' || classification === 'artisan')) return failure('Invalid classification')
+        if (!(classification === 'academic' || classification === 'artisan')) return failure('잘못된 분류입니다.')
 
         mentoringList.push({
             code,
@@ -630,11 +630,11 @@ addServerEventListener('log_image', async (body) => {
 
     const startLogImage = await logImageColl(semester).findOne({ _id: new ObjectId(startImageId) })
     if (startLogImage === null) {
-        return failure(`No start image ${startImageId}`)
+        return failure(`시작 이미지 ${startImageId}가 존재하지 않습니다.`)
     }
     const endLogImage = await logImageColl(semester).findOne({ _id: new ObjectId(endImageId) })
     if (endLogImage === null) {
-        return failure(`No end image ${endImageId}`)
+        return failure(`종료 이미지 ${endImageId}가 존재하지 않습니다.`)
     }
     return success({
         startImage: startLogImage.image,

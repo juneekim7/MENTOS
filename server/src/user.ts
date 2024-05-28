@@ -41,7 +41,7 @@ export const getUser = getRes(async (accessToken: string) => {
         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${accessToken}`
     )
     if (data.hd !== 'ksa.hs.kr') {
-        return failure('You are not KSA student!')
+        return failure('한국과학영재학교 계정으로 로그인 해주세요!')
     }
     const studentId = data.email.split('@')[0]
 
