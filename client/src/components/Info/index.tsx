@@ -11,6 +11,7 @@ import { MentoringScreen } from "./Mentoring"
 import { Start } from "./Start"
 import { Finish } from "./Finish"
 import { Attendance } from "./Attendance"
+import { Attended } from "./Attended"
 
 export const MentoringInfo: React.FC = () => {
     const { id } = useParams()
@@ -58,6 +59,8 @@ export const MentoringInfo: React.FC = () => {
             {info.mentors.some((mtr) => mtr.id === userInfo.id) && info.working !== null &&
                 <Fragment>
                     <Attendance queue={info.working.attendQueue} code={info.code} forceUpdate={forceUpdate} />
+                    <VBox height={48} />
+                    <Attended attend={info.working.attend} code={info.code} forceUpdate={forceUpdate} />
                     <VBox height={48} />
                 </Fragment>}
             <History logs={info.logs} mentors={info.mentors} />
