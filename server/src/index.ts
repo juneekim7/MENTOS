@@ -1,5 +1,4 @@
 import express from 'express'
-import cors from 'cors'
 import { configDotenv } from 'dotenv'
 import { RawData, WebSocket, WebSocketServer } from 'ws'
 import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb'
@@ -11,19 +10,27 @@ import { getUser, verifyAdmin } from './user'
 import { KeyOfMap, currentSemester, getRes, splitStringIntoChunks } from './utils'
 import { checkLog, getMentoring } from './mentoring'
 import ViteExpress from 'vite-express'
+import { readFileSync } from 'fs'
+// import { createServer as httpsCreateServer } from 'https'
+// import { createServer as viteCreateServer } from 'vite'
 
 // #region app setting
 export type ParamDict = Record<string, string>
+
+const privateKey = readFileSync('/etc/letsencrypt/live/ksamentos.kr/privkey.pem', 'utf8')
+const certificate = readFileSync('/etc/letsencrypt/live/ksamentos.kr/cert.pem', 'utf8')
+const ca = readFileSync('/etc/letsencrypt/live/ksamentos.kr/chain.pem', 'utf8')
+const _credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca
+}
 
 const app = express()
 app.use(express.json({
     limit: '10mb'
 }))
-const corsOptions = {
-    origin: 'http://localhost',
-    optionsSuccessStatus: 200
-}
-app.use(cors(corsOptions))
+// const httpsServer = httpsCreateServer(credentials, app)
 ViteExpress.config({
     mode: 'production',
     inlineViteConfig: {
@@ -32,13 +39,20 @@ ViteExpress.config({
         }
     }
 })
+
 ViteExpress.listen(app, 80, () => {
     console.log('The server has started!')
 })
+// const vite = await viteCreateServer({
+//     server: {
+//         middlewareMode: true,
+//         hmr: {
+//             server: httpsServer
+//         }
+//     }
+// })
 
-app.listen(8080, () => {
-    console.log('The server has started.')
-})
+// app.use()
 
 const addServerEventListener = <T extends keyof Connection>(
     event: T,
